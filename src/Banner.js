@@ -4,7 +4,7 @@ import codeBanner from './code_banner.png'; // Import the image file
 const Banner = () => {
   return (
     <div>
-      <img src={codeBanner} alt="Banner Image" />
+      <img src={codeBanner} />
     </div>
   );
 };
