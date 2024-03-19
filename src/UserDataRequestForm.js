@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
-import Banner from './Banner'; // Import the Banner component
+import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 
 const UserDataRequestForm = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
-
-    const toggleMenu = () => {
-      setMenuOpen(!menuOpen);
-    };
   // State variables to store form data
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -57,8 +52,8 @@ const UserDataRequestForm = () => {
 
   return (
     <div>
+      <HamburgerMenu />
       <Banner />
-      <HamburgerMenu isOpen={menuOpen} toggleMenu={toggleMenu} />
       <h2>User Data Request Form</h2>
       <form onSubmit={handleSubmit}>
         <div>
