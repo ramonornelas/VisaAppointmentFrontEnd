@@ -92,7 +92,9 @@ const UserDataRequestForm = () => {
   return (
     <div>
       <HamburgerMenu />
+      <div style={{ marginBottom: '5px' }}></div>
       <Banner />
+      <div style={{ marginBottom: '5px' }}></div>
       <h2>User Data Request Form</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -201,7 +203,7 @@ const UserDataRequestForm = () => {
             </div>
           ))}
         </div>
-        <div style={{ marginBottom: '20px' }}></div> {/* Adding space with a div */}
+        <div style={{ marginBottom: '20px' }}></div>
         <button type="submit">Submit</button>
       </form>
     </div>

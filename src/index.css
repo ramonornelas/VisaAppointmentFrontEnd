@@ -1,6 +1,10 @@
 .banner-container {
     position: relative;
-    top: 50px;
   }
+  .banner-image {
+    width: 100%; /* Set width to 100% to make the image wider */
+    height: 150px; /* Maintain aspect ratio */
+  }
+
 
   
