@@ -6,9 +6,12 @@ const About = () => {
   return (
     <div>
       <HamburgerMenu />
+      <div style={{ marginBottom: '5px' }}></div>
       <Banner />
-      <h2>About Us</h2>
-      <p>We are Orion Scaled.</p>
+      <div style={{ marginBottom: '5px' }}></div>
+      <h2>About</h2>
+      <p>We are Orion Scaled</p>
+      <p>Find your way in IT with Orion Scaled</p>
     </div>
   );
 };
