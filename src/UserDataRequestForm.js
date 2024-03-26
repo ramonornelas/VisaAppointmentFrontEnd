@@ -26,8 +26,8 @@ const UserDataRequestForm = () => {
         'password': password,
         'schedule_id': scheduleId,
         'target_start_mode': targetStartMode,
-        'target_start_days': targetStartMode === 'DATE' ? targetStartDays : '-',
-        'target_start_date': targetStartMode === 'DAYS' ? targetStartDate : '-',
+        'target_start_days': targetStartMode === 'DAYS' ? targetStartDays : '-',
+        'target_start_date': targetStartMode === 'DATE' ? targetStartDate : '-',
         'target_end_date': targetEndDate,
         'country_code': countryCode,
         'consul_codes': consulCodes,
@@ -201,6 +201,7 @@ const UserDataRequestForm = () => {
             </div>
           ))}
         </div>
+        <div style={{ marginBottom: '20px' }}></div> {/* Adding space with a div */}
         <button type="submit">Submit</button>
       </form>
     </div>
