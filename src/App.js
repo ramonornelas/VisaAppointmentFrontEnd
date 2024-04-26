@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Banner from './Banner';
-import HamburgerMenu from './HamburgerMenu';
+import Footer from './Footer';
 
 const App = () => {
   const [username, setUsername] = useState('');
@@ -21,13 +21,10 @@ const App = () => {
 
   return (
     <div>
-      <HamburgerMenu />
-      <div style={{ marginBottom: '5px' }}></div>
       <Banner />
       <div style={{ marginBottom: '5px' }}></div>
       <div style={{ textAlign: 'center' }}>
       <h2>Welcome to the Visa Auto Scheduler</h2>
-      <p>Orion Scaled TM.</p>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="username">Username:</label>
@@ -39,7 +36,8 @@ const App = () => {
         </div>
         <button type="submit">Log In</button>
       </form>
-      <p>Don't have an account? <a href="/register">Register here</a></p>
+      <p>Don't have an account? <a href="/registeruser">Register here</a></p>
+      <Footer />
       </div>
     </div>
   );

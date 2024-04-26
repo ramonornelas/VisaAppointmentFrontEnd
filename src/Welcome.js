@@ -3,19 +3,18 @@ import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
 
-const About = () => {
+const Welcome = ({ username }) => {
   return (
     <div>
       <HamburgerMenu />
       <div style={{ marginBottom: '5px' }}></div>
       <Banner />
       <div style={{ marginBottom: '5px' }}></div>
-      <h2>About</h2>
-      <p>We are Orion Scaled</p>
-      <p>Find your way in IT with Orion Scaled</p>
+      <h2>Welcome, {username}!</h2>
+      <p>You have been registered successfully</p>
       <Footer />
     </div>
   );
 };
 
-export default About;
+export default Welcome;
