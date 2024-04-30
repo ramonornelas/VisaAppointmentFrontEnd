@@ -21,7 +21,6 @@ const UserRegistrationForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
     fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users', {
       method: 'POST',
       headers: {
