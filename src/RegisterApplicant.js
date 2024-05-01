@@ -74,6 +74,8 @@ const RegisterApplicant = () => {
     setTargetEndDate('');
     setConsulCodes('');
     setAscCodes('');
+    // Redirect to applicants
+    window.location.href = '/applicants';
     })
     .catch(error => {
     console.error('Error:', error);
