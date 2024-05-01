@@ -6,23 +6,23 @@ import { UserDetails } from './APIFunctions';
 
 const Home = () => {
     const [userData, setUserData] = useState(null);
-    const userId = sessionStorage.getItem("userId");
+    const fastVisa_userid = sessionStorage.getItem("fastVisa_userid");
     const [username, setUsername] = useState(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const data = await UserDetails(userId);
+                const data = await UserDetails(fastVisa_userid);
                 setUserData(data);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
         };
 
-        if (userId) {
+        if (fastVisa_userid) {
             fetchUserData();
         }
-    }, [userId]);
+    }, [fastVisa_userid]);
 
     useEffect(() => {
         if (userData) {

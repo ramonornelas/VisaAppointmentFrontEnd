@@ -2,43 +2,52 @@ import React, { useState } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 
-const UserDataRequestForm = () => {
+const RegisterApplicant = () => {
+  const fastVisa_userid = sessionStorage.getItem("fastVisa_userid");
+  const fastVisa_username = sessionStorage.getItem("fastVisa_username");  
   // State variables to store form data
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [scheduleId, setScheduleId] = useState('');
+  const [hasConsulDate, setHasConsulDate] = useState(false);
+  const [consulDate, setConsulDate] = useState('');
+  const [hasAscDate, setHasAscDate] = useState(false);
+  const [ascDate, setAscDate] = useState('');
   const [targetStartMode, setTargetStartMode] = useState('DATE');
   const [targetStartDays, setTargetStartDays] = useState('3');
   const [targetStartDate, setTargetStartDate] = useState('');
   const [targetEndDate, setTargetEndDate] = useState('');
-  const [countryCode, setCountryCode] = useState('es-mx'); // Adding countryCode state variable
   const [consulCodes, setConsulCodes] = useState('');
   const [ascCodes, setAscCodes] = useState('');
 
   // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you can implement the logic to send the user data request
     const Body = {
-      'event_type': 'deploy',
-      'client_payload' : {
-        'username': email,
-        'password': password,
-        'schedule_id': scheduleId,
+        "ais_schedule_id": scheduleId,
+        "ais_username": email,
+        "ais_password": password,
+        "fastVisa_userid": fastVisa_userid,
+        "fastVisa_username": fastVisa_username,
+        "applicant_active": true,
+        "search_active": true,
+        "consul_appointment_date": hasConsulDate ? consulDate : '',
+        "asc_appointment_date": hasAscDate ? ascDate : '',
         'target_start_mode': targetStartMode,
         'target_start_days': targetStartMode === 'DAYS' ? targetStartDays : '-',
         'target_start_date': targetStartMode === 'DATE' ? targetStartDate : '-',
         'target_end_date': targetEndDate,
-        'country_code': countryCode,
-        'consul_codes': consulCodes,
-        'asc_codes': ascCodes
-    }};
+        "target_consul_codes": consulCodes,
+        "target_asc_codes": ascCodes,
+        "container_id": "",
+        "container_start_datetime": ""
+    };
     // Send the clientPayload object as JSON to the API
-    fetch('https://api.github.com/repos/Nokktarehezth/VisaAppointmentConsole/dispatches', {
+    fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      "Authorization": "Bearer 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"
+        "Accept": "application/json",
+        "Content-Type": "application/json"
     },
     body: JSON.stringify(Body)
     })
@@ -55,11 +64,14 @@ const UserDataRequestForm = () => {
     setEmail('');
     setPassword('');
     setScheduleId('');
+    setHasConsulDate(false);
+    setConsulDate('');
+    setHasAscDate(false);
+    setAscDate('');
     setTargetStartMode('DATE');
     setTargetStartDays('3');
     setTargetStartDate('');
     setTargetEndDate('');
-    setCountryCode('es-mx');
     setConsulCodes('');
     setAscCodes('');
     })
@@ -89,6 +101,42 @@ const UserDataRequestForm = () => {
     }
   };
 
+// Function to handle checkbox changes for Consul Date
+    const handleConsulDateChange = (e) => {
+        setHasConsulDate(e.target.checked);
+    };
+    
+// Function to handle checkbox changes for ASC Date
+    const handleAscDateChange = (e) => {
+        setHasAscDate(e.target.checked);
+    };
+
+    const CONSUL_NAMES = {
+        65: "Ciudad Juarez",
+        66: "Guadalajara",
+        67: "Hermosillo",
+        68: "Matamoros",
+        69: "Merida",
+        70: "Mexico City",
+        71: "Monterrey",
+        72: "Nogales",
+        73: "Nuevo Laredo",
+        74: "Tijuana",
+    };
+      
+    const ASC_NAMES = {
+        76: "Ciudad Juarez",
+        77: "Guadalajara",
+        78: "Hermosillo",
+        79: "Matamoros",
+        81: "Merida",
+        82: "Mexico City",
+        83: "Monterrey",
+        84: "Nogales",
+        85: "Nuevo Laredo",
+        88: "Tijuana",
+    };
+
   return (
     <div>
       <HamburgerMenu />
@@ -98,7 +146,7 @@ const UserDataRequestForm = () => {
       <h2>User Data Request Form</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">AIS Email:</label>
           <input
             type="email"
             id="email"
@@ -108,7 +156,7 @@ const UserDataRequestForm = () => {
           />
         </div>
         <div>
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">AIS Password:</label>
           <input
             type="password"
             id="password"
@@ -118,7 +166,7 @@ const UserDataRequestForm = () => {
           />
         </div>
         <div>
-          <label htmlFor="scheduleId">Schedule ID:</label>
+          <label htmlFor="scheduleId">AIS Schedule ID:</label>
           <input
             type="number"
             id="scheduleId"
@@ -126,6 +174,50 @@ const UserDataRequestForm = () => {
             onChange={(e) => setScheduleId(e.target.value)}
             required
           />
+        </div>
+                {/* Checkbox and field for Consul Date */}
+                <div>
+          <input
+            type="checkbox"
+            id="hasConsulDate"
+            checked={hasConsulDate}
+            onChange={handleConsulDateChange}
+          />
+          <label htmlFor="hasConsulDate">I already have a Consul Date</label>
+          {hasConsulDate && (
+            <div>
+              <label htmlFor="consulDate">Consul Date:</label>
+              <input
+                type="date"
+                id="consulDate"
+                value={consulDate}
+                onChange={(e) => setConsulDate(e.target.value)}
+                required={hasConsulDate}
+              />
+            </div>
+          )}
+        </div>
+        {/* Checkbox and field for ASC Date */}
+        <div>
+          <input
+            type="checkbox"
+            id="hasAscDate"
+            checked={hasAscDate}
+            onChange={handleAscDateChange}
+          />
+          <label htmlFor="hasAscDate">I already have an ASC Date</label>
+          {hasAscDate && (
+            <div>
+              <label htmlFor="ascDate">ASC Date:</label>
+              <input
+                type="date"
+                id="ascDate"
+                value={ascDate}
+                onChange={(e) => setAscDate(e.target.value)}
+                required={hasAscDate}
+              />
+            </div>
+          )}
         </div>
         <div>
           <label htmlFor="targetStartMode">Target Start Mode:</label>
@@ -210,30 +302,6 @@ const UserDataRequestForm = () => {
   );
 };
 
-const CONSUL_NAMES = {
-  65: "Ciudad Juarez",
-  66: "Guadalajara",
-  67: "Hermosillo",
-  68: "Matamoros",
-  69: "Merida",
-  70: "Mexico City",
-  71: "Monterrey",
-  72: "Nogales",
-  73: "Nuevo Laredo",
-  74: "Tijuana",
-};
 
-const ASC_NAMES = {
-  76: "Ciudad Juarez",
-  77: "Guadalajara",
-  78: "Hermosillo",
-  79: "Matamoros",
-  81: "Merida",
-  82: "Mexico City",
-  83: "Monterrey",
-  84: "Nogales",
-  85: "Nuevo Laredo",
-  88: "Tijuana",
-};
 
-export default UserDataRequestForm;
+export default RegisterApplicant;

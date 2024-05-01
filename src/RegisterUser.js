@@ -31,7 +31,7 @@ const UserRegistrationForm = () => {
     })
     .then(response => {
       if (response.status === 201) {
-        setRegistrationSuccess(true); // Set registration success flag to true
+        setRegistrationSuccess(true);
       } else {
         throw new Error('Network response was not ok');
       }

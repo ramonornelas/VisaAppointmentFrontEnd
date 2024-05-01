@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Banner from './Banner';
 import Footer from './Footer';
 
-const App = () => {
+const LogIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -40,7 +40,9 @@ const App = () => {
         if (searchuserresponse.status === 200) {
           const searchuserdata = await searchuserresponse.json();
           const searchuserid = searchuserdata[0].id;
-          sessionStorage.setItem("userId", searchuserid);
+          const searchusername = searchuserdata[0].username;
+          sessionStorage.setItem("fastVisa_userid", searchuserid);
+          sessionStorage.setItem("fastVisa_username", searchusername);
           window.location.href = '/home';
         } else {
           throw new Error('Failed to fetch user data');
@@ -79,4 +81,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default LogIn;

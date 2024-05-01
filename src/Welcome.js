@@ -7,7 +7,8 @@ const Welcome = ({ username }) => {
       <div style={{ marginBottom: '5px' }}></div>
       <h2>Welcome, {username}!</h2>
       <p>You have been registered successfully</p>
-      <Link to="/">Go to Home to log in</Link>
+      <p>Click below to go to log in page</p>
+      <Link to="/">Log in</Link>
     </div>
   );
 };

@@ -16,4 +16,18 @@
     left: 0;
     width: 100%;
   }
-  
+
+  .table-container {
+    position: relative;
+  }
+
+  .table-content {
+    border-collapse: collapse; /* Collapse borders into a single border */
+    font-size: 0.7rem; /* Adjust the font size as needed */
+  }
+
+  .table-container th,
+  .table-container td {
+    border: 1px solid #ddd; /* Add border to cells */
+    padding: 8px; /* Add padding to cells for spacing */
+  }

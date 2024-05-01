@@ -1,6 +1,6 @@
-const UserDetails = async (userid) => {
+const UserDetails = async (fastVisa_userid) => {
     try {
-      const response = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users/${userid}`, {
+      const response = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users/${fastVisa_userid}`, {
         method: 'GET',
         headers: {
           "Accept": "application/json",
@@ -19,8 +19,29 @@ const UserDetails = async (userid) => {
     }
 };
 
-const otherFunction = async () => {
-  // Another API call or function
+const ApplicantDetails = async (fastVisa_userid) => {
+  const requestBody = {
+    "fastVisa_userid": fastVisa_userid,
+  };
+  try {
+    const response = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/search', {
+      method: 'POST',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (response.status === 200) {
+      const data = await response.json();
+      return data;
+    } else {
+      throw new Error('Failed to fetch applicant data');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
 };
 
-export { UserDetails, otherFunction };
+export { UserDetails, ApplicantDetails };
