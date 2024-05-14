@@ -7,10 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import './index.css';
 
 const Applicants = () => {
-    const [data, setData] = useState(null); // Changed 'Data' to lowercase as per convention
-    const fastVisaUserId = sessionStorage.getItem("fastVisa_userid"); // Changed variable name to camelCase
-    const fastVisaUsername = sessionStorage.getItem("fastVisa_username"); // Changed variable name to camelCase
+    const [data, setData] = useState(null); 
+    const fastVisaUserId = sessionStorage.getItem("fastVisa_userid"); 
+    const fastVisaUsername = sessionStorage.getItem("fastVisa_username"); 
     const navigate = useNavigate();
+    
+    // Define the included fields
+    const includeFields = ['ais_schedule_id', 'ais_username', 'applicant_active']; // Add more fields as needed
 
     useEffect(() => {
         const fetchData = async () => {
@@ -19,7 +22,6 @@ const Applicants = () => {
                 setData(response);
             } catch (error) {
                 console.error('Error fetching data:', error);
-                // Optionally, you can provide feedback to the user about the error
             }
         };
 
@@ -32,7 +34,19 @@ const Applicants = () => {
         navigate('/RegisterApplicant');
     };
 
-    const excludedFields = ['ais_password', 'fastVisa_userid', 'id']; 
+    const handleEdit = (id) => {
+        navigate(`/EditApplicant/${id}`);
+    };
+
+    const renderEditLink = (id) => (
+        <td key={`edit-${id}`} style={{ textAlign: 'left' }}>
+            <button onClick={() => handleEdit(id)}>Edit</button>
+        </td>
+    );
+
+    const renderBooleanValue = (value) => (
+        <span>{value ? 'Active' : 'Inactive'}</span>
+    );
 
     return (
         <div className="table-container">
@@ -46,19 +60,21 @@ const Applicants = () => {
             <table className="table-content" style={{ textAlign: 'left' }}>
                 <thead>
                     <tr>
-                    {data && Object.keys(data[0]).filter(key => !excludedFields.includes(key)).map((key, index) => (
-                        <th key={key} style={{ textAlign: 'left' }}>{key}</th> // Changed key to use the actual key instead of index
-                    ))}
+                        {includeFields.map((field) => (
+                            <th key={field}>{field}</th>
+                        ))}
+                        <th>Edit</th> {/* Add new column for Edit */}
                     </tr>
                 </thead>
                 <tbody>
-                    {data && data.map((item, rowIndex) => (
-                        <tr key={item.id || rowIndex}> {/* Use a unique identifier if available */}
-                            {Object.entries(item).filter(([key]) => !excludedFields.includes(key)).map(([key, value], cellIndex) => (
-                                <td key={key + rowIndex} style={{ textAlign: 'left'}}>
-                                    {typeof value === 'boolean' ? value.toString() : typeof value === 'object' ? JSON.stringify(value) : value}
-                                </td> // Changed key to use a combination of key and rowIndex
+                    {data && data.map((item, index) => (
+                        <tr key={item.id || index}>
+                            {includeFields.map((field) => (
+                                <td key={`${item.id}-${field}`} style={{ textAlign: 'left' }}>
+                                    {field === 'applicant_active' ? renderBooleanValue(item[field]) : item[field]}
+                                </td>
                             ))}
+                            {renderEditLink(item.id)} {/* Render Edit link */}
                         </tr>
                     ))}
                 </tbody>

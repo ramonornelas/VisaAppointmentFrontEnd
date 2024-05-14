@@ -17,127 +17,101 @@ const RegisterApplicant = () => {
   const [targetStartDays, setTargetStartDays] = useState('3');
   const [targetStartDate, setTargetStartDate] = useState('');
   const [targetEndDate, setTargetEndDate] = useState('');
-  const [consulCodes, setConsulCodes] = useState('');
-  const [ascCodes, setAscCodes] = useState('');
+  const [cityCodes, setCityCodes] = useState('');
 
   // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     const Body = {
-        "ais_schedule_id": scheduleId,
-        "ais_username": email,
-        "ais_password": password,
-        "fastVisa_userid": fastVisa_userid,
-        "fastVisa_username": fastVisa_username,
-        "applicant_active": true,
-        "search_active": true,
-        "consul_appointment_date": hasConsulDate ? consulDate : '',
-        "asc_appointment_date": hasAscDate ? ascDate : '',
-        'target_start_mode': targetStartMode,
-        'target_start_days': targetStartMode === 'DAYS' ? targetStartDays : '-',
-        'target_start_date': targetStartMode === 'DATE' ? targetStartDate : '-',
-        'target_end_date': targetEndDate,
-        "target_consul_codes": consulCodes,
-        "target_asc_codes": ascCodes,
-        "container_id": "",
-        "container_start_datetime": ""
+      "ais_schedule_id": scheduleId,
+      "ais_username": email,
+      "ais_password": password,
+      "fastVisa_userid": fastVisa_userid,
+      "fastVisa_username": fastVisa_username,
+      "applicant_active": true,
+      "search_active": true,
+      "consul_appointment_date": hasConsulDate ? consulDate : '',
+      "asc_appointment_date": hasAscDate ? ascDate : '',
+      'target_start_mode': targetStartMode,
+      'target_start_days': targetStartMode === 'DAYS' ? targetStartDays : '-',
+      'target_start_date': targetStartMode === 'DATE' ? targetStartDate : '-',
+      'target_end_date': targetEndDate,
+      "target_city_codes": cityCodes,
+      "container_id": "",
+      "container_start_datetime": ""
     };
     // Send the clientPayload object as JSON to the API
     fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants', {
-    method: 'POST',
-    headers: {
+      method: 'POST',
+      headers: {
         "Accept": "application/json",
         "Content-Type": "application/json"
-    },
-    body: JSON.stringify(Body)
+      },
+      body: JSON.stringify(Body)
     })
-    .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    console.log('Response:', response);
-    return response;
-    })
-    .then(data => {
-    console.log('Success:', data);
-    // Reset form fields after successful submission if needed
-    setEmail('');
-    setPassword('');
-    setScheduleId('');
-    setHasConsulDate(false);
-    setConsulDate('');
-    setHasAscDate(false);
-    setAscDate('');
-    setTargetStartMode('DATE');
-    setTargetStartDays('3');
-    setTargetStartDate('');
-    setTargetEndDate('');
-    setConsulCodes('');
-    setAscCodes('');
-    // Redirect to applicants
-    window.location.href = '/applicants';
-    })
-    .catch(error => {
-    console.error('Error:', error);
-    // Handle errors here if needed
-    });
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        console.log('Response:', response);
+        return response;
+      })
+      .then(data => {
+        console.log('Success:', data);
+        // Reset form fields after successful submission if needed
+        setEmail('');
+        setPassword('');
+        setScheduleId('');
+        setHasConsulDate(false);
+        setConsulDate('');
+        setHasAscDate(false);
+        setAscDate('');
+        setTargetStartMode('DATE');
+        setTargetStartDays('3');
+        setTargetStartDate('');
+        setTargetEndDate('');
+        setCityCodes('');
+        // Redirect to applicants
+        window.location.href = '/applicants';
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Handle errors here if needed
+      });
   };
 
-  // Function to handle checkbox changes for Consul Codes
-  const handleConsulCodeChange = (e) => {
-    const value = parseInt(e.target.value);
-    if (consulCodes.includes(value)) {
-      setConsulCodes(consulCodes.split(',').filter((code) => code !== value).join(','));
+  // Function to handle checkbox changes for Consul Date
+  const handleConsulDateChange = (e) => {
+    setHasConsulDate(e.target.checked);
+  };
+
+  // Function to handle checkbox changes for ASC Date
+  const handleAscDateChange = (e) => {
+    setHasAscDate(e.target.checked);
+  };
+
+  // Function to handle checkbox changes for Cities
+  const handleCityCodeChange = (e) => {
+    const value = e.target.value;
+    if (cityCodes.includes(value)) {
+      setCityCodes(cityCodes.split(',').filter((code) => code !== value).join(','));
     } else {
-      setConsulCodes(consulCodes ? `${consulCodes},${value}` : `${value}`);
+      setCityCodes(cityCodes ? `${cityCodes},${value}` : `${value}`);
     }
   };
 
-  // Function to handle checkbox changes for ASC Codes
-  const handleAscCodeChange = (e) => {
-    const value = parseInt(e.target.value);
-    if (ascCodes.includes(value)) {
-      setAscCodes(ascCodes.split(',').filter((code) => code !== value).join(','));
-    } else {
-      setAscCodes(ascCodes ? `${ascCodes},${value}` : `${value}`);
-    }
-  };
-
-// Function to handle checkbox changes for Consul Date
-    const handleConsulDateChange = (e) => {
-        setHasConsulDate(e.target.checked);
-    };
-    
-// Function to handle checkbox changes for ASC Date
-    const handleAscDateChange = (e) => {
-        setHasAscDate(e.target.checked);
-    };
-
-    const CONSUL_NAMES = {
-        65: "Ciudad Juarez",
-        66: "Guadalajara",
-        67: "Hermosillo",
-        68: "Matamoros",
-        69: "Merida",
-        70: "Mexico City",
-        71: "Monterrey",
-        72: "Nogales",
-        73: "Nuevo Laredo",
-        74: "Tijuana",
-    };
-      
-    const ASC_NAMES = {
-        76: "Ciudad Juarez",
-        77: "Guadalajara",
-        78: "Hermosillo",
-        79: "Matamoros",
-        81: "Merida",
-        82: "Mexico City",
-        83: "Monterrey",
-        84: "Nogales",
-        85: "Nuevo Laredo",
-        88: "Tijuana",
-    };
+  const CITIES = [
+    {"city_code": "CJS", "city_name": "Ciudad Juarez"},
+    {"city_code": "GDL", "city_name": "Guadalajara"},
+    {"city_code": "HMO", "city_name": "Hermosillo"},
+    {"city_code": "MAM", "city_name": "Matamoros"},
+    {"city_code": "MID", "city_name": "Merida"},
+    {"city_code": "MEX", "city_name": "Mexico City"},
+    {"city_code": "MTY", "city_name": "Monterrey"},
+    {"city_code": "NOG", "city_name": "Nogales"},
+    {"city_code": "NLD", "city_name": "Nuevo Laredo"},
+    {"city_code": "TIJ", "city_name": "Tijuana"},
+  ];
 
   return (
     <div>
@@ -177,8 +151,8 @@ const RegisterApplicant = () => {
             required
           />
         </div>
-                {/* Checkbox and field for Consul Date */}
-                <div>
+        {/* Checkbox and field for Consul Date */}
+        <div>
           <input
             type="checkbox"
             id="hasConsulDate"
@@ -268,32 +242,17 @@ const RegisterApplicant = () => {
           />
         </div>
         <div>
-          <h3>Consul Codes</h3>
-          {Object.entries(CONSUL_NAMES).map(([id, name]) => (
-            <div key={id}>
+          <h3>Target Cities</h3>
+          {CITIES.map((city) => (
+            <div key={city.city_code}>
               <input
                 type="checkbox"
-                id={id}
-                value={id}
-                checked={consulCodes.split(',').includes(id)}
-                onChange={handleConsulCodeChange}
+                id={city.city_code}
+                value={city.city_code}
+                checked={cityCodes.split(',').includes(city.city_code)}
+                onChange={handleCityCodeChange}
               />
-              <label htmlFor={id}>{name}</label>
-            </div>
-          ))}
-        </div>
-        <div>
-          <h3>ASC Codes</h3>
-          {Object.entries(ASC_NAMES).map(([id, name]) => (
-            <div key={id}>
-              <input
-                type="checkbox"
-                id={id}
-                value={id}
-                checked={ascCodes.split(',').includes(id)}
-                onChange={handleAscCodeChange}
-              />
-              <label htmlFor={id}>{name}</label>
+              <label htmlFor={city.city_code}>{city.city_name}</label>
             </div>
           ))}
         </div>
@@ -303,7 +262,5 @@ const RegisterApplicant = () => {
     </div>
   );
 };
-
-
 
 export default RegisterApplicant;
