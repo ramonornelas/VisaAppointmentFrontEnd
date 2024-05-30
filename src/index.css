@@ -1,3 +1,18 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the page container takes the full height */
+}
+
+.content-wrap {
+  flex: 1; /* This will allow the content to grow and push the footer down */
+}
+
 .banner-container {
     position: relative;
   }
@@ -26,8 +41,8 @@
     font-size: 0.7rem; /* Adjust the font size as needed */
   }
 
-  .table-container th,
-  .table-container td {
+  .table-content th,
+  .table-content td {
     border: 1px solid #ddd; /* Add border to cells */
     padding: 8px; /* Add padding to cells for spacing */
   }

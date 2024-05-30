@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
-import { ApplicantDetails } from './APIFunctions';
+import { ApplicantSearch } from './APIFunctions';
 import { useNavigate } from 'react-router-dom'; 
 import './index.css';
 
@@ -18,7 +18,7 @@ const Applicants = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await ApplicantDetails(fastVisaUserId);
+                const response = await ApplicantSearch(fastVisaUserId);
                 setData(response);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -34,18 +34,32 @@ const Applicants = () => {
         navigate('/RegisterApplicant');
     };
 
-    const handleEdit = (id) => {
-        navigate(`/EditApplicant/${id}`);
+    const handleView = (id) => {
+        sessionStorage.setItem("applicant_userid", id);
+        navigate(`/ViewApplicant`);
     };
 
-    const renderEditLink = (id) => (
+    const handleAction = (id, isActive) => {
+        const destination = isActive === 'Active' ? `/StartContainer/${id}` : `/StopContainer/${id}`;
+        navigate(destination);
+    };
+
+    const renderViewButton = (id) => (
         <td key={`edit-${id}`} style={{ textAlign: 'left' }}>
-            <button onClick={() => handleEdit(id)}>Edit</button>
+            <button onClick={() => handleView(id)}>Details</button>
         </td>
     );
 
     const renderBooleanValue = (value) => (
         <span>{value ? 'Active' : 'Inactive'}</span>
+    );
+
+    const renderActionButton = (id, isActive) => (
+        <td key={`toggle-${id}`} style={{ textAlign: 'left' }}>
+            <button onClick={() => handleAction(id, isActive)}>
+                {isActive ? 'Stop' : 'Start'}
+            </button>
+        </td>
     );
 
     return (
@@ -59,11 +73,12 @@ const Applicants = () => {
             <h3>Applicants</h3>
             <table className="table-content" style={{ textAlign: 'left' }}>
                 <thead>
-                    <tr>
-                        {includeFields.map((field) => (
-                            <th key={field}>{field}</th>
-                        ))}
-                        <th>Edit</th> {/* Add new column for Edit */}
+                    <tr>                        
+                        <th>AIS ID</th>
+                        <th>AIS Username</th>
+                        <th>Applicant Status</th>
+                        <th>Action</th>
+                        <th>View</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,7 +89,8 @@ const Applicants = () => {
                                     {field === 'applicant_active' ? renderBooleanValue(item[field]) : item[field]}
                                 </td>
                             ))}
-                            {renderEditLink(item.id)} {/* Render Edit link */}
+                            {renderActionButton(item.id, item.applicant_active)}
+                            {renderViewButton(item.id)}
                         </tr>
                     ))}
                 </tbody>

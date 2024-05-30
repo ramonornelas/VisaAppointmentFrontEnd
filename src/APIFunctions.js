@@ -19,7 +19,7 @@ const UserDetails = async (fastVisa_userid) => {
     }
 };
 
-const ApplicantDetails = async (fastVisa_userid) => {
+const ApplicantSearch = async (fastVisa_userid) => {
   const requestBody = {
     "fastVisa_userid": fastVisa_userid,
   };
@@ -44,4 +44,25 @@ const ApplicantDetails = async (fastVisa_userid) => {
   }
 };
 
-export { UserDetails, ApplicantDetails };
+const ApplicantDetails = async (applicant_userid) => {
+  try {
+    const response = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/${applicant_userid}`, {
+      method: 'GET',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+    });
+
+    if (response.status === 200) {
+      const data = await response.json();
+      return data;
+    } else {
+      throw new Error('Failed to fetch applicant data');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+export { UserDetails, ApplicantSearch, ApplicantDetails };

@@ -8,6 +8,7 @@ import About from './About';
 import RegisterUser from './RegisterUser';
 import Applicants from './Applicants';
 import RegisterApplicant from './RegisterApplicant';
+import ViewApplicant from './ViewApplicant';
 
 ReactDOM.render(
   <Router>
@@ -18,6 +19,7 @@ ReactDOM.render(
       <Route path="/registeruser" element={<RegisterUser />} />
       <Route path="/applicants" element={<Applicants />} />
       <Route path="/registerapplicant" element={<RegisterApplicant />} />
+      <Route path="/viewapplicant" element={<ViewApplicant />} />
     </Routes>
   </Router>,
   document.getElementById('root')
