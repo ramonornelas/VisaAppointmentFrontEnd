@@ -57,7 +57,9 @@ const LogIn = () => {
   };
 
   return (
-    <div>
+    <div className="page-container">
+      <div className="content-wrap">
+      <div style={{ marginBottom: '5px' }}></div>
       <Banner />
       <div style={{ marginBottom: '5px' }}></div>
       <div style={{ textAlign: 'center' }}>
@@ -75,8 +77,9 @@ const LogIn = () => {
           <button type="submit">Log In</button>
         </form>
         <p>Don't have an account? <a href="/registeruser">Register here</a></p>
-        <Footer />
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };

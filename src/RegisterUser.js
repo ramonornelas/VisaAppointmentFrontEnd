@@ -42,7 +42,8 @@ const UserRegistrationForm = () => {
   };
 
   return (
-    <div>
+    <div className="page-container">
+      <div className="content-wrap">
       <div style={{ marginBottom: '5px' }}></div>
       <Banner />
       <div style={{ marginBottom: '5px' }}></div>
@@ -74,6 +75,7 @@ const UserRegistrationForm = () => {
           <button type="submit">Submit</button>
         </form>
       )}
+      </div>
       <Footer />
     </div>
   );

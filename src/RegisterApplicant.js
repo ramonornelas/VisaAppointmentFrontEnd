@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
+import Footer from './Footer';
 
 const RegisterApplicant = () => {
   const fastVisa_userid = sessionStorage.getItem("fastVisa_userid");
@@ -114,7 +115,8 @@ const RegisterApplicant = () => {
   ];
 
   return (
-    <div>
+    <div className="page-container">
+      <div className="content-wrap">
       <HamburgerMenu />
       <div style={{ marginBottom: '5px' }}></div>
       <Banner />
@@ -259,6 +261,8 @@ const RegisterApplicant = () => {
         <div style={{ marginBottom: '20px' }}></div>
         <button type="submit">Submit</button>
       </form>
+      </div>
+      <Footer />
     </div>
   );
 };

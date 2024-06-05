@@ -26,14 +26,10 @@ html, body {
     color: #fff;
     padding: 20px;
     text-align: center;
-    position: fixed;
+    position: relative;
     bottom: 0;
     left: 0;
     width: 100%;
-  }
-
-  .table-container {
-    position: relative;
   }
 
   .table-content {

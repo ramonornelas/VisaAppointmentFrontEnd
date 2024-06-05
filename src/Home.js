@@ -35,7 +35,8 @@ const Home = () => {
     ) : null;
 
     return (
-        <div>
+        <div className="page-container">
+            <div className="content-wrap">
             <HamburgerMenu />
             <div style={{ marginBottom: '5px' }}></div>
             <Banner />
@@ -63,6 +64,7 @@ const Home = () => {
                     </table>
                 </>
             )}
+            </div>
             <Footer />
         </div>
     );

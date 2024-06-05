@@ -5,7 +5,8 @@ import Footer from './Footer';
 
 const About = () => {
   return (
-    <div>
+    <div className="page-container">
+      <div className="content-wrap">
       <HamburgerMenu />
       <div style={{ marginBottom: '5px' }}></div>
       <Banner />
@@ -13,6 +14,7 @@ const About = () => {
       <h2>About</h2>
       <p>We are Orion Scaled</p>
       <p>Find your way in IT with Orion Scaled</p>
+      </div>
       <Footer />
     </div>
   );

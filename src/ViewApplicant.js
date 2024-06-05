@@ -67,7 +67,7 @@ const ViewApplicant = () => {
                                     <tr key={field}>
                                         <td style={{ textAlign: 'left' }}>{field}</td>
                                         <td style={{ textAlign: 'left' }}>
-                                            {field === 'applicant_active' ? renderBooleanValue(data[field]) : data[field]}
+                                            {(field === 'applicant_active' || field === 'search_active') ? renderBooleanValue(data[field]) : data[field]}
                                         </td>
                                     </tr>
                             ))}

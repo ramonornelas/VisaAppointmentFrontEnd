@@ -65,4 +65,29 @@ const ApplicantDetails = async (applicant_userid) => {
   }
 };
 
-export { UserDetails, ApplicantSearch, ApplicantDetails };
+const StartApplicantContainer = async (applicant_userid) => {
+  const requestBody = {
+    "applicant_id": applicant_userid
+  };
+  try {
+    const response = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/start', {
+      method: 'POST',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (response.status === 200) {
+      const data = await response.json();
+      return data;
+    } else {
+      throw new Error('Failed to start container');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+export { UserDetails, ApplicantSearch, ApplicantDetails, StartApplicantContainer };

@@ -13,7 +13,7 @@ const Applicants = () => {
     const navigate = useNavigate();
     
     // Define the included fields
-    const includeFields = ['ais_schedule_id', 'ais_username', 'applicant_active']; // Add more fields as needed
+    const includeFields = ['ais_schedule_id', 'ais_username', 'applicant_active', 'search_status']; // Add more fields as needed
 
     useEffect(() => {
         const fetchData = async () => {
@@ -40,13 +40,14 @@ const Applicants = () => {
     };
 
     const handleAction = (id, isActive) => {
-        const destination = isActive === 'Active' ? `/StartContainer/${id}` : `/StopContainer/${id}`;
+        sessionStorage.setItem("applicant_userid", id);
+        const destination = isActive === 'Inactive' ? '/StartContainer' : '/StopContainer';
         navigate(destination);
     };
 
     const renderViewButton = (id) => (
         <td key={`edit-${id}`} style={{ textAlign: 'left' }}>
-            <button onClick={() => handleView(id)}>Details</button>
+            <button onClick={() => handleView(id)}>View Details</button>
         </td>
     );
 
@@ -57,13 +58,14 @@ const Applicants = () => {
     const renderActionButton = (id, isActive) => (
         <td key={`toggle-${id}`} style={{ textAlign: 'left' }}>
             <button onClick={() => handleAction(id, isActive)}>
-                {isActive ? 'Stop' : 'Start'}
+                {(isActive === 'Inactive') ? 'Start Search' : 'Stop Search'}
             </button>
         </td>
     );
 
     return (
-        <div className="table-container">
+        <div className="page-container">
+            <div className="content-wrap">
             <HamburgerMenu />
             <div style={{ marginBottom: '5px' }}></div>
             <Banner />
@@ -77,8 +79,8 @@ const Applicants = () => {
                         <th>AIS ID</th>
                         <th>AIS Username</th>
                         <th>Applicant Status</th>
-                        <th>Action</th>
-                        <th>View</th>
+                        <th>Search Status</th>
+                        <th colSpan={2} style={{ textAlign: 'center' }}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -89,7 +91,7 @@ const Applicants = () => {
                                     {field === 'applicant_active' ? renderBooleanValue(item[field]) : item[field]}
                                 </td>
                             ))}
-                            {renderActionButton(item.id, item.applicant_active)}
+                            {renderActionButton(item.id, item.search_status)}
                             {renderViewButton(item.id)}
                         </tr>
                     ))}
@@ -97,6 +99,7 @@ const Applicants = () => {
             </table>
             <div style={{ marginBottom: '5px' }}></div>
             <button onClick={handleRegisterApplicant}>Register Applicant</button>
+            </div>
             <Footer />
         </div>
     );
