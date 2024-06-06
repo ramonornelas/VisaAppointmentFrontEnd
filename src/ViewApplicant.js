@@ -3,14 +3,14 @@ import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
 import { ApplicantDetails } from './APIFunctions';
-import { useNavigate } from 'react-router-dom'; 
+import UpdateApplicant from './UpdateApplicant';
 import './index.css';
 
 const ViewApplicant = () => {
     const [data, setData] = useState(null); // Initialize as null to handle object data
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
     const ApplicantUserId = sessionStorage.getItem("applicant_userid");
-    const navigate = useNavigate();
+    const [isEditing, setIsEditing] = useState(false);
     const excludeFields = ['fastVisa_userid','ais_password', 'id'];
 
     useEffect(() => {
@@ -35,7 +35,7 @@ const ViewApplicant = () => {
     }, [ApplicantUserId]);
 
     const handleEditApplicant = () => {
-        navigate('/EditApplicant');
+        setIsEditing(true);
     };
 
     const renderBooleanValue = (value) => (
@@ -52,7 +52,10 @@ const ViewApplicant = () => {
                 <h2>Fast Visa Scheduler</h2>
                 <p>Welcome, {fastVisaUsername}</p>
                 <h3>Applicant Details</h3>
-                {data ? (
+                {isEditing ? (
+                    <UpdateApplicant data={data} setIsEditing={setIsEditing} />
+                ) : (
+                data ? (
                     <table className="table-content" style={{ textAlign: 'left' }}>
                         <thead>
                             <tr>                        
@@ -75,9 +78,10 @@ const ViewApplicant = () => {
                     </table>
                 ) : (
                     <p>No data available</p>
+                )
                 )}
                 <div style={{ marginBottom: '5px' }}></div>
-                <button onClick={handleEditApplicant}>Edit Applicant</button>
+                {!isEditing && <button onClick={handleEditApplicant}>Edit Applicant</button>}
             </div>
             <Footer />
         </div>
