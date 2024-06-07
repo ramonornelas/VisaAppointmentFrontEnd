@@ -11,7 +11,7 @@ const ViewApplicant = () => {
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
     const ApplicantUserId = sessionStorage.getItem("applicant_userid");
     const [isEditing, setIsEditing] = useState(false);
-    const excludeFields = ['fastVisa_userid','ais_password', 'id'];
+    const excludeFields = ['fastVisa_userid', 'ais_password', 'id'];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -55,33 +55,35 @@ const ViewApplicant = () => {
                 {isEditing ? (
                     <UpdateApplicant data={data} setIsEditing={setIsEditing} />
                 ) : (
-                data ? (
-                    <table className="table-content" style={{ textAlign: 'left' }}>
-                        <thead>
-                            <tr>                        
-                                <th>Field</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Object.keys(data)
-                                .filter(field => !excludeFields.includes(field)) // Exclude specified fields
-                                .map((field) => (
-                                    <tr key={field}>
-                                        <td style={{ textAlign: 'left' }}>{field}</td>
-                                        <td style={{ textAlign: 'left' }}>
-                                            {(field === 'applicant_active' || field === 'search_active') ? renderBooleanValue(data[field]) : data[field]}
-                                        </td>
+                    data ? (
+                        <>
+                            <table className="table-content" style={{ textAlign: 'left' }}>
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Value</th>
                                     </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p>No data available</p>
-                )
+                                </thead>
+                                <tbody>
+                                    {Object.keys(data)
+                                        .filter(field => !excludeFields.includes(field)) // Exclude specified fields
+                                        .map((field) => (
+                                            <tr key={field}>
+                                                <td style={{ textAlign: 'left' }}>{field}</td>
+                                                <td style={{ textAlign: 'left' }}>
+                                                    {(field === 'applicant_active' || field === 'search_active') ? renderBooleanValue(data[field]) : data[field]}
+                                                </td>
+                                            </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <button onClick={() => handleEditApplicant()}>Edit Applicant</button>
+                        </>
+                    ) : (
+                        <p>No data available</p>
+                    )
                 )}
                 <div style={{ marginBottom: '5px' }}></div>
-                {!isEditing && <button onClick={handleEditApplicant}>Edit Applicant</button>}
             </div>
             <Footer />
         </div>
