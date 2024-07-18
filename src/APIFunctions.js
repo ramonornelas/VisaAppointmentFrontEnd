@@ -112,4 +112,30 @@ const StartApplicantContainer = async (applicant_userid) => {
   }
 };
 
-export { UserDetails, ApplicantSearch, ApplicantDetails, ApplicantUpdate, StartApplicantContainer };
+
+const StopApplicantContainer = async (applicant_userid) => {
+  const requestBody = {
+    "applicant_id": applicant_userid
+  };
+  try {
+    const response = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/stop', {
+      method: 'POST',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (response.status === 200) {
+      const data = await response.json();
+      return data;
+    } else {
+      throw new Error('Failed to stop container');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+export { UserDetails, ApplicantSearch, ApplicantDetails, ApplicantUpdate, StartApplicantContainer, StopApplicantContainer };

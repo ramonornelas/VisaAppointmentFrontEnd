@@ -30,7 +30,6 @@ const RegisterApplicant = () => {
       "fastVisa_userid": fastVisa_userid,
       "fastVisa_username": fastVisa_username,
       "applicant_active": true,
-      "search_active": true,
       "consul_appointment_date": hasConsulDate ? consulDate : '',
       "asc_appointment_date": hasAscDate ? ascDate : '',
       'target_start_mode': targetStartMode,

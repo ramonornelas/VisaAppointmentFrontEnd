@@ -10,6 +10,7 @@ import Applicants from './Applicants';
 import RegisterApplicant from './RegisterApplicant';
 import ViewApplicant from './ViewApplicant';
 import StartContainer from './StartContainer';
+import StopContainer from './StopContainer';
 
 ReactDOM.render(
   <Router>
@@ -22,6 +23,7 @@ ReactDOM.render(
       <Route path="/registerapplicant" element={<RegisterApplicant />} />
       <Route path="/viewapplicant" element={<ViewApplicant />} />
       <Route path="/startcontainer" element={<StartContainer />} />
+      <Route path="/stopcontainer" element={<StopContainer />} />
     </Routes>
   </Router>,
   document.getElementById('root')
