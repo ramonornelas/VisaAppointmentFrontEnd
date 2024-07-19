@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect} from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import './index.css';
 
 const StopContainer = () => {
-    const [data, setData] = useState(null); 
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
     const applicantUserId = sessionStorage.getItem("applicant_userid");
     const navigate = useNavigate();
@@ -15,8 +14,7 @@ const StopContainer = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await StopApplicantContainer(applicantUserId);
-                setData(response);
+                await StopApplicantContainer(applicantUserId);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -44,7 +42,6 @@ const StopContainer = () => {
             <p>Successfully sent request to stop container for applicant id: {applicantUserId}</p>
             <p>Search Status will change to "Inactive" upon completion</p>
             <p>Go back to Applicants and Refresh page for new status</p>
-            <p>Response: {data}</p>
             <div style={{ marginBottom: '5px' }}></div>
             <button onClick={handleBack}>Back to Applicants</button>
             </div>
