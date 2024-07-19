@@ -87,6 +87,27 @@ const ApplicantUpdate = async (applicant_userid, requestBody) => {
   }
 };
 
+const ApplicantDelete = async (applicant_userid) => {
+  try {
+    const response = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/${applicant_userid}`, {
+      method: 'DELETE',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+    });
+
+    if (response.status === 200) {
+      const data = await response.json();
+      return data;
+    } else {
+      throw new Error('Failed to delete applicant');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
 const StartApplicantContainer = async (applicant_userid) => {
   const requestBody = {
     "applicant_id": applicant_userid
@@ -138,4 +159,4 @@ const StopApplicantContainer = async (applicant_userid) => {
   }
 };
 
-export { UserDetails, ApplicantSearch, ApplicantDetails, ApplicantUpdate, StartApplicantContainer, StopApplicantContainer };
+export { UserDetails, ApplicantSearch, ApplicantDetails, ApplicantUpdate, StartApplicantContainer, StopApplicantContainer, ApplicantDelete };

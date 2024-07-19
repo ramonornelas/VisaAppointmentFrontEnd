@@ -9,6 +9,7 @@ import RegisterUser from './RegisterUser';
 import Applicants from './Applicants';
 import RegisterApplicant from './RegisterApplicant';
 import ViewApplicant from './ViewApplicant';
+import DeleteApplicant from './DeleteApplicant';
 import StartContainer from './StartContainer';
 import StopContainer from './StopContainer';
 
@@ -22,6 +23,7 @@ ReactDOM.render(
       <Route path="/applicants" element={<Applicants />} />
       <Route path="/registerapplicant" element={<RegisterApplicant />} />
       <Route path="/viewapplicant" element={<ViewApplicant />} />
+      <Route path="/deleteapplicant" element={<DeleteApplicant />} />
       <Route path="/startcontainer" element={<StartContainer />} />
       <Route path="/stopcontainer" element={<StopContainer />} />
     </Routes>

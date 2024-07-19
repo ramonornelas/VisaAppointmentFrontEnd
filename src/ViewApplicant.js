@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
@@ -12,6 +13,7 @@ const ViewApplicant = () => {
     const ApplicantUserId = sessionStorage.getItem("applicant_userid");
     const [isEditing, setIsEditing] = useState(false);
     const excludeFields = ['fastVisa_userid', 'ais_password', 'id'];
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,6 +39,13 @@ const ViewApplicant = () => {
     const handleEditApplicant = () => {
         setIsEditing(true);
     };
+
+    const handleDeleteApplicant = () => {
+        if (window.confirm('Are you sure you want to delete this applicant?')) {
+            navigate(`/DeleteApplicant`);
+        }
+    };
+    
 
     const renderBooleanValue = (value) => (
         <span>{value ? 'Active' : 'Inactive'}</span>
@@ -78,6 +87,7 @@ const ViewApplicant = () => {
                                 </tbody>
                             </table>
                             <button onClick={() => handleEditApplicant()}>Edit Applicant</button>
+                            <button onClick={() => handleDeleteApplicant()}>Delete Applicant</button>
                         </>
                     ) : (
                         <p>No data available</p>
