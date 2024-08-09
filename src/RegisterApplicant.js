@@ -10,6 +10,8 @@ const RegisterApplicant = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [scheduleId, setScheduleId] = useState('');
+  const [name, setName] = useState('');
+  const [numberofapplicants, setNumberofApplicants] = useState('');
   const [hasConsulDate, setHasConsulDate] = useState(false);
   const [consulDate, setConsulDate] = useState('');
   const [hasAscDate, setHasAscDate] = useState(false);
@@ -29,6 +31,8 @@ const RegisterApplicant = () => {
       "ais_password": password,
       "fastVisa_userid": fastVisa_userid,
       "fastVisa_username": fastVisa_username,
+      "name": name,
+      "number_of_applicants": numberofapplicants,
       "applicant_active": true,
       "consul_appointment_date": hasConsulDate ? consulDate : '',
       "asc_appointment_date": hasAscDate ? ascDate : '',
@@ -62,6 +66,8 @@ const RegisterApplicant = () => {
         setEmail('');
         setPassword('');
         setScheduleId('');
+        setName('');
+        setNumberofApplicants('');
         setHasConsulDate(false);
         setConsulDate('');
         setHasAscDate(false);
@@ -80,6 +86,7 @@ const RegisterApplicant = () => {
       });
   };
 
+  /* 
   // Function to handle checkbox changes for Consul Date
   const handleConsulDateChange = (e) => {
     setHasConsulDate(e.target.checked);
@@ -89,6 +96,7 @@ const RegisterApplicant = () => {
   const handleAscDateChange = (e) => {
     setHasAscDate(e.target.checked);
   };
+  */
 
   // Function to handle checkbox changes for Cities
   const handleCityCodeChange = (e) => {
@@ -123,6 +131,16 @@ const RegisterApplicant = () => {
       <h2>User Data Request Form</h2>
       <form onSubmit={handleSubmit}>
         <div>
+          <label htmlFor="name">Name:</label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+        <div>
           <label htmlFor="email">AIS Email:</label>
           <input
             type="email"
@@ -152,7 +170,17 @@ const RegisterApplicant = () => {
             required
           />
         </div>
-        {/* Checkbox and field for Consul Date */}
+        <div>
+          <label htmlFor="numberofapplicants">Number of Applicants:</label>
+          <input
+            type="number"
+            id="numberofapplicants"
+            value={numberofapplicants}
+            onChange={(e) => setNumberofApplicants(e.target.value)}
+            required
+          />
+        </div>
+        {/* Checkbox and field for Consul Date 
         <div>
           <input
             type="checkbox"
@@ -173,8 +201,8 @@ const RegisterApplicant = () => {
               />
             </div>
           )}
-        </div>
-        {/* Checkbox and field for ASC Date */}
+        </div>*/}
+        {/* Checkbox and field for ASC Date 
         <div>
           <input
             type="checkbox"
@@ -195,7 +223,7 @@ const RegisterApplicant = () => {
               />
             </div>
           )}
-        </div>
+        </div>*/}
         <div>
           <label htmlFor="targetStartMode">Target Start Mode:</label>
           <select
