@@ -113,7 +113,7 @@ const StartApplicantContainer = async (applicant_userid) => {
     "applicant_id": applicant_userid
   };
   try {
-    const response = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/startecstask', {
+    const response = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/start', {
       method: 'POST',
       headers: {
         "Accept": "application/json",
