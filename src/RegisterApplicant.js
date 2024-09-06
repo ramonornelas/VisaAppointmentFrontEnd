@@ -42,7 +42,8 @@ const RegisterApplicant = () => {
       'target_end_date': targetEndDate,
       "target_city_codes": cityCodes,
       "container_id": "",
-      "container_start_datetime": ""
+      "container_start_datetime": "",
+      "container_stop_datetime": ""
     };
     // Send the clientPayload object as JSON to the API
     fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants', {
