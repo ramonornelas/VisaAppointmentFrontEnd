@@ -8,27 +8,31 @@ import './index.css';
 
 const Applicants = () => {
     const [data, setData] = useState(null); 
+    const [filterActive, setFilterActive] = useState(true); // State for the toggle
     const fastVisaUserId = sessionStorage.getItem("fastVisa_userid"); 
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username"); 
     const navigate = useNavigate();
     
     // Define the included fields
     const includeFields = ['ais_schedule_id', 'ais_username', 'applicant_active', 'search_status']; // Add more fields as needed
-
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await ApplicantSearch(fastVisaUserId);
-                setData(response);
+                const filteredData = filterActive 
+                    ? response.filter(item => item.applicant_active === true) 
+                    : response;
+                setData(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
-
+    
         if (fastVisaUserId) {
             fetchData();
         }
-    }, [fastVisaUserId]);
+    }, [fastVisaUserId, filterActive]);
 
     const handleRegisterApplicant = () => {
         navigate('/RegisterApplicant');
@@ -73,6 +77,16 @@ const Applicants = () => {
             <h2>Fast Visa Scheduler</h2>
             <p>Welcome, {fastVisaUsername}</p>
             <h3>Applicants</h3>
+            <div style={{ marginBottom: '5px' }}></div>
+            <label>
+                <input 
+                    type="checkbox" 
+                    checked={filterActive} 
+                    onChange={() => setFilterActive(!filterActive)} 
+                />
+                Filter by active applicants
+            </label>
+            <div style={{ marginBottom: '5px' }}></div>
             <table className="table-content" style={{ textAlign: 'left' }}>
                 <thead>
                     <tr>                        

@@ -24,7 +24,7 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
     }, [data]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, type, checked, value } = e.target;
 
         // If target_start_mode is changed, update formData and disable the corresponding field
         if (name === 'target_start_mode') {
@@ -36,7 +36,11 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
                 target_start_days: startDateDisabled ? prevState.target_start_days : ''
             }));
         } else {
-            setFormData(prevState => ({ ...prevState, [name]: value }));
+            const newValue = type === 'checkbox' ? checked : value;
+            setFormData({
+                ...formData,
+                [name]: newValue,
+            });
         }
     };
 
