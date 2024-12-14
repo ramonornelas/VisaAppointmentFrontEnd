@@ -3,13 +3,21 @@ import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
 import { UserDetails } from './APIFunctions';
+import { useNavigate } from 'react-router-dom'; 
 
 const Home = () => {
     const [userData, setUserData] = useState(null);
     const fastVisa_userid = sessionStorage.getItem("fastVisa_userid");
+    const fastVisaUsername = sessionStorage.getItem("fastVisa_username"); 
     const [username, setUsername] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (!fastVisa_userid || !fastVisaUsername) {
+            navigate('/');
+            return;
+        }
+        
         const fetchUserData = async () => {
             try {
                 const data = await UserDetails(fastVisa_userid);

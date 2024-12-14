@@ -12,6 +12,7 @@ import ViewApplicant from './ViewApplicant';
 import DeleteApplicant from './DeleteApplicant';
 import StartContainer from './StartContainer';
 import StopContainer from './StopContainer';
+import LogOut from './LogOut';
 
 ReactDOM.render(
   <Router>
@@ -26,6 +27,7 @@ ReactDOM.render(
       <Route path="/deleteapplicant" element={<DeleteApplicant />} />
       <Route path="/startcontainer" element={<StartContainer />} />
       <Route path="/stopcontainer" element={<StopContainer />} />
+      <Route path="/logout" element={<LogOut />} />
     </Routes>
   </Router>,
   document.getElementById('root')

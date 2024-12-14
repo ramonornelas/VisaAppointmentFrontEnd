@@ -43,7 +43,7 @@ const LogIn = () => {
           const searchusername = searchuserdata[0].username;
           sessionStorage.setItem("fastVisa_userid", searchuserid);
           sessionStorage.setItem("fastVisa_username", searchusername);
-          window.location.href = '/home';
+          window.location.href = '/applicants'; // Redirect to applicants page since it's the only active page so far
         } else {
           throw new Error('Failed to fetch user data');
         }

@@ -17,6 +17,11 @@ const Applicants = () => {
     const includeFields = ['ais_schedule_id', 'ais_username', 'applicant_active', 'search_status']; // Add more fields as needed
     
     useEffect(() => {
+        if (!fastVisaUserId || !fastVisaUsername) {
+            navigate('/');
+            return;
+        }
+
         const fetchData = async () => {
             try {
                 const response = await ApplicantSearch(fastVisaUserId);
