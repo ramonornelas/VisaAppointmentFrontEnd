@@ -31,7 +31,7 @@ const StopContainer = () => {
         if (applicantUserId) {
             fetchData();
         }
-    }, [navigate]);
+    }, [applicantUserId, isAuthenticated, navigate]);
 
     const handleBack = () => {
         navigate('/applicants');
