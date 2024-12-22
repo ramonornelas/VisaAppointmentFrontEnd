@@ -3,17 +3,19 @@ import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
 import { UserDetails } from './APIFunctions';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';   
+import { useAuth } from './utils/AuthContext';
 
 const Home = () => {
     const [userData, setUserData] = useState(null);
     const fastVisa_userid = sessionStorage.getItem("fastVisa_userid");
-    const fastVisaUsername = sessionStorage.getItem("fastVisa_username"); 
     const [username, setUsername] = useState(null);
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
 
     useEffect(() => {
-        if (!fastVisa_userid || !fastVisaUsername) {
+        if (!isAuthenticated) {
+            document.body.classList.remove('menu-open');
             navigate('/');
             return;
         }
@@ -30,7 +32,7 @@ const Home = () => {
         if (fastVisa_userid) {
             fetchUserData();
         }
-    }, [fastVisa_userid]);
+    }, [isAuthenticated, fastVisa_userid, navigate]);
 
     useEffect(() => {
         if (userData) {

@@ -3,15 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
-import { ApplicantDelete } from './APIFunctions';
+import { ApplicantDelete } from './APIFunctions';  
+import { useAuth } from './utils/AuthContext';
 import './index.css';
 
 const DeleteApplicant = () => {
+    const { isAuthenticated } = useAuth();
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
     const ApplicantUserId = sessionStorage.getItem("applicant_userid");
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!isAuthenticated) {
+          document.body.classList.remove('menu-open');
+          navigate('/');
+          return;
+        }
+
         const fetchData = async () => {
             try {
                 const response = await ApplicantDelete(ApplicantUserId);
@@ -27,7 +35,7 @@ const DeleteApplicant = () => {
         if (ApplicantUserId) {
             fetchData();
         }
-    }, [ApplicantUserId]);
+    }, [ApplicantUserId, isAuthenticated, navigate]);
 
     const handleBack = () => {
         navigate('/applicants');

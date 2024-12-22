@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ApplicantUpdate } from './APIFunctions';
+import { ApplicantUpdate } from './APIFunctions'; 
 import './index.css';
 
 const CITIES = [
@@ -17,30 +17,40 @@ const CITIES = [
 
 const UpdateApplicant = ({ data, setIsEditing }) => {
     const [formData, setFormData] = useState(data || {});
+    const [showStartDate, setShowStartDate] = useState(true);
+    const [showStartDays, setShowStartDays] = useState(false);
     const disabledFields = ['fastVisa_username', 'fastVisa_userid', 'ais_username', 'ais_password', 'creation_datetime', 'id', 'container_start_datetime', 'container_id', 'search_status'];
 
     useEffect(() => {
-        setFormData(data || {});
-    }, [data]);
+        if (formData.target_start_mode) {
+          const startDateDisabled = formData.target_start_mode === 'days';
+          setShowStartDate(!startDateDisabled);
+          setShowStartDays(startDateDisabled);
+        }
+    }, [formData.target_start_mode]);
 
     const handleChange = (e) => {
         const { name, type, checked, value } = e.target;
-
+    
         // If target_start_mode is changed, update formData and disable the corresponding field
         if (name === 'target_start_mode') {
-            const startDateDisabled = value === 'Days';
-            setFormData(prevState => ({
-                ...prevState,
-                [name]: value,
-                target_start_date: startDateDisabled ? '' : prevState.target_start_date,
-                target_start_days: startDateDisabled ? prevState.target_start_days : ''
-            }));
+            const startDateDisabled = value === 'days';
+            setShowStartDate(!startDateDisabled);
+            setShowStartDays(startDateDisabled);
+            setFormData(prevState => {
+                const updatedState = {
+                    ...prevState,
+                    [name]: value,
+                };
+                return updatedState;
+            });
         } else {
             const newValue = type === 'checkbox' ? checked : value;
-            setFormData({
+            const updatedFormData = {
                 ...formData,
                 [name]: newValue,
-            });
+            };
+            setFormData(updatedFormData);
         }
     };
 
@@ -77,110 +87,128 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
         }
     };
 
-    const renderField = (field) => {
-        if (field === 'target_start_mode') {
-            return (
-                <div className="form-group" key={field}>
-                    <label htmlFor={field}>{field}</label>
+    return (
+        <div className="update-applicant-form">
+            <h2>Edit Applicant</h2>
+            <form onSubmit={handleSubmit}>
+                <button type="submit">Save Changes</button>
+                &nbsp;
+                <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
+                <div style={{ marginBottom: '20px' }}></div>
+                <div className="form-group" key={"applicantActive"}>
+                    <label htmlFor={"applicant_active"}>Applicant Active</label>
+                    &nbsp;
+                    <input
+                        type="checkbox"
+                        id={"applicant_active"}
+                        name={"applicant_active"}
+                        checked={formData["applicant_active"]}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group" key={"ais_username"}>
+                    <label htmlFor={"ais_username"}>AIS Username</label>
+                    &nbsp;
+                    <input
+                        type="text"
+                        id={"ais_username"}
+                        name={"ais_username"}
+                        value={formData["ais_username"]}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group" key="ais_schedule_id">
+                    <label htmlFor={"ais_schedule_id"}>AIS Schedule ID</label>
+                    &nbsp;
+                    <input
+                        type="text"
+                        id={"ais_schedule_id"}
+                        name={"ais_schedule_id"}
+                        value={formData["ais_schedule_id"]}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group" key={"name"}>
+                    <label htmlFor={"name"}>Name</label>
+                    &nbsp;
+                    <input
+                        type="text"
+                        id={"name"}
+                        name={"name"}
+                        value={formData["name"]}
+                        onChange={handleChange}
+                        style={{ width: '350px'}}
+                    />
+                </div>
+                <div className="form-group" key={"number_of_applicants"}>
+                    <label htmlFor={"number_of_applicants"}>Number of Applicants</label>
+                    &nbsp;
+                    <input
+                        type="number"
+                        id={"number_of_applicants"}
+                        name={"number_of_applicants"}
+                        value={formData["number_of_applicants"]}
+                        onChange={handleChange}
+                        style={{ width: '50px'}}
+                    />
+                </div>
+                <div className="form-group" key={"target_start_mode"}>
+                    <label htmlFor={"target_start_mode"}>Target Start Mode</label>
+                    &nbsp;
                     <select
-                        id={field}
-                        name={field}
-                        value={formData[field]?.toLowerCase()}
+                        id={"target_start_mode"}
+                        name={"target_start_mode"}
+                        value={formData["target_start_mode"]?.toLowerCase()}
                         onChange={handleChange}
                     >
                         <option value="date">Date</option>
                         <option value="days">Days</option>
                     </select>
                 </div>
-            );
-        } else if (field === 'target_start_date') {
-            return (
-                <div className="form-group" key={field}>
-                    <label htmlFor={field}>{field}</label>
+                {showStartDays && (
+                    <>
+                        <div className="form-group" key={"target_start_days"}>
+                            <label htmlFor={"target_start_days"}>Target Start Days</label>
+                            &nbsp;
+                            <input
+                                type="number"
+                                id={"target_start_days"}
+                                name={"target_start_days"}
+                                value={formData["target_start_days"]}
+                                onChange={handleChange}
+                                disabled={formData.target_start_mode === 'date'}
+                                style={{ width: '50px'}}
+                            />
+                        </div>
+                        </>
+                )}
+                {showStartDate && (
+                    <>
+                        <div className="form-group" key={"target_start_date"}>
+                            <label htmlFor={"target_start_date"}>Target Start Date</label>
+                            &nbsp;
+                            <input
+                                type="date"
+                                id={"target_start_date"}
+                                name={"target_start_date"}
+                                value={formData["target_start_date"]}
+                                onChange={handleChange}
+                                disabled={formData.target_start_mode === 'days'}
+                            />
+                        </div>
+                        </>
+                )}
+                <div className="form-group" key={"target_end_date"}>
+                    <label htmlFor={"target_end_date"}>Target End Date</label>
+                    &nbsp;
                     <input
                         type="date"
-                        id={field}
-                        name={field}
-                        value={formData[field]}
-                        onChange={handleChange}
-                        disabled={formData.target_start_mode === 'Days'}
-                    />
-                </div>
-            );
-        } else if (field === 'target_start_days') {
-            return (
-                <div className="form-group" key={field}>
-                    <label htmlFor={field}>{field}</label>
-                    <input
-                        type="text"
-                        id={field}
-                        name={field}
-                        value={formData[field]}
-                        onChange={handleChange}
-                        disabled={formData.target_start_mode === 'Date'}
-                    />
-                </div>
-            );
-        } else if (disabledFields.includes(field)) {
-            return (
-                <div className="form-group" key={field}>
-                    <label htmlFor={field}>{field}</label>
-                    <input
-                        type="text"
-                        id={field}
-                        name={field}
-                        value={formData[field]}
-                        disabled // Always disabled for permanent disabled fields
-                    />
-                </div>
-            );
-        } else if (field.toLowerCase().includes('date')) { // Check if the field contains "date" in its name
-            return (
-                <div className="form-group" key={field}>
-                    <label htmlFor={field}>{field}</label>
-                    <input
-                        type="date"
-                        id={field}
-                        name={field}
-                        value={formData[field]}
+                        id={"target_end_date"}
+                        name={"target_end_date"}
+                        value={formData["target_end_date"]}
                         onChange={handleChange}
                     />
                 </div>
-            );
-        } else if (typeof formData[field] === 'boolean') {
-            return (
-                <div className="form-group" key={field}>
-                    <label htmlFor={field}>{field}</label>
-                    <input
-                        type="checkbox"
-                        id={field}
-                        name={field}
-                        checked={formData[field]}
-                        onChange={handleChange}
-                    />
-                </div>
-            );
-        } else {
-            return (
-                <div className="form-group" key={field}>
-                    <label htmlFor={field}>{field}</label>
-                    <input
-                        type="text"
-                        id={field}
-                        name={field}
-                        value={formData[field]}
-                        onChange={handleChange}
-                    />
-                </div>
-            );
-        }
-    };
-
-    return (
-        <div className="update-applicant-form">
-            <h2>Edit Applicant</h2>
-            <form onSubmit={handleSubmit}>
-                {Object.keys(formData).map(field => renderField(field))}
                 <div>
                     <h3>Target Cities</h3>
                     {CITIES.map((city) => (
@@ -198,6 +226,7 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
                 </div>
                 <div style={{ marginBottom: '20px' }}></div>
                 <button type="submit">Save Changes</button>
+                &nbsp;
                 <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
             </form>
         </div>

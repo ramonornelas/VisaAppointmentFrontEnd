@@ -1,17 +1,19 @@
 // FILE: LogOut.js
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './utils/AuthContext';
 
 const LogOut = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => {
-    // Clear session storage to log out the user
-    sessionStorage.removeItem('fastVisa_userid');
-    sessionStorage.removeItem('fastVisa_username');
+    document.body.classList.remove('menu-open');
+    // Update authentication status
+    logout();
     // Redirect to login page
     navigate('/');
-  }, [navigate]);
+  }, [navigate, logout]);
 
   return (
     <div>

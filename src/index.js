@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './utils/AuthContext';
 import './index.css';
 import LogIn from './LogIn';
 import Home from './Home';
@@ -15,20 +16,22 @@ import StopContainer from './StopContainer';
 import LogOut from './LogOut';
 
 ReactDOM.render(
-  <Router>
-    <Routes>
-      <Route path="/" element={<LogIn />} />
-      <Route path="/home" element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/registeruser" element={<RegisterUser />} />
-      <Route path="/applicants" element={<Applicants />} />
-      <Route path="/registerapplicant" element={<RegisterApplicant />} />
-      <Route path="/viewapplicant" element={<ViewApplicant />} />
-      <Route path="/deleteapplicant" element={<DeleteApplicant />} />
-      <Route path="/startcontainer" element={<StartContainer />} />
-      <Route path="/stopcontainer" element={<StopContainer />} />
-      <Route path="/logout" element={<LogOut />} />
-    </Routes>
-  </Router>,
+  <AuthProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LogIn />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/registeruser" element={<RegisterUser />} />
+        <Route path="/applicants" element={<Applicants />} />
+        <Route path="/registerapplicant" element={<RegisterApplicant />} />
+        <Route path="/viewapplicant" element={<ViewApplicant />} />
+        <Route path="/deleteapplicant" element={<DeleteApplicant />} />
+        <Route path="/startcontainer" element={<StartContainer />} />
+        <Route path="/stopcontainer" element={<StopContainer />} />
+        <Route path="/logout" element={<LogOut />} />
+      </Routes>
+    </Router>
+  </AuthProvider>,
   document.getElementById('root')
 );

@@ -1,17 +1,32 @@
 // HamburgerMenu.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from './utils/AuthContext';
 import './HamburgerMenu.css';
 
 const HamburgerMenu = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add('menu-open');
+    } else {
+      document.body.classList.remove('menu-open');
+    }
+  }, [isMenuOpen]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
   
   return (
-    <div className="hamburger-menu-icon" onClick={toggleMenu}>
-      <div className={`menu-icon ${isMenuOpen ? 'open' : ''}`}>
+    <div className="hamburger-menu-icon">
+      <div className={`menu-icon ${isMenuOpen ? 'open' : ''}`} onClick={toggleMenu}>
         <div className="line"></div>
         <div className="line"></div>
         <div className="line"></div>
@@ -26,6 +41,6 @@ const HamburgerMenu = () => {
       </nav>
     </div>
   );
-}
+};
 
 export default HamburgerMenu;

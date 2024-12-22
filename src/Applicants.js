@@ -4,9 +4,11 @@ import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
 import { ApplicantSearch } from './APIFunctions';
 import { useNavigate } from 'react-router-dom'; 
+import { useAuth } from './utils/AuthContext';
 import './index.css';
 
 const Applicants = () => {
+    const { isAuthenticated } = useAuth();
     const [data, setData] = useState(null); 
     const [filterActive, setFilterActive] = useState(true); // State for the toggle
     const fastVisaUserId = sessionStorage.getItem("fastVisa_userid"); 
@@ -14,10 +16,11 @@ const Applicants = () => {
     const navigate = useNavigate();
     
     // Define the included fields
-    const includeFields = ['ais_schedule_id', 'ais_username', 'applicant_active', 'search_status']; // Add more fields as needed
+    const includeFields = ['ais_schedule_id', 'ais_username', 'name', 'applicant_active', 'search_status']; // Add more fields as needed
     
     useEffect(() => {
-        if (!fastVisaUserId || !fastVisaUsername) {
+        if (!isAuthenticated) {
+            document.body.classList.remove('menu-open');
             navigate('/');
             return;
         }
@@ -83,20 +86,19 @@ const Applicants = () => {
             <p>Welcome, {fastVisaUsername}</p>
             <h3>Applicants</h3>
             <div style={{ marginBottom: '5px' }}></div>
-            <label>
-                <input 
-                    type="checkbox" 
-                    checked={filterActive} 
-                    onChange={() => setFilterActive(!filterActive)} 
-                />
-                Filter by active applicants
-            </label>
+            <button 
+                className={`toggle-button ${filterActive ? 'active' : ''}`} 
+                onClick={() => setFilterActive(!filterActive)}
+            >
+                {filterActive ? 'View all applicants' : 'Only active applicants'}
+            </button>
             <div style={{ marginBottom: '5px' }}></div>
             <table className="table-content" style={{ textAlign: 'left' }}>
                 <thead>
                     <tr>                        
                         <th>AIS ID</th>
                         <th>AIS Username</th>
+                        <th>Name</th>
                         <th>Applicant Status</th>
                         <th>Search Status</th>
                         <th colSpan={2} style={{ textAlign: 'center' }}>Actions</th>

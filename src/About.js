@@ -2,19 +2,20 @@ import React, { useEffect } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';  
+import { useAuth } from './utils/AuthContext';
 
 const About = () => {
-  const fastVisaUserId = sessionStorage.getItem("fastVisa_userid"); 
-  const fastVisaUsername = sessionStorage.getItem("fastVisa_username"); 
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   
   useEffect(() => {
-      if (!fastVisaUserId || !fastVisaUsername) {
-          navigate('/');
-          return;
+      if (!isAuthenticated) {
+        document.body.classList.remove('menu-open');
+        navigate('/');
+        return;
       }
-    }, fastVisaUserId);
+    }, [isAuthenticated, navigate]);
 
   return (
     <div className="page-container">
