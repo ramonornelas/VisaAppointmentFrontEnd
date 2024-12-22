@@ -40,7 +40,7 @@ const Applicants = () => {
         if (fastVisaUserId) {
             fetchData();
         }
-    }, [fastVisaUserId, filterActive]);
+    }, [isAuthenticated, navigate]);
 
     const handleRegisterApplicant = () => {
         navigate('/RegisterApplicant');
