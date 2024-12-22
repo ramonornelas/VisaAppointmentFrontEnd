@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
+import { useNavigate } from 'react-router-dom';  
+import { useAuth } from './utils/AuthContext';
 
 const About = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  
+  useEffect(() => {
+      if (!isAuthenticated) {
+        document.body.classList.remove('menu-open');
+        navigate('/');
+        return;
+      }
+    }, [isAuthenticated, navigate]);
+
   return (
     <div className="page-container">
       <div className="content-wrap">

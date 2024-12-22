@@ -1,9 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Welcome from './Welcome';
 import Banner from './Banner';
 import Footer from './Footer';
+import { useNavigate } from 'react-router-dom';  
+import { useAuth } from './utils/AuthContext';
 
 const UserRegistrationForm = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  
+  useEffect(() => {
+      if (!isAuthenticated) {
+        document.body.classList.remove('menu-open');
+        navigate('/');
+        return;
+      }
+    }, [isAuthenticated, navigate]);
+
   const [formData, setFormData] = useState({
     username: '',
     password: '',

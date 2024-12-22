@@ -3,15 +3,23 @@ import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
 import { StopApplicantContainer } from './APIFunctions';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';   
+import { useAuth } from './utils/AuthContext';
 import './index.css';
 
 const StopContainer = () => {
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
     const applicantUserId = sessionStorage.getItem("applicant_userid");
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
 
     useEffect(() => {
+        if (!isAuthenticated) {
+          document.body.classList.remove('menu-open');
+          navigate('/');
+          return;
+        }
+
         const fetchData = async () => {
             try {
                 await StopApplicantContainer(applicantUserId);
@@ -23,7 +31,7 @@ const StopContainer = () => {
         if (applicantUserId) {
             fetchData();
         }
-    }, [applicantUserId]);
+    }, [applicantUserId, isAuthenticated, navigate]);
 
     const handleBack = () => {
         navigate('/applicants');

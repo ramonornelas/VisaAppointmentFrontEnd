@@ -1,9 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
+import { useNavigate } from 'react-router-dom';  
+import { useAuth } from './utils/AuthContext';
 
 const RegisterApplicant = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  
+  useEffect(() => {
+      if (!isAuthenticated) {
+        document.body.classList.remove('menu-open');
+        navigate('/');
+        return;
+      }
+    }, [isAuthenticated, navigate]);
+    
   const fastVisa_userid = sessionStorage.getItem("fastVisa_userid");
   const fastVisa_username = sessionStorage.getItem("fastVisa_username");  
   // State variables to store form data
@@ -16,7 +29,7 @@ const RegisterApplicant = () => {
   const [consulDate, setConsulDate] = useState('');
   const [hasAscDate, setHasAscDate] = useState(false);
   const [ascDate, setAscDate] = useState('');
-  const [targetStartMode, setTargetStartMode] = useState('DATE');
+  const [targetStartMode, setTargetStartMode] = useState('date');
   const [targetStartDays, setTargetStartDays] = useState('3');
   const [targetStartDate, setTargetStartDate] = useState('');
   const [targetEndDate, setTargetEndDate] = useState('');
@@ -37,8 +50,8 @@ const RegisterApplicant = () => {
       "consul_appointment_date": hasConsulDate ? consulDate : '',
       "asc_appointment_date": hasAscDate ? ascDate : '',
       'target_start_mode': targetStartMode,
-      'target_start_days': targetStartMode === 'DAYS' ? targetStartDays : '-',
-      'target_start_date': targetStartMode === 'DATE' ? targetStartDate : '-',
+      'target_start_days': targetStartMode === 'days' ? targetStartDays : '-',
+      'target_start_date': targetStartMode === 'date' ? targetStartDate : '-',
       'target_end_date': targetEndDate,
       "target_city_codes": cityCodes,
       "container_id": "",
@@ -73,7 +86,7 @@ const RegisterApplicant = () => {
         setConsulDate('');
         setHasAscDate(false);
         setAscDate('');
-        setTargetStartMode('DATE');
+        setTargetStartMode('date');
         setTargetStartDays('3');
         setTargetStartDate('');
         setTargetEndDate('');
@@ -233,11 +246,11 @@ const RegisterApplicant = () => {
             onChange={(e) => setTargetStartMode(e.target.value)}
             required
           >
-            <option value="DATE">Date</option>
-            <option value="DAYS">Days</option>
+            <option value="date">Date</option>
+            <option value="days">Days</option>
           </select>
         </div>
-        {targetStartMode === 'DAYS' && (
+        {targetStartMode === 'days' && (
           <div>
             <label htmlFor="targetStartDays">Target Start Days:</label>
             <input
@@ -249,7 +262,7 @@ const RegisterApplicant = () => {
             />
           </div>
         )}
-        {targetStartMode === 'DATE' && ( // Render targetStartDate only if targetStartMode is DATE
+        {targetStartMode === 'date' && ( // Render targetStartDate only if targetStartMode is DATE
           <div>
             <label htmlFor="targetStartDate">Target Start Date:</label>
             <input

@@ -43,7 +43,7 @@ const LogIn = () => {
           const searchusername = searchuserdata[0].username;
           sessionStorage.setItem("fastVisa_userid", searchuserid);
           sessionStorage.setItem("fastVisa_username", searchusername);
-          window.location.href = '/home';
+          window.location.href = '/applicants'; // Redirect to applicants page since it's the only active page so far
         } else {
           throw new Error('Failed to fetch user data');
         }
@@ -57,7 +57,7 @@ const LogIn = () => {
   };
 
   return (
-    <div className="page-container">
+    <div>
       <div className="content-wrap">
       <div style={{ marginBottom: '5px' }}></div>
       <Banner />
@@ -67,13 +67,16 @@ const LogIn = () => {
         <form onSubmit={handleSubmit}>
           <div>
             <label htmlFor="username">Username:</label>
-            <input type="text" id="username" value={username} onChange={handleUsernameChange} />
+            <input type="text" id="username" value={username} onChange={handleUsernameChange} style={{ marginLeft: '1em' }} />
           </div>
+          <div style={{ marginBottom: '5px' }}></div>
           <div>
             <label htmlFor="password">Password:</label>
-            <input type="password" id="password" value={password} onChange={handlePasswordChange} />
+            &nbsp;
+            <input type="password" id="password" value={password} onChange={handlePasswordChange} style={{ marginLeft: '1em' }} />
           </div>
           {error && <p style={{ color: 'red' }}>{error}</p>}
+          <div style={{ marginBottom: '5px' }}></div>
           <button type="submit">Log In</button>
         </form>
         <p>Don't have an account? <a href="/registeruser">Register here</a></p>
