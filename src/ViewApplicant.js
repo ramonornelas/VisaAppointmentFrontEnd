@@ -163,6 +163,18 @@ const ViewApplicant = () => {
                                                 {data['target_city_codes']}
                                             </td>
                                         </tr>
+                                        <tr key={'consul_appointment_date'}>
+                                            <td style={{ textAlign: 'left' }}>{'Consulate Appointment Date'}</td>
+                                            <td style={{ textAlign: 'left' }}>
+                                                {data['consul_appointment_date']}
+                                            </td>
+                                        </tr>
+                                        <tr key={'asc_appointment_date'}>
+                                            <td style={{ textAlign: 'left' }}>{'ASC Appointment Date'}</td>
+                                            <td style={{ textAlign: 'left' }}>
+                                                {data['asc_appointment_date']}
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             )}
