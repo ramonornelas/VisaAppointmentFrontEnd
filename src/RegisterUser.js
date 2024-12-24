@@ -1,22 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Welcome from './Welcome';
 import Banner from './Banner';
 import Footer from './Footer';
-import { useNavigate } from 'react-router-dom';  
-import { useAuth } from './utils/AuthContext';
 
 const UserRegistrationForm = () => {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  
-  useEffect(() => {
-      if (!isAuthenticated) {
-        document.body.classList.remove('menu-open');
-        navigate('/');
-        return;
-      }
-    }, [isAuthenticated, navigate]);
-
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -25,6 +13,7 @@ const UserRegistrationForm = () => {
     expiration_date: ''
   });
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -52,6 +41,10 @@ const UserRegistrationForm = () => {
     .catch(error => {
       console.error('Error:', error);
     });
+  };
+
+  const handleCancel = () => {
+    navigate('/');
   };
 
   return (
@@ -85,7 +78,10 @@ const UserRegistrationForm = () => {
             <label htmlFor="expiration_date">Expiration Date:</label>
             <input type="date" id="expiration_date" name="expiration_date" value={formData.expiration_date} onChange={handleChange} />
           </div>
+          <div style={{ marginBottom: '5px' }}></div>
           <button type="submit">Submit</button>
+          &nbsp;
+          <button type="button" onClick={handleCancel}>Cancel</button>
         </form>
       )}
       </div>
