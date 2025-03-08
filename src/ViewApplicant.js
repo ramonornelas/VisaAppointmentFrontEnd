@@ -20,14 +20,14 @@ const ViewApplicant = () => {
     const toggleFieldsVisibility = () => {
         setShowAllFields(!showAllFields);
     };
-    
+
     const { isAuthenticated } = useAuth();
 
     useEffect(() => {
         if (!isAuthenticated) {
-          document.body.classList.remove('menu-open');
-          navigate('/');
-          return;
+            document.body.classList.remove('menu-open');
+            navigate('/');
+            return;
         }
         const fetchData = async () => {
             try {
@@ -58,7 +58,7 @@ const ViewApplicant = () => {
             navigate(`/DeleteApplicant`);
         }
     };
-    
+
 
     const renderBooleanValue = (value) => (
         <span>{value ? 'Active' : 'Inactive'}</span>
@@ -71,9 +71,8 @@ const ViewApplicant = () => {
                 <div style={{ marginBottom: '5px' }}></div>
                 <Banner />
                 <div style={{ marginBottom: '5px' }}></div>
-                <h2>Fast Visa Scheduler</h2>
-                <p>Welcome, {fastVisaUsername}</p>
-                <h3>Applicant Details</h3>
+                <p className="username-right">{fastVisaUsername}</p>
+                <h2>Applicant Details</h2>
                 {isEditing ? (
                     <UpdateApplicant data={data} setIsEditing={setIsEditing} />
                 ) : (
@@ -93,6 +92,12 @@ const ViewApplicant = () => {
                             {!showAllFields && (
                                 <table className="table-content" style={{ textAlign: 'left' }}>
                                     <tbody>
+                                        <tr key={'id'}>
+                                            <td style={{ textAlign: 'left' }}>{'FastVisa ID'}</td>
+                                            <td style={{ textAlign: 'left' }}>
+                                                {data['id']}
+                                            </td>
+                                        </tr>
                                         <tr key={'applicant_active'}>
                                             <td style={{ textAlign: 'left' }}>{'Applicant Active'}</td>
                                             <td style={{ textAlign: 'left' }}>
@@ -119,7 +124,7 @@ const ViewApplicant = () => {
                                         </tr>
                                         <tr key={'number_of_applicants'}>
                                             <td style={{ textAlign: 'left' }}>{'Number of Applicants'}</td>
-                                            <td style={{ textAlign: 'left' }}> 
+                                            <td style={{ textAlign: 'left' }}>
                                                 {data['number_of_applicants']}
                                             </td>
                                         </tr>
@@ -128,7 +133,7 @@ const ViewApplicant = () => {
                                             <td style={{ textAlign: 'left' }}>
                                                 {data['target_start_mode']}
                                             </td>
-                                        </tr>                                      
+                                        </tr>
                                         {data['target_start_mode'] === 'days' && (
                                             <tr key={'target_start_days'}>
                                                 <td style={{ textAlign: 'left' }}>{'Target Start Days'}</td>

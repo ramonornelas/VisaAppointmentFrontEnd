@@ -48,9 +48,8 @@ const DeleteApplicant = () => {
             <div style={{ marginBottom: '5px' }}></div>
             <Banner />
             <div style={{ marginBottom: '5px' }}></div>
-            <h2>Fast Visa Scheduler</h2>
-            <p>Welcome, {fastVisaUsername}</p>
-            <h3>Applicants</h3>
+            <p className="username-right">{fastVisaUsername}</p>
+            <h2>Applicants</h2>
             <p>Deleted Applicant with applicant id: {ApplicantUserId}</p>
             <div style={{ marginBottom: '5px' }}></div>
             <button onClick={handleBack}>Back to Applicants</button>
