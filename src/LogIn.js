@@ -63,7 +63,7 @@ const LogIn = () => {
       <Banner />
       <div style={{ marginBottom: '5px' }}></div>
       <div style={{ textAlign: 'center' }}>
-        <h2>Welcome to the Visa Auto Scheduler</h2>
+        <h2>Welcome to FastVisa</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <label htmlFor="username">Username:</label>

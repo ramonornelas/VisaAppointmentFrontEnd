@@ -95,7 +95,7 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
                 &nbsp;
                 <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
                 <div style={{ marginBottom: '20px' }}></div>
-                <div className="form-group" key={"applicantActive"}>
+                <div className="form-field" key={"applicantActive"}>
                     <label htmlFor={"applicant_active"}>Applicant Active</label>
                     &nbsp;
                     <input
@@ -106,7 +106,7 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
                         onChange={handleChange}
                     />
                 </div>
-                <div className="form-group" key={"ais_username"}>
+                <div className="form-field" key={"ais_username"}>
                     <label htmlFor={"ais_username"}>AIS Username</label>
                     &nbsp;
                     <input
@@ -115,9 +115,10 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
                         name={"ais_username"}
                         value={formData["ais_username"]}
                         onChange={handleChange}
+                        style={{ width: '250px'}}
                     />
                 </div>
-                <div className="form-group" key="ais_schedule_id">
+                <div className="form-field" key="ais_schedule_id">
                     <label htmlFor={"ais_schedule_id"}>AIS Schedule ID</label>
                     &nbsp;
                     <input
@@ -126,9 +127,10 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
                         name={"ais_schedule_id"}
                         value={formData["ais_schedule_id"]}
                         onChange={handleChange}
+                        style={{ width: '70px'}}
                     />
                 </div>
-                <div className="form-group" key={"name"}>
+                <div className="form-field" key={"name"}>
                     <label htmlFor={"name"}>Name</label>
                     &nbsp;
                     <input
@@ -140,7 +142,7 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
                         style={{ width: '350px'}}
                     />
                 </div>
-                <div className="form-group" key={"number_of_applicants"}>
+                <div className="form-field" key={"number_of_applicants"}>
                     <label htmlFor={"number_of_applicants"}>Number of Applicants</label>
                     &nbsp;
                     <input
@@ -152,7 +154,7 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
                         style={{ width: '50px'}}
                     />
                 </div>
-                <div className="form-group" key={"target_start_mode"}>
+                <div className="form-field" key={"target_start_mode"}>
                     <label htmlFor={"target_start_mode"}>Target Start Mode</label>
                     &nbsp;
                     <select
@@ -167,7 +169,7 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
                 </div>
                 {showStartDays && (
                     <>
-                        <div className="form-group" key={"target_start_days"}>
+                        <div className="form-field" key={"target_start_days"}>
                             <label htmlFor={"target_start_days"}>Target Start Days</label>
                             &nbsp;
                             <input
@@ -184,7 +186,7 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
                 )}
                 {showStartDate && (
                     <>
-                        <div className="form-group" key={"target_start_date"}>
+                        <div className="form-field" key={"target_start_date"}>
                             <label htmlFor={"target_start_date"}>Target Start Date</label>
                             &nbsp;
                             <input
@@ -198,7 +200,7 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
                         </div>
                         </>
                 )}
-                <div className="form-group" key={"target_end_date"}>
+                <div className="form-field" key={"target_end_date"}>
                     <label htmlFor={"target_end_date"}>Target End Date</label>
                     &nbsp;
                     <input

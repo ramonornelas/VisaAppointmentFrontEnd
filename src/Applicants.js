@@ -16,7 +16,7 @@ const Applicants = () => {
     const navigate = useNavigate();
     
     // Define the included fields
-    const includeFields = ['ais_schedule_id', 'ais_username', 'name', 'applicant_active', 'search_status']; // Add more fields as needed
+    const includeFields = ['ais_schedule_id', 'ais_username', 'name', 'applicant_active', 'target_end_date', 'search_status'];
     
     useEffect(() => {
         if (!isAuthenticated) {
@@ -82,9 +82,8 @@ const Applicants = () => {
             <div style={{ marginBottom: '5px' }}></div>
             <Banner />
             <div style={{ marginBottom: '5px' }}></div>
-            <h2>Fast Visa Scheduler</h2>
-            <p>Welcome, {fastVisaUsername}</p>
-            <h3>Applicants</h3>
+            <p className="username-right">{fastVisaUsername}</p>
+            <h2>Applicants</h2>
             <div style={{ marginBottom: '5px' }}></div>
             <button 
                 className={`toggle-button ${filterActive ? 'active' : ''}`} 
@@ -100,6 +99,7 @@ const Applicants = () => {
                         <th>AIS Username</th>
                         <th>Name</th>
                         <th>Applicant Status</th>
+                        <th>Target End Date</th>
                         <th>Search Status</th>
                         <th colSpan={2} style={{ textAlign: 'center' }}>Actions</th>
                     </tr>

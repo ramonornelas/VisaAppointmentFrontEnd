@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
 }
@@ -6,39 +7,70 @@ html, body {
 .page-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensure the page container takes the full height */
+  min-height: 100vh;
+  /* Ensure the page container takes the full height */
 }
 
 .content-wrap {
-  flex: 1; /* This will allow the content to grow and push the footer down */
+  flex: 1;
+  /* This will allow the content to grow and push the footer down */
 }
 
 .banner-container {
-    position: relative;
-  }
-  .banner-image {
-    width: 100%; /* Set width to 100% to make the image wider */
-    height: 150px; /* Maintain aspect ratio */
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  .footer {
-    background-color: #333;
-    color: #fff;
-    padding: 20px;
-    text-align: center;
-    position: relative;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-  }
+.banner-image {
+  max-width: 10%;
+  height: auto;
+}
 
-  .table-content {
-    border-collapse: collapse; /* Collapse borders into a single border */
-    font-size: 0.7rem; /* Adjust the font size as needed */
-  }
+.footer {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
 
-  .table-content th,
-  .table-content td {
-    border: 1px solid #ddd; /* Add border to cells */
-    padding: 8px; /* Add padding to cells for spacing */
-  }
+.table-content {
+  border-collapse: collapse;
+  /* Collapse borders into a single border */
+  font-size: 0.7rem;
+  /* Adjust the font size as needed */
+}
+
+.table-content th,
+.table-content td {
+  border: 1px solid #ddd;
+  /* Add border to cells */
+  padding: 8px;
+  /* Add padding to cells for spacing */
+}
+
+.username-right {
+  text-align: right;
+}
+
+.form-field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.form-field label {
+  width: 150px;
+  /* Adjust the width as needed */
+  margin-right: 10px;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  flex: 0 1 auto;
+}

@@ -1,4 +1,4 @@
-import React, { useEffect} from 'react';
+import React, { useEffect } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
@@ -44,9 +44,8 @@ const StartContainer = () => {
             <div style={{ marginBottom: '5px' }}></div>
             <Banner />
             <div style={{ marginBottom: '5px' }}></div>
-            <h2>Fast Visa Scheduler</h2>
-            <p>Welcome, {fastVisaUsername}</p>
-            <h3>Applicants</h3>
+            <p className="username-right">{fastVisaUsername}</p>
+            <h2>Applicants</h2>
             <p>Successfully sent request to start container for applicant id: {applicantUserId}</p>
             <p>Search Status will change to "Running" upon completion</p>
             <p>Go back to Applicants and Refresh page for new status</p>

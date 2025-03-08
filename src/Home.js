@@ -5,6 +5,7 @@ import Footer from './Footer';
 import { UserDetails } from './APIFunctions';
 import { useNavigate } from 'react-router-dom';   
 import { useAuth } from './utils/AuthContext';
+import { APP_TITLE } from './constants';
 
 const Home = () => {
     const [userData, setUserData] = useState(null);
@@ -51,8 +52,8 @@ const Home = () => {
             <div style={{ marginBottom: '5px' }}></div>
             <Banner />
             <div style={{ marginBottom: '5px' }}></div>
-            <h2>Fast Visa Scheduler </h2>
-            <p>Welcome, {username}</p>
+            <p className="username-right">{username}</p>
+            <h2>{APP_TITLE}</h2>
             {filteredUserData && (
                 <>
                     <h3>User Data:</h3>
