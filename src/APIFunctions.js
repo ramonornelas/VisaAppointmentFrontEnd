@@ -159,4 +159,25 @@ const StopApplicantContainer = async (applicant_userid) => {
   }
 };
 
-export { UserDetails, ApplicantSearch, ApplicantDetails, ApplicantUpdate, StartApplicantContainer, StopApplicantContainer, ApplicantDelete };
+const GetApplicantPassword = async (applicant_userid) => {
+  try {
+    const response = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/${applicant_userid}/password`, {
+      method: 'GET',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+    });
+
+    if (response.status === 200) {
+      const data = await response.json();
+      return data;
+    } else {
+      throw new Error('Failed to fetch applicant password');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+export { UserDetails, ApplicantSearch, ApplicantDetails, ApplicantUpdate, StartApplicantContainer, StopApplicantContainer, ApplicantDelete, GetApplicantPassword };
