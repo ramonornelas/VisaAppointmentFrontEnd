@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
-import { ApplicantSearch } from './APIFunctions';
+import { ApplicantSearch, GetApplicantPassword } from './APIFunctions';
 import { useNavigate } from 'react-router-dom'; 
 import { useAuth } from './utils/AuthContext';
 import './index.css';
@@ -11,6 +11,7 @@ const Applicants = () => {
     const { isAuthenticated } = useAuth();
     const [data, setData] = useState(null); 
     const [filterActive, setFilterActive] = useState(true); // State for the toggle
+    const [revealedPasswords, setRevealedPasswords] = useState({});
     const fastVisaUserId = sessionStorage.getItem("fastVisa_userid"); 
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username"); 
     const navigate = useNavigate();
@@ -57,6 +58,17 @@ const Applicants = () => {
         navigate(destination);
     };
 
+    const handleCopyPassword = async (id) => {
+        try {
+            const response = await GetApplicantPassword(id);
+            const password = response.password;
+            await navigator.clipboard.writeText(password);
+            alert('Password copied to clipboard');
+        } catch (error) {
+            console.error('Error copying password:', error);
+        }
+    };
+
     const renderViewButton = (id) => (
         <td key={`edit-${id}`} style={{ textAlign: 'left' }}>
             <button onClick={() => handleView(id)}>View Details</button>
@@ -71,6 +83,14 @@ const Applicants = () => {
         <td key={`toggle-${id}`} style={{ textAlign: 'left' }}>
             <button onClick={() => handleAction(id, isActive)}>
                 {(isActive === 'Inactive') ? 'Start Search' : 'Stop Search'}
+            </button>
+        </td>
+    );
+
+    const renderPasswordButton = (id) => (
+        <td key={`password-${id}`} style={{ textAlign: 'left' }}>
+            <button onClick={() => handleCopyPassword(id)}>
+                <i className="fas fa-key"></i>
             </button>
         </td>
     );
@@ -101,7 +121,7 @@ const Applicants = () => {
                         <th>Applicant Status</th>
                         <th>Target End Date</th>
                         <th>Search Status</th>
-                        <th colSpan={2} style={{ textAlign: 'center' }}>Actions</th>
+                        <th colSpan={3} style={{ textAlign: 'center' }}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -114,6 +134,7 @@ const Applicants = () => {
                             ))}
                             {renderActionButton(item.id, item.search_status)}
                             {renderViewButton(item.id)}
+                            {renderPasswordButton(item.id)}
                         </tr>
                     ))}
                 </tbody>
