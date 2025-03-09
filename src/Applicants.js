@@ -10,8 +10,7 @@ import './index.css';
 const Applicants = () => {
     const { isAuthenticated } = useAuth();
     const [data, setData] = useState(null); 
-    const [filterActive, setFilterActive] = useState(true); // State for the toggle
-    const [revealedPasswords, setRevealedPasswords] = useState({});
+    const [filterActive, setFilterActive] = useState(true);
     const fastVisaUserId = sessionStorage.getItem("fastVisa_userid"); 
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username"); 
     const navigate = useNavigate();
