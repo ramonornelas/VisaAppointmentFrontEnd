@@ -4,10 +4,12 @@ import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';  
 import { useAuth } from './utils/AuthContext';
+import './index.css';
 
 const RegisterApplicant = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const fastVisaUsername = sessionStorage.getItem("fastVisa_username"); 
   
   useEffect(() => {
       if (!isAuthenticated) {
@@ -101,18 +103,6 @@ const RegisterApplicant = () => {
       });
   };
 
-  /* 
-  // Function to handle checkbox changes for Consul Date
-  const handleConsulDateChange = (e) => {
-    setHasConsulDate(e.target.checked);
-  };
-
-  // Function to handle checkbox changes for ASC Date
-  const handleAscDateChange = (e) => {
-    setHasAscDate(e.target.checked);
-  };
-  */
-
   // Function to handle checkbox changes for Cities
   const handleCityCodeChange = (e) => {
     const value = e.target.value;
@@ -143,9 +133,10 @@ const RegisterApplicant = () => {
       <div style={{ marginBottom: '5px' }}></div>
       <Banner />
       <div style={{ marginBottom: '5px' }}></div>
+      <p className="username-right">{fastVisaUsername}</p>
       <h2>User Data Request Form</h2>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="form-field">
           <label htmlFor="name">Name:</label>
           <input
             type="text"
@@ -155,7 +146,7 @@ const RegisterApplicant = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-field">
           <label htmlFor="email">AIS Email:</label>
           <input
             type="email"
@@ -165,7 +156,7 @@ const RegisterApplicant = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-field">
           <label htmlFor="password">AIS Password:</label>
           <input
             type="password"
@@ -175,7 +166,7 @@ const RegisterApplicant = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-field">
           <label htmlFor="scheduleId">AIS Schedule ID:</label>
           <input
             type="number"
@@ -185,7 +176,7 @@ const RegisterApplicant = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-field">
           <label htmlFor="numberofapplicants">Number of Applicants:</label>
           <input
             type="number"
@@ -195,51 +186,7 @@ const RegisterApplicant = () => {
             required
           />
         </div>
-        {/* Checkbox and field for Consul Date 
-        <div>
-          <input
-            type="checkbox"
-            id="hasConsulDate"
-            checked={hasConsulDate}
-            onChange={handleConsulDateChange}
-          />
-          <label htmlFor="hasConsulDate">I already have a Consul Date</label>
-          {hasConsulDate && (
-            <div>
-              <label htmlFor="consulDate">Consul Date:</label>
-              <input
-                type="date"
-                id="consulDate"
-                value={consulDate}
-                onChange={(e) => setConsulDate(e.target.value)}
-                required={hasConsulDate}
-              />
-            </div>
-          )}
-        </div>*/}
-        {/* Checkbox and field for ASC Date 
-        <div>
-          <input
-            type="checkbox"
-            id="hasAscDate"
-            checked={hasAscDate}
-            onChange={handleAscDateChange}
-          />
-          <label htmlFor="hasAscDate">I already have an ASC Date</label>
-          {hasAscDate && (
-            <div>
-              <label htmlFor="ascDate">ASC Date:</label>
-              <input
-                type="date"
-                id="ascDate"
-                value={ascDate}
-                onChange={(e) => setAscDate(e.target.value)}
-                required={hasAscDate}
-              />
-            </div>
-          )}
-        </div>*/}
-        <div>
+        <div className="form-field">
           <label htmlFor="targetStartMode">Target Start Mode:</label>
           <select
             id="targetStartMode"
@@ -252,7 +199,7 @@ const RegisterApplicant = () => {
           </select>
         </div>
         {targetStartMode === 'days' && (
-          <div>
+          <div className="form-field">
             <label htmlFor="targetStartDays">Target Start Days:</label>
             <input
               type="number"
@@ -263,8 +210,8 @@ const RegisterApplicant = () => {
             />
           </div>
         )}
-        {targetStartMode === 'date' && ( // Render targetStartDate only if targetStartMode is DATE
-          <div>
+        {targetStartMode === 'date' && (
+          <div className="form-field">
             <label htmlFor="targetStartDate">Target Start Date:</label>
             <input
               type="date"
@@ -275,7 +222,7 @@ const RegisterApplicant = () => {
             />
           </div>
         )}
-        <div>
+        <div className="form-field">
           <label htmlFor="targetEndDate">Target End Date:</label>
           <input
             type="date"
@@ -288,7 +235,7 @@ const RegisterApplicant = () => {
         <div>
           <h3>Target Cities</h3>
           {CITIES.map((city) => (
-            <div key={city.city_code}>
+            <div key={city.city_code} className="form-field">
               <input
                 type="checkbox"
                 id={city.city_code}
