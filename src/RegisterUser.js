@@ -5,12 +5,20 @@ import Banner from './Banner';
 import Footer from './Footer';
 
 const UserRegistrationForm = () => {
+  // Calculate expiration date (one month from now)
+  const getExpirationDate = () => {
+    const now = new Date();
+    const expirationDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    return expirationDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  };
+
   const [formData, setFormData] = useState({
     username: '',
     password: '',
     phone_number: '',
     active: true,
-    expiration_date: ''
+    expiration_date: getExpirationDate(),
+    country_code: ''
   });
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const navigate = useNavigate();
@@ -59,24 +67,41 @@ const UserRegistrationForm = () => {
       ) : (
         <form onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="username">Username:</label>
+            <label htmlFor="username">Username: </label>
             <input type="email" id="username" name="username" value={formData.username} onChange={handleChange} />
           </div>
           <div>
-            <label htmlFor="password">Password:</label>
+            <label htmlFor="password">Password: </label>
             <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} />
           </div>
           <div>
-            <label htmlFor="phone_number">Phone Number:</label>
+            <label htmlFor="country_code">Country: </label>
+            <select id="country_code" name="country_code" value={formData.country_code} onChange={handleChange}>
+              <option value="">Select a country</option>
+              <option value="es-mx">Mexico</option>
+              <option value="es-ar">Argentina</option>
+              <option value="es-br">Brazil</option>
+              <option value="es-co">Colombia</option>
+              <option value="es-pe">Peru</option>
+              <option value="es-ve">Venezuela</option>
+              <option value="es-cl">Chile</option>
+              <option value="es-ec">Ecuador</option>
+              <option value="es-gt">Guatemala</option>
+              <option value="es-cu">Cuba</option>
+              <option value="es-hn">Honduras</option>
+              <option value="es-bo">Bolivia</option>
+              <option value="es-do">Dominican Republic</option>
+              <option value="es-py">Paraguay</option>
+              <option value="es-ni">Nicaragua</option>
+              <option value="es-cr">Costa Rica</option>
+              <option value="es-pa">Panama</option>
+              <option value="es-uy">Uruguay</option>
+              <option value="es-sv">El Salvador</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="phone_number">Phone Number: </label>
             <input type="text" id="phone_number" name="phone_number" value={formData.phone_number} onChange={handleChange} />
-          </div>
-          <div>
-            <label htmlFor="active">Active:</label>
-            <input type="checkbox" id="active" name="active" checked={formData.active} onChange={handleChange} />
-          </div>
-          <div>
-            <label htmlFor="expiration_date">Expiration Date:</label>
-            <input type="date" id="expiration_date" name="expiration_date" value={formData.expiration_date} onChange={handleChange} />
           </div>
           <div style={{ marginBottom: '5px' }}></div>
           <button type="submit">Submit</button>
