@@ -20,7 +20,8 @@ const RegisterApplicant = () => {
     }, [isAuthenticated, navigate]);
     
   const fastVisa_userid = sessionStorage.getItem("fastVisa_userid");
-  const fastVisa_username = sessionStorage.getItem("fastVisa_username");  
+  const fastVisa_username = sessionStorage.getItem("fastVisa_username");
+  const countryCode = sessionStorage.getItem("country_code");  
   // State variables to store form data
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -56,6 +57,7 @@ const RegisterApplicant = () => {
       'target_start_date': targetStartMode === 'date' ? targetStartDate : '-',
       'target_end_date': targetEndDate,
       "target_city_codes": cityCodes,
+      "target_country_code": countryCode,
       "container_id": "",
       "container_start_datetime": "",
       "container_stop_datetime": "",
@@ -113,18 +115,25 @@ const RegisterApplicant = () => {
     }
   };
 
-  const CITIES = [
-    {"city_code": "CJS", "city_name": "Ciudad Juarez"},
-    {"city_code": "GDL", "city_name": "Guadalajara"},
-    {"city_code": "HMO", "city_name": "Hermosillo"},
-    {"city_code": "MAM", "city_name": "Matamoros"},
-    {"city_code": "MID", "city_name": "Merida"},
-    {"city_code": "MEX", "city_name": "Mexico City"},
-    {"city_code": "MTY", "city_name": "Monterrey"},
-    {"city_code": "NOG", "city_name": "Nogales"},
-    {"city_code": "NLD", "city_name": "Nuevo Laredo"},
-    {"city_code": "TIJ", "city_name": "Tijuana"},
-  ];
+  const ALL_CITIES = {
+    'es-mx': [
+      {"city_code": "CJS", "city_name": "Ciudad Juarez"},
+      {"city_code": "GDL", "city_name": "Guadalajara"},
+      {"city_code": "HMO", "city_name": "Hermosillo"},
+      {"city_code": "MAM", "city_name": "Matamoros"},
+      {"city_code": "MID", "city_name": "Merida"},
+      {"city_code": "MEX", "city_name": "Mexico City"},
+      {"city_code": "MTY", "city_name": "Monterrey"},
+      {"city_code": "NOG", "city_name": "Nogales"},
+      {"city_code": "NLD", "city_name": "Nuevo Laredo"},
+      {"city_code": "TIJ", "city_name": "Tijuana"},
+    ],
+    'es-hn': [
+      {"city_code": "TGU", "city_name": "Tegucigalpa"}
+    ]
+  };
+
+  const CITIES = ALL_CITIES[countryCode] || [];
 
   return (
     <div className="page-container">

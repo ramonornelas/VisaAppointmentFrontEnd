@@ -56,18 +56,8 @@ const Applicants = () => {
         if (isActive === 'Inactive') {
             // Only allow starting if concurrent limit not reached
             try {
-                // Get user details (including concurrent_applicants)
-                const fastVisaUserId = sessionStorage.getItem("fastVisa_userid");
-                const userResponse = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users/${fastVisaUserId}`, {
-                    method: 'GET',
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                    }
-                });
-                if (userResponse.status !== 200) throw new Error('Failed to fetch user data');
-                const userData = await userResponse.json();
-                const concurrentLimit = userData.concurrent_applicants;
+                // Get concurrent limit from session storage
+                const concurrentLimit = parseInt(sessionStorage.getItem("concurrent_applicants"));
                 // Count currently running applicants
                 const applicantsResponse = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/search', {
                     method: 'POST',

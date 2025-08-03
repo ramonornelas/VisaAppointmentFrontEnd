@@ -41,8 +41,12 @@ const LogIn = () => {
           const searchuserdata = await searchuserresponse.json();
           const searchuserid = searchuserdata[0].id;
           const searchusername = searchuserdata[0].username;
+          const countryCode = searchuserdata[0].country_code;
+          const concurrentApplicants = searchuserdata[0].concurrent_applicants;
           sessionStorage.setItem("fastVisa_userid", searchuserid);
           sessionStorage.setItem("fastVisa_username", searchusername);
+          sessionStorage.setItem("country_code", countryCode);
+          sessionStorage.setItem("concurrent_applicants", concurrentApplicants);
           window.location.href = '/applicants'; // Redirect to applicants page since it's the only active page so far
         } else {
           throw new Error('Failed to fetch user data');
