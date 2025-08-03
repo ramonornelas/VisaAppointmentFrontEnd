@@ -48,7 +48,8 @@ const LogIn = () => {
           throw new Error('Failed to fetch user data');
         }
       } else {
-        throw new Error('Failed to log in');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to log in');
       }
     } catch (error) {
       console.error('Error:', error);
