@@ -21,16 +21,50 @@ const UserRegistrationForm = () => {
     country_code: ''
   });
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const val = type === 'checkbox' ? checked : value;
     setFormData({ ...formData, [name]: val });
+    
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.username.trim()) {
+      newErrors.username = 'Username is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.username)) {
+      newErrors.username = 'Please enter a valid email address';
+    }
+    
+    if (!formData.password.trim()) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters long';
+    }
+    
+    if (!formData.country_code) {
+      newErrors.country_code = 'Country selection is required';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users', {
       method: 'POST',
       headers: {
@@ -66,17 +100,48 @@ const UserRegistrationForm = () => {
         <Welcome username={formData.username} />
       ) : (
         <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="username">Username: </label>
-            <input type="email" id="username" name="username" value={formData.username} onChange={handleChange} />
+          <div className="form-field">
+            <label htmlFor="username">
+              Username: <span style={{ color: 'red' }}>*</span>
+            </label>
+            <input 
+              type="email" 
+              id="username" 
+              name="username" 
+              value={formData.username} 
+              onChange={handleChange}
+              style={{ borderColor: errors.username ? 'red' : '' }}
+              required
+            />
+            {errors.username && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.username}</div>}
           </div>
-          <div>
-            <label htmlFor="password">Password: </label>
-            <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} />
+          <div className="form-field">
+            <label htmlFor="password">
+              Password: <span style={{ color: 'red' }}>*</span>
+            </label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              value={formData.password} 
+              onChange={handleChange}
+              style={{ borderColor: errors.password ? 'red' : '' }}
+              required
+            />
+            &nbsp;{errors.password && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.password}</div>}
           </div>
-          <div>
-            <label htmlFor="country_code">Country: </label>
-            <select id="country_code" name="country_code" value={formData.country_code} onChange={handleChange}>
+          <div className="form-field">
+            <label htmlFor="country_code">
+              Country: <span style={{ color: 'red' }}>*</span>
+            </label>
+            <select 
+              id="country_code" 
+              name="country_code" 
+              value={formData.country_code} 
+              onChange={handleChange}
+              style={{ borderColor: errors.country_code ? 'red' : '' }}
+              required
+            >
               <option value="">Select a country</option>
               <option value="es-mx">Mexico</option>
               <option value="es-ar">Argentina</option>
@@ -98,12 +163,21 @@ const UserRegistrationForm = () => {
               <option value="es-uy">Uruguay</option>
               <option value="es-sv">El Salvador</option>
             </select>
+            {errors.country_code && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.country_code}</div>}
           </div>
-          <div>
-            <label htmlFor="phone_number">Phone Number: </label>
-            <input type="text" id="phone_number" name="phone_number" value={formData.phone_number} onChange={handleChange} />
+          <div className="form-field">
+            <label htmlFor="phone_number">
+              Phone Number:
+            </label>
+            <input 
+              type="text" 
+              id="phone_number" 
+              name="phone_number" 
+              value={formData.phone_number} 
+              onChange={handleChange}
+            />
           </div>
-          <div style={{ marginBottom: '5px' }}></div>
+          <div style={{ marginBottom: '20px' }}></div>
           <button type="submit">Submit</button>
           &nbsp;
           <button type="button" onClick={handleCancel}>Cancel</button>
