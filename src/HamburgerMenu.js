@@ -33,9 +33,7 @@ const HamburgerMenu = () => {
       </div>
       <nav className={`menu ${isMenuOpen ? 'open' : ''}`}>
         <div className="menu-items">
-          <Link to="/home">Home</Link>
           <Link to="/applicants">Applicants</Link>
-          <Link to="/about">About</Link>
           <Link to="/logout">Log Out</Link>
         </div>
       </nav>

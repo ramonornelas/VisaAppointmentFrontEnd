@@ -46,7 +46,7 @@ const StartContainer = () => {
             <div style={{ marginBottom: '5px' }}></div>
             <p className="username-right">{fastVisaUsername}</p>
             <h2>Applicants</h2>
-            <p>Successfully sent request to start container for applicant id: {applicantUserId}</p>
+            <p>Successfully sent request to start search for applicant id: {applicantUserId}</p>
             <p>Search Status will change to "Running" upon completion</p>
             <p>Go back to Applicants and Refresh page for new status</p>
             <div style={{ marginBottom: '5px' }}></div>

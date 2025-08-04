@@ -20,7 +20,8 @@ const RegisterApplicant = () => {
     }, [isAuthenticated, navigate]);
     
   const fastVisa_userid = sessionStorage.getItem("fastVisa_userid");
-  const fastVisa_username = sessionStorage.getItem("fastVisa_username");  
+  const fastVisa_username = sessionStorage.getItem("fastVisa_username");
+  const countryCode = sessionStorage.getItem("country_code");  
   // State variables to store form data
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,10 +37,58 @@ const RegisterApplicant = () => {
   const [targetStartDate, setTargetStartDate] = useState('');
   const [targetEndDate, setTargetEndDate] = useState('');
   const [cityCodes, setCityCodes] = useState('');
+  const [errors, setErrors] = useState({});
+
+  // Function to validate form
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    
+    if (!email.trim()) {
+      newErrors.email = 'AIS Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    
+    if (!password.trim()) {
+      newErrors.password = 'AIS Password is required';
+    }
+    
+    if (!scheduleId.trim()) {
+      newErrors.scheduleId = 'AIS Schedule ID is required';
+    }
+    
+    if (!numberofapplicants.trim()) {
+      newErrors.numberofapplicants = 'Number of Applicants is required';
+    }
+    
+    if (targetStartMode === 'days' && !targetStartDays) {
+      newErrors.targetStartDays = 'Target Start Days is required';
+    }
+    
+    if (targetStartMode === 'date' && !targetStartDate) {
+      newErrors.targetStartDate = 'Target Start Date is required';
+    }
+    
+    if (!targetEndDate) {
+      newErrors.targetEndDate = 'Target End Date is required';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     const Body = {
       "ais_schedule_id": scheduleId,
       "ais_username": email,
@@ -56,6 +105,7 @@ const RegisterApplicant = () => {
       'target_start_date': targetStartMode === 'date' ? targetStartDate : '-',
       'target_end_date': targetEndDate,
       "target_city_codes": cityCodes,
+      "target_country_code": countryCode,
       "container_id": "",
       "container_start_datetime": "",
       "container_stop_datetime": "",
@@ -103,6 +153,13 @@ const RegisterApplicant = () => {
       });
   };
 
+  // Helper function to clear errors when user starts typing
+  const clearError = (fieldName) => {
+    if (errors[fieldName]) {
+      setErrors({ ...errors, [fieldName]: '' });
+    }
+  };
+
   // Function to handle checkbox changes for Cities
   const handleCityCodeChange = (e) => {
     const value = e.target.value;
@@ -113,18 +170,25 @@ const RegisterApplicant = () => {
     }
   };
 
-  const CITIES = [
-    {"city_code": "CJS", "city_name": "Ciudad Juarez"},
-    {"city_code": "GDL", "city_name": "Guadalajara"},
-    {"city_code": "HMO", "city_name": "Hermosillo"},
-    {"city_code": "MAM", "city_name": "Matamoros"},
-    {"city_code": "MID", "city_name": "Merida"},
-    {"city_code": "MEX", "city_name": "Mexico City"},
-    {"city_code": "MTY", "city_name": "Monterrey"},
-    {"city_code": "NOG", "city_name": "Nogales"},
-    {"city_code": "NLD", "city_name": "Nuevo Laredo"},
-    {"city_code": "TIJ", "city_name": "Tijuana"},
-  ];
+  const ALL_CITIES = {
+    'es-mx': [
+      {"city_code": "CJS", "city_name": "Ciudad Juarez"},
+      {"city_code": "GDL", "city_name": "Guadalajara"},
+      {"city_code": "HMO", "city_name": "Hermosillo"},
+      {"city_code": "MAM", "city_name": "Matamoros"},
+      {"city_code": "MID", "city_name": "Merida"},
+      {"city_code": "MEX", "city_name": "Mexico City"},
+      {"city_code": "MTY", "city_name": "Monterrey"},
+      {"city_code": "NOG", "city_name": "Nogales"},
+      {"city_code": "NLD", "city_name": "Nuevo Laredo"},
+      {"city_code": "TIJ", "city_name": "Tijuana"},
+    ],
+    'es-hn': [
+      {"city_code": "TGU", "city_name": "Tegucigalpa"}
+    ]
+  };
+
+  const CITIES = ALL_CITIES[countryCode] || [];
 
   return (
     <div className="page-container">
@@ -137,57 +201,82 @@ const RegisterApplicant = () => {
       <h2>User Data Request Form</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-field">
-          <label htmlFor="name">Name:</label>
+          <label htmlFor="name">Name: <span style={{ color: 'red' }}>*</span></label>
           <input
             type="text"
             id="name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              clearError('name');
+            }}
+            style={{ borderColor: errors.name ? 'red' : '' }}
             required
           />
+          {errors.name && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.name}</div>}
         </div>
         <div className="form-field">
-          <label htmlFor="email">AIS Email:</label>
+          <label htmlFor="email">AIS Email: <span style={{ color: 'red' }}>*</span></label>
           <input
             type="email"
             id="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              clearError('email');
+            }}
+            style={{ borderColor: errors.email ? 'red' : '' }}
             required
           />
+          {errors.email && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.email}</div>}
         </div>
         <div className="form-field">
-          <label htmlFor="password">AIS Password:</label>
+          <label htmlFor="password">AIS Password: <span style={{ color: 'red' }}>*</span></label>
           <input
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              clearError('password');
+            }}
+            style={{ borderColor: errors.password ? 'red' : '' }}
             required
           />
+          {errors.password && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.password}</div>}
         </div>
         <div className="form-field">
-          <label htmlFor="scheduleId">AIS Schedule ID:</label>
+          <label htmlFor="scheduleId">AIS Schedule ID: <span style={{ color: 'red' }}>*</span></label>
           <input
             type="number"
             id="scheduleId"
             value={scheduleId}
-            onChange={(e) => setScheduleId(e.target.value)}
+            onChange={(e) => {
+              setScheduleId(e.target.value);
+              clearError('scheduleId');
+            }}
+            style={{ borderColor: errors.scheduleId ? 'red' : '' }}
             required
           />
+          {errors.scheduleId && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.scheduleId}</div>}
         </div>
         <div className="form-field">
-          <label htmlFor="numberofapplicants">Number of Applicants:</label>
+          <label htmlFor="numberofapplicants">Number of Applicants: <span style={{ color: 'red' }}>*</span></label>
           <input
             type="number"
             id="numberofapplicants"
             value={numberofapplicants}
-            onChange={(e) => setNumberofApplicants(e.target.value)}
+            onChange={(e) => {
+              setNumberofApplicants(e.target.value);
+              clearError('numberofapplicants');
+            }}
+            style={{ borderColor: errors.numberofapplicants ? 'red' : '' }}
             required
           />
+          {errors.numberofapplicants && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.numberofapplicants}</div>}
         </div>
         <div className="form-field">
-          <label htmlFor="targetStartMode">Target Start Mode:</label>
+          <label htmlFor="targetStartMode">Target Start Mode: <span style={{ color: 'red' }}>*</span></label>
           <select
             id="targetStartMode"
             value={targetStartMode}
@@ -200,37 +289,52 @@ const RegisterApplicant = () => {
         </div>
         {targetStartMode === 'days' && (
           <div className="form-field">
-            <label htmlFor="targetStartDays">Target Start Days:</label>
+            <label htmlFor="targetStartDays">Target Start Days: <span style={{ color: 'red' }}>*</span></label>
             <input
               type="number"
               id="targetStartDays"
               value={targetStartDays}
-              onChange={(e) => setTargetStartDays(parseInt(e.target.value))}
+              onChange={(e) => {
+                setTargetStartDays(parseInt(e.target.value));
+                clearError('targetStartDays');
+              }}
+              style={{ borderColor: errors.targetStartDays ? 'red' : '' }}
               required
             />
+            {errors.targetStartDays && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.targetStartDays}</div>}
           </div>
         )}
         {targetStartMode === 'date' && (
           <div className="form-field">
-            <label htmlFor="targetStartDate">Target Start Date:</label>
+            <label htmlFor="targetStartDate">Target Start Date: <span style={{ color: 'red' }}>*</span></label>
             <input
               type="date"
               id="targetStartDate"
               value={targetStartDate}
-              onChange={(e) => setTargetStartDate(e.target.value)}
+              onChange={(e) => {
+                setTargetStartDate(e.target.value);
+                clearError('targetStartDate');
+              }}
+              style={{ borderColor: errors.targetStartDate ? 'red' : '' }}
               required
             />
+            {errors.targetStartDate && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.targetStartDate}</div>}
           </div>
         )}
         <div className="form-field">
-          <label htmlFor="targetEndDate">Target End Date:</label>
+          <label htmlFor="targetEndDate">Target End Date: <span style={{ color: 'red' }}>*</span></label>
           <input
             type="date"
             id="targetEndDate"
             value={targetEndDate}
-            onChange={(e) => setTargetEndDate(e.target.value)}
+            onChange={(e) => {
+              setTargetEndDate(e.target.value);
+              clearError('targetEndDate');
+            }}
+            style={{ borderColor: errors.targetEndDate ? 'red' : '' }}
             required
           />
+          {errors.targetEndDate && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.targetEndDate}</div>}
         </div>
         <div>
           <h3>Target Cities</h3>

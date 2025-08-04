@@ -51,10 +51,37 @@ const Applicants = () => {
         navigate(`/ViewApplicant`);
     };
 
-    const handleAction = (id, isActive) => {
+    const handleAction = async (id, isActive) => {
         sessionStorage.setItem("applicant_userid", id);
-        const destination = isActive === 'Inactive' ? '/StartContainer' : '/StopContainer';
-        navigate(destination);
+        if (isActive === 'Inactive') {
+            // Only allow starting if concurrent limit not reached
+            try {
+                // Get concurrent limit from session storage
+                const concurrentLimit = parseInt(sessionStorage.getItem("concurrent_applicants"));
+                // Count currently running applicants
+                const applicantsResponse = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/search', {
+                    method: 'POST',
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ fastVisa_userid: fastVisaUserId })
+                });
+                if (applicantsResponse.status !== 200) throw new Error('Failed to fetch applicants');
+                const applicants = await applicantsResponse.json();
+                const runningCount = applicants.filter(a => a.search_status === 'Running').length;
+                if (runningCount >= concurrentLimit) {
+                    alert(`You have reached your concurrent applicants limit (${concurrentLimit}).\nTo start a new applicant, please end one of your currently running applicants first.`);
+                    return;
+                }
+                navigate('/StartContainer');
+            } catch (error) {
+                alert('Error checking concurrent applicants limit.');
+                console.error(error);
+            }
+        } else {
+            navigate('/StopContainer');
+        }
     };
 
     const handleCopyPassword = async (id) => {
