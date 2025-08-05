@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
@@ -39,6 +39,7 @@ const RegisterApplicant = () => {
   const [targetStartDate, setTargetStartDate] = useState('');
   const [targetEndDate, setTargetEndDate] = useState('');
   const [cityCodes, setCityCodes] = useState('');
+  const [cityError, setCityError] = useState('');
   const [errors, setErrors] = useState({});
 
   // Function to validate form
@@ -86,11 +87,17 @@ const RegisterApplicant = () => {
   // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    setCityError('');
+    if (CITIES.length > 1) {
+      const selectedCities = (cityCodes || '').split(',').filter(Boolean);
+      if (selectedCities.length === 0) {
+        setCityError('Please select at least one city.');
+        return;
+      }
+    }
     if (!validateForm()) {
       return;
     }
-    
     const Body = {
       "ais_schedule_id": scheduleId,
       "ais_username": email,
@@ -172,7 +179,7 @@ const RegisterApplicant = () => {
     }
   };
 
-  const CITIES = ALL_CITIES[countryCode] || [];
+  const CITIES = useMemo(() => ALL_CITIES[countryCode] || [], [countryCode]);
 
   return (
     <div className="page-container">
@@ -252,18 +259,32 @@ const RegisterApplicant = () => {
         </div>
         <div>
           <h3>Target Cities</h3>
-          {CITIES.map((city) => (
-            <div key={city.city_code} className="form-field">
+          {CITIES.length === 1 ? (
+            <div className="form-field">
               <input
                 type="checkbox"
-                id={city.city_code}
-                value={city.city_code}
-                checked={cityCodes.split(',').includes(city.city_code)}
-                onChange={handleCityCodeChange}
+                id={CITIES[0].city_code}
+                value={CITIES[0].city_code}
+                checked={true}
+                disabled
               />
-              <label htmlFor={city.city_code}>{city.city_name}</label>
+              <label htmlFor={CITIES[0].city_code}>{CITIES[0].city_name}</label>
             </div>
-          ))}
+          ) : (
+            CITIES.map((city) => (
+              <div key={city.city_code} className="form-field">
+                <input
+                  type="checkbox"
+                  id={city.city_code}
+                  value={city.city_code}
+                  checked={cityCodes.split(',').includes(city.city_code)}
+                  onChange={handleCityCodeChange}
+                />
+                <label htmlFor={city.city_code}>{city.city_name}</label>
+              </div>
+            ))
+          )}
+          {cityError && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{cityError}</div>}
         </div>
         <div style={{ marginBottom: '20px' }}></div>
         <button type="submit">Submit</button>

@@ -3,17 +3,19 @@ import React, { useState, useEffect } from 'react';
 import { ApplicantUpdate } from './APIFunctions';
 import { ALL_CITIES } from './utils/cities';
 import { NameField, EmailField, ScheduleIdField, NumberOfApplicantsField } from './utils/ApplicantFormFields';
+import { useMemo } from 'react';
 
 
 const UpdateApplicant = ({ data, setIsEditing }) => {
   const [formData, setFormData] = useState(data || {});
+  const [cityError, setCityError] = useState('');
   const [showStartDate, setShowStartDate] = useState(true);
   const [showStartDays, setShowStartDays] = useState(false);
   const disabledFields = ['fastVisa_username', 'fastVisa_userid', 'ais_username', 'ais_password', 'creation_datetime', 'id', 'container_start_datetime', 'container_id', 'search_status'];
 
   // Get country code from sessionStorage
   const countryCode = sessionStorage.getItem("country_code");
-  const CITIES = ALL_CITIES[countryCode] || [];
+  const CITIES = useMemo(() => ALL_CITIES[countryCode] || [], [countryCode]);
 
   useEffect(() => {
     if (formData.target_start_mode) {
@@ -22,6 +24,16 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
       setShowStartDays(startDateDisabled);
     }
   }, [formData.target_start_mode]);
+
+  // Auto-select and disable city if only one is available
+  useEffect(() => {
+    if (CITIES.length === 1) {
+      setFormData(prev => ({
+        ...prev,
+        target_city_codes: CITIES[0].city_code
+      }));
+    }
+  }, [CITIES]);
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
@@ -61,6 +73,15 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setCityError('');
+    // Require at least one city if more than one is available
+    if (CITIES.length > 1) {
+      const selectedCities = (formData.target_city_codes || '').split(',').filter(Boolean);
+      if (selectedCities.length === 0) {
+        setCityError('Please select at least one city.');
+        return;
+      }
+    }
     const filteredData = Object.keys(formData)
       .filter(key => !disabledFields.includes(key))
       .reduce((obj, key) => {
@@ -154,18 +175,32 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
         </div>
         <div>
           <h3>Target Cities</h3>
-          {CITIES.map((city) => (
-            <div key={city.city_code} className="form-field">
+          {CITIES.length === 1 ? (
+            <div className="form-field">
               <input
                 type="checkbox"
-                id={city.city_code}
-                value={city.city_code}
-                checked={(formData.target_city_codes || '').split(',').includes(city.city_code)}
-                onChange={handleCityCodeChange}
+                id={CITIES[0].city_code}
+                value={CITIES[0].city_code}
+                checked={true}
+                disabled
               />
-              <label htmlFor={city.city_code}>{city.city_name}</label>
+              <label htmlFor={CITIES[0].city_code}>{CITIES[0].city_name}</label>
             </div>
-          ))}
+          ) : (
+            CITIES.map((city) => (
+              <div key={city.city_code} className="form-field">
+                <input
+                  type="checkbox"
+                  id={city.city_code}
+                  value={city.city_code}
+                  checked={(formData.target_city_codes || '').split(',').includes(city.city_code)}
+                  onChange={handleCityCodeChange}
+                />
+                <label htmlFor={city.city_code}>{city.city_name}</label>
+              </div>
+            ))
+          )}
+          {cityError && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{cityError}</div>}
         </div>
         <div style={{ marginBottom: '20px' }}></div>
         <button type="submit">Save Changes</button>
