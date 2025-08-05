@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';  
 import { useAuth } from './utils/AuthContext';
 import './index.css';
+import { ALL_CITIES } from './utils/cities';
+import { NameField, EmailField, PasswordField, ScheduleIdField, NumberOfApplicantsField } from './utils/ApplicantFormFields';
 
 const RegisterApplicant = () => {
   const navigate = useNavigate();
@@ -37,6 +39,7 @@ const RegisterApplicant = () => {
   const [targetStartDate, setTargetStartDate] = useState('');
   const [targetEndDate, setTargetEndDate] = useState('');
   const [cityCodes, setCityCodes] = useState('');
+  const [cityError, setCityError] = useState('');
   const [errors, setErrors] = useState({});
 
   // Function to validate form
@@ -84,11 +87,17 @@ const RegisterApplicant = () => {
   // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    setCityError('');
+    if (CITIES.length > 1) {
+      const selectedCities = (cityCodes || '').split(',').filter(Boolean);
+      if (selectedCities.length === 0) {
+        setCityError('Please select at least one city.');
+        return;
+      }
+    }
     if (!validateForm()) {
       return;
     }
-    
     const Body = {
       "ais_schedule_id": scheduleId,
       "ais_username": email,
@@ -170,25 +179,14 @@ const RegisterApplicant = () => {
     }
   };
 
-  const ALL_CITIES = {
-    'es-mx': [
-      {"city_code": "CJS", "city_name": "Ciudad Juarez"},
-      {"city_code": "GDL", "city_name": "Guadalajara"},
-      {"city_code": "HMO", "city_name": "Hermosillo"},
-      {"city_code": "MAM", "city_name": "Matamoros"},
-      {"city_code": "MID", "city_name": "Merida"},
-      {"city_code": "MEX", "city_name": "Mexico City"},
-      {"city_code": "MTY", "city_name": "Monterrey"},
-      {"city_code": "NOG", "city_name": "Nogales"},
-      {"city_code": "NLD", "city_name": "Nuevo Laredo"},
-      {"city_code": "TIJ", "city_name": "Tijuana"},
-    ],
-    'es-hn': [
-      {"city_code": "TGU", "city_name": "Tegucigalpa"}
-    ]
-  };
+  const CITIES = useMemo(() => ALL_CITIES[countryCode] || [], [countryCode]);
 
-  const CITIES = ALL_CITIES[countryCode] || [];
+  // Set cityCodes to the single city code if only one city is available
+  useEffect(() => {
+    if (CITIES.length === 1) {
+      setCityCodes(CITIES[0].city_code);
+    }
+  }, [CITIES]);
 
   return (
     <div className="page-container">
@@ -200,81 +198,11 @@ const RegisterApplicant = () => {
       <p className="username-right">{fastVisaUsername}</p>
       <h2>User Data Request Form</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-field">
-          <label htmlFor="name">Name: <span style={{ color: 'red' }}>*</span></label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-              clearError('name');
-            }}
-            style={{ borderColor: errors.name ? 'red' : '' }}
-            required
-          />
-          {errors.name && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.name}</div>}
-        </div>
-        <div className="form-field">
-          <label htmlFor="email">AIS Email: <span style={{ color: 'red' }}>*</span></label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              clearError('email');
-            }}
-            style={{ borderColor: errors.email ? 'red' : '' }}
-            required
-          />
-          {errors.email && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.email}</div>}
-        </div>
-        <div className="form-field">
-          <label htmlFor="password">AIS Password: <span style={{ color: 'red' }}>*</span></label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              clearError('password');
-            }}
-            style={{ borderColor: errors.password ? 'red' : '' }}
-            required
-          />
-          {errors.password && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.password}</div>}
-        </div>
-        <div className="form-field">
-          <label htmlFor="scheduleId">AIS Schedule ID: <span style={{ color: 'red' }}>*</span></label>
-          <input
-            type="number"
-            id="scheduleId"
-            value={scheduleId}
-            onChange={(e) => {
-              setScheduleId(e.target.value);
-              clearError('scheduleId');
-            }}
-            style={{ borderColor: errors.scheduleId ? 'red' : '' }}
-            required
-          />
-          {errors.scheduleId && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.scheduleId}</div>}
-        </div>
-        <div className="form-field">
-          <label htmlFor="numberofapplicants">Number of Applicants: <span style={{ color: 'red' }}>*</span></label>
-          <input
-            type="number"
-            id="numberofapplicants"
-            value={numberofapplicants}
-            onChange={(e) => {
-              setNumberofApplicants(e.target.value);
-              clearError('numberofapplicants');
-            }}
-            style={{ borderColor: errors.numberofapplicants ? 'red' : '' }}
-            required
-          />
-          {errors.numberofapplicants && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.numberofapplicants}</div>}
-        </div>
+        <NameField value={name} onChange={e => { setName(e.target.value); clearError('name'); }} error={errors.name} />
+        <EmailField value={email} onChange={e => { setEmail(e.target.value); clearError('email'); }} error={errors.email} />
+        <PasswordField value={password} onChange={e => { setPassword(e.target.value); clearError('password'); }} error={errors.password} />
+        <ScheduleIdField value={scheduleId} onChange={e => { setScheduleId(e.target.value); clearError('scheduleId'); }} error={errors.scheduleId} />
+        <NumberOfApplicantsField value={numberofapplicants} onChange={e => { setNumberofApplicants(e.target.value); clearError('numberofapplicants'); }} error={errors.numberofapplicants} />
         <div className="form-field">
           <label htmlFor="targetStartMode">Target Start Mode: <span style={{ color: 'red' }}>*</span></label>
           <select
@@ -298,7 +226,7 @@ const RegisterApplicant = () => {
                 setTargetStartDays(parseInt(e.target.value));
                 clearError('targetStartDays');
               }}
-              style={{ borderColor: errors.targetStartDays ? 'red' : '' }}
+              style={{ borderColor: errors.targetStartDays ? 'red' : '', width: '80px' }}
               required
             />
             {errors.targetStartDays && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.targetStartDays}</div>}
@@ -338,21 +266,42 @@ const RegisterApplicant = () => {
         </div>
         <div>
           <h3>Target Cities</h3>
-          {CITIES.map((city) => (
-            <div key={city.city_code} className="form-field">
+          {CITIES.length === 1 ? (
+            <div className="form-field">
               <input
                 type="checkbox"
-                id={city.city_code}
-                value={city.city_code}
-                checked={cityCodes.split(',').includes(city.city_code)}
-                onChange={handleCityCodeChange}
+                id={CITIES[0].city_code}
+                value={CITIES[0].city_code}
+                checked={true}
+                disabled
               />
-              <label htmlFor={city.city_code}>{city.city_name}</label>
+              <label htmlFor={CITIES[0].city_code}>{CITIES[0].city_name}</label>
             </div>
-          ))}
+          ) : (
+            CITIES.map((city) => (
+              <div key={city.city_code} className="form-field">
+                <input
+                  type="checkbox"
+                  id={city.city_code}
+                  value={city.city_code}
+                  checked={cityCodes.split(',').includes(city.city_code)}
+                  onChange={handleCityCodeChange}
+                />
+                <label htmlFor={city.city_code}>{city.city_name}</label>
+              </div>
+            ))
+          )}
+          {cityError && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{cityError}</div>}
         </div>
         <div style={{ marginBottom: '20px' }}></div>
         <button type="submit">Submit</button>
+        <button
+          type="button"
+          style={{ marginLeft: '10px' }}
+          onClick={() => navigate('/applicants')}
+        >
+          Cancel
+        </button>
       </form>
       </div>
       <Footer />
