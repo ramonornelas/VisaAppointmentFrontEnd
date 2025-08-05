@@ -181,6 +181,13 @@ const RegisterApplicant = () => {
 
   const CITIES = useMemo(() => ALL_CITIES[countryCode] || [], [countryCode]);
 
+  // Set cityCodes to the single city code if only one city is available
+  useEffect(() => {
+    if (CITIES.length === 1) {
+      setCityCodes(CITIES[0].city_code);
+    }
+  }, [CITIES]);
+
   return (
     <div className="page-container">
       <div className="content-wrap">
