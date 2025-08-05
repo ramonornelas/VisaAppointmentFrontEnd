@@ -219,7 +219,7 @@ const RegisterApplicant = () => {
                 setTargetStartDays(parseInt(e.target.value));
                 clearError('targetStartDays');
               }}
-              style={{ borderColor: errors.targetStartDays ? 'red' : '' }}
+              style={{ borderColor: errors.targetStartDays ? 'red' : '', width: '80px' }}
               required
             />
             {errors.targetStartDays && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.targetStartDays}</div>}

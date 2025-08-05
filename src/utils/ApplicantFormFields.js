@@ -12,7 +12,7 @@ export function NameField({ value, onChange, error }) {
         name="name"
         value={value}
         onChange={onChange}
-        style={{ borderColor: error ? 'red' : '' }}
+        style={{ borderColor: error ? 'red' : '', width: '350px' }}
         required
       />
       {error && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{error}</div>}
@@ -30,7 +30,7 @@ export function EmailField({ value, onChange, error }) {
         name="email"
         value={value}
         onChange={onChange}
-        style={{ borderColor: error ? 'red' : '' }}
+        style={{ borderColor: error ? 'red' : '', width: '250px' }}
         required
       />
       {error && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{error}</div>}
@@ -66,7 +66,7 @@ export function ScheduleIdField({ value, onChange, error }) {
         name="scheduleId"
         value={value}
         onChange={onChange}
-        style={{ borderColor: error ? 'red' : '' }}
+        style={{ borderColor: error ? 'red' : '', width: '80px' }}
         required
       />
       {error && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{error}</div>}
@@ -84,7 +84,7 @@ export function NumberOfApplicantsField({ value, onChange, error }) {
         name="numberofapplicants"
         value={value}
         onChange={onChange}
-        style={{ borderColor: error ? 'red' : '' }}
+        style={{ borderColor: error ? 'red' : '', width: '80px' }}
         required
       />
       {error && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{error}</div>}

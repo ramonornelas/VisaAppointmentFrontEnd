@@ -120,23 +120,23 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
         <ScheduleIdField value={formData["ais_schedule_id"] || ''} onChange={e => setFormData({ ...formData, ais_schedule_id: e.target.value })} />
         <NameField value={formData["name"] || ''} onChange={e => setFormData({ ...formData, name: e.target.value })} />
         <NumberOfApplicantsField value={formData["number_of_applicants"] || ''} onChange={e => setFormData({ ...formData, number_of_applicants: e.target.value })} />
-        <div className="form-field" key={"target_start_mode"}>
-          <label htmlFor={"target_start_mode"}>Target Start Mode</label>
-          &nbsp;
+        <div className="form-field" key={"target_start_mode"} style={{ display: 'flex', alignItems: 'center' }}>
+          <label htmlFor={"target_start_mode"} style={{ minWidth: 180 }}>Target Start Mode: <span style={{ color: 'red' }}>*</span></label>
           <select
             id={"target_start_mode"}
             name={"target_start_mode"}
             value={formData["target_start_mode"]?.toLowerCase()}
             onChange={handleChange}
+            required
+            style={{ width: '90px' }}
           >
             <option value="date">Date</option>
             <option value="days">Days</option>
           </select>
         </div>
         {showStartDays && (
-          <div className="form-field" key={"target_start_days"}>
-            <label htmlFor={"target_start_days"}>Target Start Days</label>
-            &nbsp;
+          <div className="form-field" key={"target_start_days"} style={{ display: 'flex', alignItems: 'center' }}>
+            <label htmlFor={"target_start_days"} style={{ minWidth: 180 }}>Target Start Days: <span style={{ color: 'red' }}>*</span></label>
             <input
               type="number"
               id={"target_start_days"}
@@ -144,14 +144,14 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
               value={formData["target_start_days"]}
               onChange={handleChange}
               disabled={formData.target_start_mode === 'date'}
-              style={{ width: '50px'}}
+              style={{ width: '80px' }}
+              required
             />
           </div>
         )}
         {showStartDate && (
-          <div className="form-field" key={"target_start_date"}>
-            <label htmlFor={"target_start_date"}>Target Start Date</label>
-            &nbsp;
+          <div className="form-field" key={"target_start_date"} style={{ display: 'flex', alignItems: 'center' }}>
+            <label htmlFor={"target_start_date"} style={{ minWidth: 180 }}>Target Start Date: <span style={{ color: 'red' }}>*</span></label>
             <input
               type="date"
               id={"target_start_date"}
@@ -159,18 +159,21 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
               value={formData["target_start_date"]}
               onChange={handleChange}
               disabled={formData.target_start_mode === 'days'}
+              required
+              style={{ width: '180px' }}
             />
           </div>
         )}
-        <div className="form-field" key={"target_end_date"}>
-          <label htmlFor={"target_end_date"}>Target End Date</label>
-          &nbsp;
+        <div className="form-field" key={"target_end_date"} style={{ display: 'flex', alignItems: 'center' }}>
+          <label htmlFor={"target_end_date"} style={{ minWidth: 180 }}>Target End Date: <span style={{ color: 'red' }}>*</span></label>
           <input
             type="date"
             id={"target_end_date"}
             name={"target_end_date"}
             value={formData["target_end_date"]}
             onChange={handleChange}
+            required
+            style={{ width: '180px' }}
           />
         </div>
         <div>
