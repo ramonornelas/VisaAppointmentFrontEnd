@@ -7,17 +7,25 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
 import './index.css';
 
+// Hardcode admin username en una constante
+const ADMIN_EMAIL = 'admin@orionscaled.com';
+
+// Función para validar si el usuario es admin
+function isAdminUser(username) {
+    return username === ADMIN_EMAIL;
+}
+
 const Applicants = () => {
     const { isAuthenticated } = useAuth();
-    const [data, setData] = useState(null); 
+    const [data, setData] = useState(null);
     const [filterActive, setFilterActive] = useState(true);
-    const fastVisaUserId = sessionStorage.getItem("fastVisa_userid"); 
-    const fastVisaUsername = sessionStorage.getItem("fastVisa_username"); 
+    const fastVisaUserId = sessionStorage.getItem("fastVisa_userid");
+    const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
     const navigate = useNavigate();
-    
+
     // Define the included fields
     const includeFields = ['ais_schedule_id', 'ais_username', 'name', 'applicant_active', 'target_end_date', 'search_status'];
-    
+
     useEffect(() => {
         if (!isAuthenticated) {
             document.body.classList.remove('menu-open');
@@ -27,20 +35,27 @@ const Applicants = () => {
 
         const fetchData = async () => {
             try {
-                const response = await ApplicantSearch(fastVisaUserId);
-                const filteredData = filterActive 
-                    ? response.filter(item => item.applicant_active === true) 
+                let response;
+                // Usar función isAdminUser para validar admin
+                if (isAdminUser(fastVisaUsername)) {
+                    response = await ApplicantSearch(null);
+                } else {
+                    response = await ApplicantSearch(fastVisaUserId);
+                }
+                const filteredData = filterActive
+                    ? response.filter(item => item.applicant_active === true)
                     : response;
                 setData(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
-    
-        if (fastVisaUserId) {
+
+        // Para admin, no depende de fastVisaUserId
+        if (fastVisaUsername || fastVisaUserId) {
             fetchData();
         }
-    }, [isAuthenticated, fastVisaUserId, filterActive, navigate]);
+    }, [isAuthenticated, fastVisaUserId, fastVisaUsername, filterActive, navigate]);
 
     const handleRegisterApplicant = () => {
         navigate('/RegisterApplicant');
