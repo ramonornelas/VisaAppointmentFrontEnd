@@ -18,6 +18,8 @@ function isAdminUser(username) {
 const Applicants = () => {
     const { isAuthenticated } = useAuth();
     const [data, setData] = useState(null);
+    const [allRegisteredUsers, setAllRegisteredUsers] = useState([]);
+    const [registeredByFilter, setRegisteredByFilter] = useState('');
     const [filterActive, setFilterActive] = useState(true);
     const fastVisaUserId = sessionStorage.getItem("fastVisa_userid");
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
@@ -36,26 +38,32 @@ const Applicants = () => {
         const fetchData = async () => {
             try {
                 let response;
-                // Usar función isAdminUser para validar admin
                 if (isAdminUser(fastVisaUsername)) {
                     response = await ApplicantSearch(null);
                 } else {
                     response = await ApplicantSearch(fastVisaUserId);
                 }
-                const filteredData = filterActive
+                // Guardar todos los usuarios únicos para el dropdown
+                if (Array.isArray(response)) {
+                    setAllRegisteredUsers([...new Set(response.map(item => item.fastVisa_username).filter(Boolean))]);
+                }
+                let filteredData = filterActive
                     ? response.filter(item => item.applicant_active === true)
                     : response;
+                // Filtrar por Registered By si el usuario es admin y el filtro está seleccionado
+                if (isAdminUser(fastVisaUsername) && registeredByFilter) {
+                    filteredData = filteredData.filter(item => item.fastVisa_username === registeredByFilter);
+                }
                 setData(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
 
-        // Para admin, no depende de fastVisaUserId
         if (fastVisaUsername || fastVisaUserId) {
             fetchData();
         }
-    }, [isAuthenticated, fastVisaUserId, fastVisaUsername, filterActive, navigate]);
+    }, [isAuthenticated, fastVisaUserId, fastVisaUsername, filterActive, registeredByFilter, navigate]);
 
     const handleRegisterApplicant = () => {
         navigate('/RegisterApplicant');
@@ -146,13 +154,31 @@ const Applicants = () => {
             <p className="username-right">{fastVisaUsername}</p>
             <h2>Applicants</h2>
             <div style={{ marginBottom: '5px' }}></div>
-            <button 
-                className={`toggle-button ${filterActive ? 'active' : ''}`} 
-                onClick={() => setFilterActive(!filterActive)}
-            >
-                {filterActive ? 'View all applicants' : 'Only active applicants'}
-            </button>
-            <div style={{ marginBottom: '5px' }}></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
+                <button 
+                    className={`toggle-button ${filterActive ? 'active' : ''}`} 
+                    onClick={() => setFilterActive(!filterActive)}
+                    title="Show both active and inactive applicants"
+                >
+                    {filterActive ? 'Show all applicants' : 'Only active applicants'}
+                </button>
+                {/* Dropdown para filtrar por Registered By solo para admin */}
+                {isAdminUser(fastVisaUsername) && allRegisteredUsers.length > 0 && (
+                    <>
+                        <label htmlFor="registeredByFilter">Registered by:&nbsp;</label>
+                        <select
+                            id="registeredByFilter"
+                            value={registeredByFilter}
+                            onChange={e => setRegisteredByFilter(e.target.value)}
+                        >
+                            <option value="">All</option>
+                            {allRegisteredUsers.map(username => (
+                                <option key={username} value={username}>{username}</option>
+                            ))}
+                        </select>
+                    </>
+                )}
+            </div>
             <table className="table-content" style={{ textAlign: 'left' }}>
                 <thead>
                     <tr>
@@ -175,7 +201,7 @@ const Applicants = () => {
                                 </td>
                             ))}
                             {isAdminUser(fastVisaUsername) && (
-                                <td key={`${item.id}-createdby`} style={{ textAlign: 'left' }}>
+                                <td key={`${item.id}-registeredby`} style={{ textAlign: 'left' }}>
                                     {item.fastVisa_username || ''}
                                 </td>
                             )}
