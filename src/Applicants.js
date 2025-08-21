@@ -155,13 +155,14 @@ const Applicants = () => {
             <div style={{ marginBottom: '5px' }}></div>
             <table className="table-content" style={{ textAlign: 'left' }}>
                 <thead>
-                    <tr>                        
+                    <tr>
                         <th>AIS ID</th>
                         <th>AIS Username</th>
                         <th>Name</th>
                         <th>Applicant Status</th>
                         <th>Target End Date</th>
                         <th>Search Status</th>
+                        {isAdminUser(fastVisaUsername) && <th>Registered By</th>}
                         <th colSpan={3} style={{ textAlign: 'center' }}>Actions</th>
                     </tr>
                 </thead>
@@ -173,6 +174,11 @@ const Applicants = () => {
                                     {field === 'applicant_active' ? renderBooleanValue(item[field]) : item[field]}
                                 </td>
                             ))}
+                            {isAdminUser(fastVisaUsername) && (
+                                <td key={`${item.id}-createdby`} style={{ textAlign: 'left' }}>
+                                    {item.fastVisa_username || ''}
+                                </td>
+                            )}
                             {renderActionButton(item.id, item.search_status)}
                             {renderViewButton(item.id)}
                             {renderPasswordButton(item.id)}
