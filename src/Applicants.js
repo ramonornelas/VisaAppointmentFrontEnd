@@ -21,6 +21,7 @@ const Applicants = () => {
     const [allRegisteredUsers, setAllRegisteredUsers] = useState([]);
     const [registeredByFilter, setRegisteredByFilter] = useState('');
     const [filterActive, setFilterActive] = useState(true);
+    const [filterRunning, setFilterRunning] = useState(true);
     const fastVisaUserId = sessionStorage.getItem("fastVisa_userid");
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
     const navigate = useNavigate();
@@ -47,9 +48,13 @@ const Applicants = () => {
                 if (Array.isArray(response)) {
                     setAllRegisteredUsers([...new Set(response.map(item => item.fastVisa_username).filter(Boolean))]);
                 }
-                let filteredData = filterActive
-                    ? response.filter(item => item.applicant_active === true)
-                    : response;
+                let filteredData = response;
+                if (filterActive) {
+                    filteredData = filteredData.filter(item => item.applicant_active === true);
+                }
+                if (filterRunning) {
+                    filteredData = filteredData.filter(item => item.search_status === 'Running');
+                }
                 // Filtrar por Registered By si el usuario es admin y el filtro está seleccionado
                 if (isAdminUser(fastVisaUsername) && registeredByFilter) {
                     filteredData = filteredData.filter(item => item.fastVisa_username === registeredByFilter);
@@ -63,7 +68,7 @@ const Applicants = () => {
         if (fastVisaUsername || fastVisaUserId) {
             fetchData();
         }
-    }, [isAuthenticated, fastVisaUserId, fastVisaUsername, filterActive, registeredByFilter, navigate]);
+    }, [isAuthenticated, fastVisaUserId, fastVisaUsername, filterActive, filterRunning, registeredByFilter, navigate]);
 
     const handleRegisterApplicant = () => {
         navigate('/RegisterApplicant');
@@ -155,30 +160,37 @@ const Applicants = () => {
             <h2>Applicants</h2>
             <div style={{ marginBottom: '5px' }}></div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
-                <button 
-                    className={`toggle-button ${filterActive ? 'active' : ''}`} 
-                    onClick={() => setFilterActive(!filterActive)}
-                    title="Show both active and inactive applicants"
-                >
-                    {filterActive ? 'Show all applicants' : 'Only active applicants'}
-                </button>
-                {/* Dropdown para filtrar por Registered By solo para admin */}
-                {isAdminUser(fastVisaUsername) && allRegisteredUsers.length > 0 && (
-                    <>
-                        <label htmlFor="registeredByFilter">Registered by:&nbsp;</label>
-                        <select
-                            id="registeredByFilter"
-                            value={registeredByFilter}
-                            onChange={e => setRegisteredByFilter(e.target.value)}
-                        >
-                            <option value="">All</option>
-                            {allRegisteredUsers.map(username => (
-                                <option key={username} value={username}>{username}</option>
-                            ))}
-                        </select>
-                    </>
-                )}
+                <div className="toggle-switch" title="Filter only active" onClick={() => setFilterActive(!filterActive)}>
+                    <div className={`switch-track${filterActive ? ' active' : ''}`}></div>
+                    <div className={`switch-thumb${filterActive ? ' active' : ''}`}></div>
+                </div>
+                <span style={{ fontWeight: 'bold' }}>
+                    Only active
+                </span>
+                <div className="toggle-switch" title="Filter only Running" onClick={() => setFilterRunning(!filterRunning)}>
+                    <div className={`switch-track${filterRunning ? ' active' : ''}`}></div>
+                    <div className={`switch-thumb${filterRunning ? ' active' : ''}`}></div>
+                </div>
+                <span style={{ fontWeight: 'bold' }}>
+                    Only Running
+                </span>
             </div>
+            {/* Dropdown para filtrar por Registered By solo para admin, en renglón aparte con más separación */}
+            {isAdminUser(fastVisaUsername) && allRegisteredUsers.length > 0 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', marginTop: '20px' }}>
+                    <label htmlFor="registeredByFilter" style={{ fontWeight: 'bold' }}>Registered by:&nbsp;</label>
+                    <select
+                        id="registeredByFilter"
+                        value={registeredByFilter}
+                        onChange={e => setRegisteredByFilter(e.target.value)}
+                    >
+                        <option value="">All</option>
+                        {allRegisteredUsers.map(username => (
+                            <option key={username} value={username}>{username}</option>
+                        ))}
+                    </select>
+                </div>
+            )}
             <table className="table-content" style={{ textAlign: 'left' }}>
                 <thead>
                     <tr>
