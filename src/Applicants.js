@@ -6,14 +6,7 @@ import { ApplicantSearch, GetApplicantPassword } from './APIFunctions';
 import { useNavigate } from 'react-router-dom'; 
 import { useAuth } from './utils/AuthContext';
 import './index.css';
-
-// Hardcode admin username en una constante
-const ADMIN_EMAIL = 'admin@orionscaled.com';
-
-// Función para validar si el usuario es admin
-function isAdminUser(username) {
-    return username === ADMIN_EMAIL;
-}
+import { permissions } from './utils/permissions';
 
 const Applicants = () => {
     const { isAuthenticated } = useAuth();
@@ -26,8 +19,11 @@ const Applicants = () => {
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
     const navigate = useNavigate();
 
+
     // Define the included fields
     const includeFields = ['ais_schedule_id', 'ais_username', 'name', 'applicant_active', 'target_end_date', 'search_status'];
+    // Use centralized permissions utility
+    const canViewAllApplicants = permissions.canViewAllApplicants();
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -39,7 +35,7 @@ const Applicants = () => {
         const fetchData = async () => {
             try {
                 let response;
-                if (isAdminUser(fastVisaUsername)) {
+                if (canViewAllApplicants) {
                     response = await ApplicantSearch(null);
                 } else {
                     response = await ApplicantSearch(fastVisaUserId);
@@ -56,7 +52,7 @@ const Applicants = () => {
                     filteredData = filteredData.filter(item => item.search_status === 'Running');
                 }
                 // Filtrar por Registered By si el usuario es admin y el filtro está seleccionado
-                if (isAdminUser(fastVisaUsername) && registeredByFilter) {
+                if (canViewAllApplicants && registeredByFilter) {
                     filteredData = filteredData.filter(item => item.fastVisa_username === registeredByFilter);
                 }
                 setData(filteredData);
@@ -68,7 +64,7 @@ const Applicants = () => {
         if (fastVisaUsername || fastVisaUserId) {
             fetchData();
         }
-    }, [isAuthenticated, fastVisaUserId, fastVisaUsername, filterActive, filterRunning, registeredByFilter, navigate]);
+    }, [isAuthenticated, fastVisaUserId, fastVisaUsername, filterActive, filterRunning, registeredByFilter, canViewAllApplicants, navigate]);
 
     const handleRegisterApplicant = () => {
         navigate('/RegisterApplicant');
@@ -176,7 +172,7 @@ const Applicants = () => {
                 </span>
             </div>
             {/* Dropdown para filtrar por Registered By solo para admin, en renglón aparte con más separación */}
-            {isAdminUser(fastVisaUsername) && allRegisteredUsers.length > 0 && (
+            {canViewAllApplicants && allRegisteredUsers.length > 0 && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', marginTop: '20px' }}>
                     <label htmlFor="registeredByFilter" style={{ fontWeight: 'bold' }}>Registered by:&nbsp;</label>
                     <select
@@ -200,7 +196,7 @@ const Applicants = () => {
                         <th>Applicant Status</th>
                         <th>Target End Date</th>
                         <th>Search Status</th>
-                        {isAdminUser(fastVisaUsername) && <th>Registered By</th>}
+                        {canViewAllApplicants && <th>Registered By</th>}
                         <th colSpan={3} style={{ textAlign: 'center' }}>Actions</th>
                     </tr>
                 </thead>
@@ -212,7 +208,7 @@ const Applicants = () => {
                                     {field === 'applicant_active' ? renderBooleanValue(item[field]) : item[field]}
                                 </td>
                             ))}
-                            {isAdminUser(fastVisaUsername) && (
+                            {canViewAllApplicants && (
                                 <td key={`${item.id}-registeredby`} style={{ textAlign: 'left' }}>
                                     {item.fastVisa_username || ''}
                                 </td>
