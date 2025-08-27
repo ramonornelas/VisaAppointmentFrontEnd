@@ -119,6 +119,35 @@ const Applicants = () => {
         }
     };
 
+    const baseUrl = "https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com"; // Use same base URL
+
+    const handleResetStatus = async (id) => {
+        try {
+            const response = await fetch(`${baseUrl}/applicants/${id}`, {
+                method: 'PUT',
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    search_status: "Inactive",
+                    container_id: null,
+                    container_start_datetime: null
+                })
+            });
+            if (response.status === 200) {
+                alert('Status reset successfully.');
+                // Optionally refresh data
+                window.location.reload();
+            } else {
+                alert('Failed to reset status.');
+            }
+        } catch (error) {
+            console.error('Error resetting status:', error);
+            alert('Error resetting status.');
+        }
+    };
+
     const renderViewButton = (id) => (
         <td key={`edit-${id}`} style={{ textAlign: 'left' }}>
             <button onClick={() => handleView(id)}>View Details</button>
@@ -141,6 +170,14 @@ const Applicants = () => {
         <td key={`password-${id}`} style={{ textAlign: 'left' }}>
             <button onClick={() => handleCopyPassword(id)}>
                 <i className="fas fa-key"></i>
+            </button>
+        </td>
+    );
+
+    const renderResetStatusButton = (id) => (
+        <td key={`reset-${id}`} style={{ textAlign: 'left' }}>
+            <button onClick={() => handleResetStatus(id)}>
+                Reset Status
             </button>
         </td>
     );
@@ -197,7 +234,7 @@ const Applicants = () => {
                         <th>Target End Date</th>
                         <th>Search Status</th>
                         {canViewAllApplicants && <th>Registered By</th>}
-                        <th colSpan={3} style={{ textAlign: 'center' }}>Actions</th>
+                        <th colSpan={4} style={{ textAlign: 'center' }}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -215,6 +252,7 @@ const Applicants = () => {
                             )}
                             {renderActionButton(item.id, item.search_status)}
                             {renderViewButton(item.id)}
+                            {renderResetStatusButton(item.id)}
                             {renderPasswordButton(item.id)}
                         </tr>
                     ))}
