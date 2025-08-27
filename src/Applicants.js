@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
-import { ApplicantSearch, GetApplicantPassword, StartApplicantContainer, StopApplicantContainer } from './APIFunctions';
+import { ApplicantSearch, GetApplicantPassword, StartApplicantContainer, StopApplicantContainer, ApplicantUpdate } from './APIFunctions';
 import { useNavigate } from 'react-router-dom'; 
 import { useAuth } from './utils/AuthContext';
 import './index.css';
@@ -113,25 +113,17 @@ const Applicants = () => {
         }
     };
 
-    const baseUrl = "https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com"; // Use same base URL
+    // baseUrl removed (no longer used)
 
     const handleResetStatus = async (id) => {
         try {
-            const response = await fetch(`${baseUrl}/applicants/${id}`, {
-                method: 'PUT',
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    search_status: "Inactive",
-                    container_id: null,
-                    container_start_datetime: null
-                })
+            const response = await ApplicantUpdate(id, {
+                search_status: "Inactive",
+                container_id: null,
+                container_start_datetime: null
             });
-            if (response.status === 200) {
+            if (response) {
                 alert('Status reset successfully.');
-                // Optionally refresh data
                 window.location.reload();
             } else {
                 alert('Failed to reset status.');
