@@ -47,6 +47,18 @@ const LogIn = () => {
           sessionStorage.setItem("fastVisa_username", searchusername);
           sessionStorage.setItem("country_code", countryCode);
           sessionStorage.setItem("concurrent_applicants", concurrentApplicants);
+
+          // Fetch and store user permissions
+          try {
+            const permissionsResponse = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users/permissions/${searchuserid}`);
+            if (permissionsResponse.status === 200) {
+              const permissionsData = await permissionsResponse.json();
+              sessionStorage.setItem("fastVisa_permissions", JSON.stringify(permissionsData));
+            }
+          } catch (permError) {
+            console.error('Error fetching permissions:', permError);
+          }
+
           window.location.href = '/applicants'; // Redirect to applicants page since it's the only active page so far
         } else {
           throw new Error('Failed to fetch user data');
