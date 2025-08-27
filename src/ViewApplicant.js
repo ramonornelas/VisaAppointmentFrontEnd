@@ -53,9 +53,47 @@ const ViewApplicant = () => {
         setIsEditing(true);
     };
 
-    const handleDeleteApplicant = () => {
-        if (window.confirm('Are you sure you want to delete this applicant?')) {
-            navigate(`/DeleteApplicant`);
+    const handleDeleteApplicant = async () => {
+        if (!window.confirm('Are you sure you want to delete this applicant?')) {
+            return;
+        }
+        const isSearchRunning = data && (data.search_status === 'Running' || data.search_active === true);
+        if (isSearchRunning) {
+            const confirmStop = window.confirm('Search is in progress. Do you want to stop the search before deleting?');
+            if (confirmStop) {
+                try {
+                    const { StopApplicantContainer, ApplicantDelete } = await import('./APIFunctions');
+                    await StopApplicantContainer(ApplicantUserId);
+                    window.alert('Search stopped. The applicant will now be deleted.');
+                    const response = await ApplicantDelete(ApplicantUserId);
+                    console.log('ApplicantDelete response:', response);
+                    if (response && response.success) {
+                        window.alert(`Applicant deleted successfully.`);
+                        navigate('/Applicants');
+                    } else {
+                        window.alert('Unexpected response when deleting applicant.');
+                    }
+                } catch (error) {
+                    window.alert('Failed to stop search or delete applicant. Please try again.');
+                }
+            }
+            // If user cancels stopping search, do nothing
+            return;
+        }
+        // If search is not running, proceed to delete
+        try {
+            const { ApplicantDelete } = await import('./APIFunctions');
+            const response = await ApplicantDelete(ApplicantUserId);
+            console.log('ApplicantDelete response:', response);
+            if (response && response.success) {
+                window.alert(`Applicant deleted successfully.`);
+                navigate('/Applicants');
+            } else {
+                window.alert('Unexpected response when deleting applicant.');
+            }
+        } catch (error) {
+            console.error('Error in ApplicantDelete:', error);
+            window.alert('Error deleting applicant.');
         }
     };
 
@@ -85,7 +123,7 @@ const ViewApplicant = () => {
                                 &nbsp;
                                 <button onClick={() => handleEditApplicant()}>Edit Applicant</button>
                                 &nbsp;
-                                <button onClick={() => handleDeleteApplicant()}>Delete Applicant</button>
+                                <button onClick={handleDeleteApplicant}>Delete Applicant</button>
                                 &nbsp;
                                 <button onClick={() => navigate('/Applicants')}>Back to Applicants</button>
                             </div>
@@ -205,10 +243,10 @@ const ViewApplicant = () => {
                     )
                 )}
                 <div style={{ marginBottom: '5px' }}></div>
+                <Footer />
             </div>
-            <Footer />
         </div>
     );
-};
+}
 
 export default ViewApplicant;

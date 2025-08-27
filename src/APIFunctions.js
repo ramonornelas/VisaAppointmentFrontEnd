@@ -93,13 +93,17 @@ const ApplicantDelete = async (applicant_userid) => {
       },
     });
 
-    if (response.status === 200) {
+    if (response.status === 204) {
+      // 204 No Content: deletion successful, no body
+      return { success: true };
+    } else if (response.status === 200) {
       return await response.json();
     } else {
       throw new Error('Failed to delete applicant');
     }
   } catch (error) {
     console.error('Error:', error);
+    return { success: false, error };
   }
 };
 
