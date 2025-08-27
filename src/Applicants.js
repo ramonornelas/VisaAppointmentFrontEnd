@@ -18,6 +18,7 @@ const Applicants = () => {
     const fastVisaUserId = sessionStorage.getItem("fastVisa_userid");
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
     const navigate = useNavigate();
+    const [refreshFlag, setRefreshFlag] = useState(false);
 
 
     // Define the included fields
@@ -64,7 +65,7 @@ const Applicants = () => {
         if (fastVisaUsername || fastVisaUserId) {
             fetchData();
         }
-    }, [isAuthenticated, fastVisaUserId, fastVisaUsername, filterActive, filterRunning, registeredByFilter, canViewAllApplicants, navigate]);
+    }, [isAuthenticated, fastVisaUserId, fastVisaUsername, filterActive, filterRunning, registeredByFilter, canViewAllApplicants, navigate, refreshFlag]);
 
     const handleRegisterApplicant = () => {
         navigate('/RegisterApplicant');
@@ -89,13 +90,12 @@ const Applicants = () => {
                 // Start search using API function
                 await StartApplicantContainer(id);
                 alert('Search started successfully.');
-                window.location.reload();
             } else {
                 // Stop search using API function
                 await StopApplicantContainer(id);
                 alert('Search stopped successfully.');
-                window.location.reload();
             }
+            setRefreshFlag(flag => !flag);
         } catch (error) {
             alert('Error performing action.');
             console.error(error);
@@ -113,8 +113,6 @@ const Applicants = () => {
         }
     };
 
-    // baseUrl removed (no longer used)
-
     const handleResetStatus = async (id) => {
         try {
             const response = await ApplicantUpdate(id, {
@@ -124,7 +122,7 @@ const Applicants = () => {
             });
             if (response) {
                 alert('Status reset successfully.');
-                window.location.reload();
+                setRefreshFlag(flag => !flag);
             } else {
                 alert('Failed to reset status.');
             }
