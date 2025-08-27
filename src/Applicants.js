@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
-import { ApplicantSearch, GetApplicantPassword } from './APIFunctions';
+import { ApplicantSearch, GetApplicantPassword, StartApplicantContainer, StopApplicantContainer, ApplicantUpdate } from './APIFunctions';
 import { useNavigate } from 'react-router-dom'; 
 import { useAuth } from './utils/AuthContext';
 import './index.css';
@@ -18,6 +18,7 @@ const Applicants = () => {
     const fastVisaUserId = sessionStorage.getItem("fastVisa_userid");
     const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
     const navigate = useNavigate();
+    const [refreshFlag, setRefreshFlag] = useState(false);
 
 
     // Define the included fields
@@ -64,7 +65,7 @@ const Applicants = () => {
         if (fastVisaUsername || fastVisaUserId) {
             fetchData();
         }
-    }, [isAuthenticated, fastVisaUserId, fastVisaUsername, filterActive, filterRunning, registeredByFilter, canViewAllApplicants, navigate]);
+    }, [isAuthenticated, fastVisaUserId, fastVisaUsername, filterActive, filterRunning, registeredByFilter, canViewAllApplicants, navigate, refreshFlag]);
 
     const handleRegisterApplicant = () => {
         navigate('/RegisterApplicant');
@@ -76,35 +77,28 @@ const Applicants = () => {
     };
 
     const handleAction = async (id, isActive) => {
-        sessionStorage.setItem("applicant_userid", id);
-        if (isActive === 'Inactive') {
-            // Only allow starting if concurrent limit not reached
-            try {
-                // Get concurrent limit from session storage
+        try {
+            if (isActive === 'Inactive') {
+                // Check concurrent limit
                 const concurrentLimit = parseInt(sessionStorage.getItem("concurrent_applicants"));
-                // Count currently running applicants
-                const applicantsResponse = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/search', {
-                    method: 'POST',
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ fastVisa_userid: fastVisaUserId })
-                });
-                if (applicantsResponse.status !== 200) throw new Error('Failed to fetch applicants');
-                const applicants = await applicantsResponse.json();
-                const runningCount = applicants.filter(a => a.search_status === 'Running').length;
+                const applicantsResponse = await ApplicantSearch(fastVisaUserId);
+                const runningCount = applicantsResponse.filter(a => a.search_status === 'Running').length;
                 if (runningCount >= concurrentLimit) {
                     alert(`You have reached your concurrent applicants limit (${concurrentLimit}).\nTo start a new applicant, please end one of your currently running applicants first.`);
                     return;
                 }
-                navigate('/StartContainer');
-            } catch (error) {
-                alert('Error checking concurrent applicants limit.');
-                console.error(error);
+                // Start search using API function
+                await StartApplicantContainer(id);
+                alert('Search started successfully.');
+            } else {
+                // Stop search using API function
+                await StopApplicantContainer(id);
+                alert('Search stopped successfully.');
             }
-        } else {
-            navigate('/StopContainer');
+            setRefreshFlag(flag => !flag);
+        } catch (error) {
+            alert('Error performing action.');
+            console.error(error);
         }
     };
 
@@ -116,6 +110,25 @@ const Applicants = () => {
             alert('Password copied to clipboard');
         } catch (error) {
             console.error('Error copying password:', error);
+        }
+    };
+
+    const handleResetStatus = async (id) => {
+        try {
+            const response = await ApplicantUpdate(id, {
+                search_status: "Inactive",
+                container_id: null,
+                container_start_datetime: null
+            });
+            if (response) {
+                alert('Status reset successfully.');
+                setRefreshFlag(flag => !flag);
+            } else {
+                alert('Failed to reset status.');
+            }
+        } catch (error) {
+            console.error('Error resetting status:', error);
+            alert('Error resetting status.');
         }
     };
 
@@ -141,6 +154,14 @@ const Applicants = () => {
         <td key={`password-${id}`} style={{ textAlign: 'left' }}>
             <button onClick={() => handleCopyPassword(id)}>
                 <i className="fas fa-key"></i>
+            </button>
+        </td>
+    );
+
+    const renderResetStatusButton = (id) => (
+        <td key={`reset-${id}`} style={{ textAlign: 'left' }}>
+            <button onClick={() => handleResetStatus(id)}>
+                Reset Status
             </button>
         </td>
     );
@@ -197,7 +218,7 @@ const Applicants = () => {
                         <th>Target End Date</th>
                         <th>Search Status</th>
                         {canViewAllApplicants && <th>Registered By</th>}
-                        <th colSpan={3} style={{ textAlign: 'center' }}>Actions</th>
+                        <th colSpan={4} style={{ textAlign: 'center' }}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -215,6 +236,7 @@ const Applicants = () => {
                             )}
                             {renderActionButton(item.id, item.search_status)}
                             {renderViewButton(item.id)}
+                            {renderResetStatusButton(item.id)}
                             {renderPasswordButton(item.id)}
                         </tr>
                     ))}

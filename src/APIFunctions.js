@@ -1,30 +1,29 @@
+import { BASE_URL } from './config.js';
+
 const UserDetails = async (fastVisa_userid) => {
-    try {
-      const response = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users/${fastVisa_userid}`, {
-        method: 'GET',
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-        },
-      });
-  
-      if (response.status === 200) {
-        const data = await response.json();
-        return data;
-      } else {
-        throw new Error('Failed to fetch user data');
-      }
-    } catch (error) {
-      console.error('Error:', error);
+  try {
+    const response = await fetch(`${BASE_URL}/users/${fastVisa_userid}`, {
+      method: 'GET',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+    });
+
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      throw new Error('Failed to fetch user data');
     }
+  } catch (error) {
+    console.error('Error:', error);
+  }
 };
 
 const ApplicantSearch = async (fastVisa_userid) => {
-  const requestBody = {
-    "fastVisa_userid": fastVisa_userid,
-  };
+  const requestBody = { fastVisa_userid };
   try {
-    const response = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/search', {
+    const response = await fetch(`${BASE_URL}/applicants/search`, {
       method: 'POST',
       headers: {
         "Accept": "application/json",
@@ -34,8 +33,7 @@ const ApplicantSearch = async (fastVisa_userid) => {
     });
 
     if (response.status === 200) {
-      const data = await response.json();
-      return data;
+      return await response.json();
     } else {
       throw new Error('Failed to fetch applicant data');
     }
@@ -46,7 +44,7 @@ const ApplicantSearch = async (fastVisa_userid) => {
 
 const ApplicantDetails = async (applicant_userid) => {
   try {
-    const response = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/${applicant_userid}`, {
+    const response = await fetch(`${BASE_URL}/applicants/${applicant_userid}`, {
       method: 'GET',
       headers: {
         "Accept": "application/json",
@@ -55,8 +53,7 @@ const ApplicantDetails = async (applicant_userid) => {
     });
 
     if (response.status === 200) {
-      const data = await response.json();
-      return data;
+      return await response.json();
     } else {
       throw new Error('Failed to fetch applicant data');
     }
@@ -67,7 +64,7 @@ const ApplicantDetails = async (applicant_userid) => {
 
 const ApplicantUpdate = async (applicant_userid, requestBody) => {
   try {
-    const response = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/${applicant_userid}`, {
+    const response = await fetch(`${BASE_URL}/applicants/${applicant_userid}`, {
       method: 'PUT',
       headers: {
         "Accept": "application/json",
@@ -77,10 +74,9 @@ const ApplicantUpdate = async (applicant_userid, requestBody) => {
     });
 
     if (response.status === 200) {
-      const data = await response.json();
-      return data;
+      return await response.json();
     } else {
-      throw new Error('Failed to fetch applicant data');
+      throw new Error('Failed to update applicant data');
     }
   } catch (error) {
     console.error('Error:', error);
@@ -89,7 +85,7 @@ const ApplicantUpdate = async (applicant_userid, requestBody) => {
 
 const ApplicantDelete = async (applicant_userid) => {
   try {
-    const response = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/${applicant_userid}`, {
+    const response = await fetch(`${BASE_URL}/applicants/${applicant_userid}`, {
       method: 'DELETE',
       headers: {
         "Accept": "application/json",
@@ -97,23 +93,24 @@ const ApplicantDelete = async (applicant_userid) => {
       },
     });
 
-    if (response.status === 200) {
-      const data = await response.json();
-      return data;
+    if (response.status === 204) {
+      // 204 No Content: deletion successful, no body
+      return { success: true };
+    } else if (response.status === 200) {
+      return await response.json();
     } else {
       throw new Error('Failed to delete applicant');
     }
   } catch (error) {
     console.error('Error:', error);
+    return { success: false, error };
   }
 };
 
 const StartApplicantContainer = async (applicant_userid) => {
-  const requestBody = {
-    "applicant_id": applicant_userid
-  };
+  const requestBody = { applicant_id: applicant_userid };
   try {
-    const response = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/start', {
+    const response = await fetch(`${BASE_URL}/applicants/start`, {
       method: 'POST',
       headers: {
         "Accept": "application/json",
@@ -123,8 +120,7 @@ const StartApplicantContainer = async (applicant_userid) => {
     });
 
     if (response.status === 200) {
-      const data = await response.json();
-      return data;
+      return await response.json();
     } else {
       throw new Error('Failed to start container');
     }
@@ -133,13 +129,10 @@ const StartApplicantContainer = async (applicant_userid) => {
   }
 };
 
-
 const StopApplicantContainer = async (applicant_userid) => {
-  const requestBody = {
-    "applicant_id": applicant_userid
-  };
+  const requestBody = { applicant_id: applicant_userid };
   try {
-    const response = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/stop', {
+    const response = await fetch(`${BASE_URL}/applicants/stop`, {
       method: 'POST',
       headers: {
         "Accept": "application/json",
@@ -149,8 +142,7 @@ const StopApplicantContainer = async (applicant_userid) => {
     });
 
     if (response.status === 200) {
-      const data = await response.json();
-      return data;
+      return await response.json();
     } else {
       throw new Error('Failed to stop container');
     }
@@ -161,7 +153,7 @@ const StopApplicantContainer = async (applicant_userid) => {
 
 const GetApplicantPassword = async (applicant_userid) => {
   try {
-    const response = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/${applicant_userid}/password`, {
+    const response = await fetch(`${BASE_URL}/applicants/${applicant_userid}/password`, {
       method: 'GET',
       headers: {
         "Accept": "application/json",
@@ -170,8 +162,7 @@ const GetApplicantPassword = async (applicant_userid) => {
     });
 
     if (response.status === 200) {
-      const data = await response.json();
-      return data;
+      return await response.json();
     } else {
       throw new Error('Failed to fetch applicant password');
     }
@@ -180,4 +171,13 @@ const GetApplicantPassword = async (applicant_userid) => {
   }
 };
 
-export { UserDetails, ApplicantSearch, ApplicantDetails, ApplicantUpdate, StartApplicantContainer, StopApplicantContainer, ApplicantDelete, GetApplicantPassword };
+export { 
+  UserDetails, 
+  ApplicantSearch, 
+  ApplicantDetails, 
+  ApplicantUpdate, 
+  StartApplicantContainer, 
+  StopApplicantContainer, 
+  ApplicantDelete, 
+  GetApplicantPassword 
+};
