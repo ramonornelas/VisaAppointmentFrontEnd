@@ -66,7 +66,6 @@ const ViewApplicant = () => {
                     await StopApplicantContainer(ApplicantUserId);
                     window.alert('Search stopped. The applicant will now be deleted.');
                     const response = await ApplicantDelete(ApplicantUserId);
-                    console.log('ApplicantDelete response:', response);
                     if (response && response.success) {
                         window.alert(`Applicant deleted successfully.`);
                         navigate('/Applicants');
@@ -84,7 +83,6 @@ const ViewApplicant = () => {
         try {
             const { ApplicantDelete } = await import('./APIFunctions');
             const response = await ApplicantDelete(ApplicantUserId);
-            console.log('ApplicantDelete response:', response);
             if (response && response.success) {
                 window.alert(`Applicant deleted successfully.`);
                 navigate('/Applicants');
