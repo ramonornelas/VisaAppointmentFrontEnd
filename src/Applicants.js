@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
-import { ApplicantSearch, GetApplicantPassword } from './APIFunctions';
+import { ApplicantSearch, GetApplicantPassword, StartApplicantContainer, StopApplicantContainer } from './APIFunctions';
 import { useNavigate } from 'react-router-dom'; 
 import { useAuth } from './utils/AuthContext';
 import './index.css';
@@ -76,35 +76,29 @@ const Applicants = () => {
     };
 
     const handleAction = async (id, isActive) => {
-        sessionStorage.setItem("applicant_userid", id);
-        if (isActive === 'Inactive') {
-            // Only allow starting if concurrent limit not reached
-            try {
-                // Get concurrent limit from session storage
+        try {
+            if (isActive === 'Inactive') {
+                // Check concurrent limit
                 const concurrentLimit = parseInt(sessionStorage.getItem("concurrent_applicants"));
-                // Count currently running applicants
-                const applicantsResponse = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/search', {
-                    method: 'POST',
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ fastVisa_userid: fastVisaUserId })
-                });
-                if (applicantsResponse.status !== 200) throw new Error('Failed to fetch applicants');
-                const applicants = await applicantsResponse.json();
-                const runningCount = applicants.filter(a => a.search_status === 'Running').length;
+                const applicantsResponse = await ApplicantSearch(fastVisaUserId);
+                const runningCount = applicantsResponse.filter(a => a.search_status === 'Running').length;
                 if (runningCount >= concurrentLimit) {
                     alert(`You have reached your concurrent applicants limit (${concurrentLimit}).\nTo start a new applicant, please end one of your currently running applicants first.`);
                     return;
                 }
-                navigate('/StartContainer');
-            } catch (error) {
-                alert('Error checking concurrent applicants limit.');
-                console.error(error);
+                // Start search using API function
+                await StartApplicantContainer(id);
+                alert('Search started successfully.');
+                window.location.reload();
+            } else {
+                // Stop search using API function
+                await StopApplicantContainer(id);
+                alert('Search stopped successfully.');
+                window.location.reload();
             }
-        } else {
-            navigate('/StopContainer');
+        } catch (error) {
+            alert('Error performing action.');
+            console.error(error);
         }
     };
 
