@@ -15,6 +15,8 @@ import StartContainer from './StartContainer';
 import StopContainer from './StopContainer';
 import LogOut from './LogOut';
 
+import Users from './Users';
+
 ReactDOM.render(
   <AuthProvider>
     <Router>
@@ -30,6 +32,7 @@ ReactDOM.render(
         <Route path="/startcontainer" element={<StartContainer />} />
         <Route path="/stopcontainer" element={<StopContainer />} />
         <Route path="/logout" element={<LogOut />} />
+  <Route path="/users" element={<Users />} />
       </Routes>
     </Router>
   </AuthProvider>,
