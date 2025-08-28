@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
 import './HamburgerMenu.css';
 
+import { permissions } from './utils/permissions';
+
 const HamburgerMenu = () => {
   const { isAuthenticated } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(true);
@@ -34,6 +36,7 @@ const HamburgerMenu = () => {
       <nav className={`menu ${isMenuOpen ? 'open' : ''}`}>
         <div className="menu-items">
           <Link to="/applicants">Applicants</Link>
+          {permissions.canManageUsers() && <Link to="/users">Users</Link>}
           <Link to="/logout">Log Out</Link>
         </div>
       </nav>

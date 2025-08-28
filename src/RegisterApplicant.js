@@ -133,12 +133,9 @@ const RegisterApplicant = () => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        console.log('Response:', response);
         return response;
       })
       .then(data => {
-        console.log('Success:', data);
-        // Reset form fields after successful submission if needed
         setEmail('');
         setPassword('');
         setScheduleId('');
