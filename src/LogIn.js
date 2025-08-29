@@ -6,6 +6,7 @@ const LogIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const permissionsErrorMsg = "Please contact the administrator to grant you access to the system.";
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -54,6 +55,13 @@ const LogIn = () => {
             if (permissionsResponse.status === 200) {
               const permissionsData = await permissionsResponse.json();
               sessionStorage.setItem("fastVisa_permissions", JSON.stringify(permissionsData));
+              if (!permissionsData || permissionsData.length === 0) {
+                setError(permissionsErrorMsg);
+                return;
+              }
+            } else {
+              setError(permissionsErrorMsg);
+              return;
             }
           } catch (permError) {
             console.error('Error fetching permissions:', permError);
