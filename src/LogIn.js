@@ -55,10 +55,6 @@ const LogIn = () => {
             if (permissionsResponse.status === 200) {
               const permissionsData = await permissionsResponse.json();
               sessionStorage.setItem("fastVisa_permissions", JSON.stringify(permissionsData));
-              if (!permissionsData || permissionsData.length === 0) {
-                setError(permissionsErrorMsg);
-                return;
-              }
             } else {
               setError(permissionsErrorMsg);
               return;
