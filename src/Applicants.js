@@ -25,6 +25,7 @@ const Applicants = () => {
     const includeFields = ['ais_schedule_id', 'ais_username', 'name', 'applicant_active', 'target_end_date', 'search_status'];
     // Use centralized permissions utility
     const canViewAllApplicants = permissions.canViewAllApplicants();
+    const canResetStatus = permissions.canResetStatus();
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -236,7 +237,7 @@ const Applicants = () => {
                             )}
                             {renderActionButton(item.id, item.search_status)}
                             {renderViewButton(item.id)}
-                            {renderResetStatusButton(item.id)}
+                            {canResetStatus && renderResetStatusButton(item.id)}
                             {renderPasswordButton(item.id)}
                         </tr>
                     ))}
