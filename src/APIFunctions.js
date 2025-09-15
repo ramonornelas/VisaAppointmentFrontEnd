@@ -239,26 +239,6 @@ const GetApplicantPassword = async (applicant_userid) => {
   }
 };
 
-const GetApplicantEmail = async (applicant_userid) => {
-  try {
-    const response = await fetch(`${BASE_URL}/applicants/${applicant_userid}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (response.status === 200) {
-      return await response.json();
-    } else {
-      throw new Error("Failed to fetch applicant email");
-    }
-  } catch (error) {
-    console.error("Error:", error);
-  }
-};
-
 export {
   UserDetails,
   ApplicantSearch,
@@ -268,7 +248,6 @@ export {
   StopApplicantContainer,
   ApplicantDelete,
   GetApplicantPassword,
-  GetApplicantEmail,
   getUsers,
   updateUser,
   getRoles,

@@ -8,7 +8,7 @@ import {
   StartApplicantContainer,
   StopApplicantContainer,
   ApplicantUpdate,
-  GetApplicantEmail,
+  ApplicantDetails,
 } from "./APIFunctions";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./utils/AuthContext";
@@ -155,7 +155,7 @@ const Applicants = () => {
 
   const handleCopyEmail = async (id) => {
     try {
-      const response = await GetApplicantEmail(id);
+      const response = await ApplicantDetails(id);
       const email = response.ais_username;
       await navigator.clipboard.writeText(email);
       alert("Email copied to clipboard");

@@ -6,7 +6,6 @@ import Footer from "./Footer";
 import {
   ApplicantDetails,
   ApplicantSearch,
-  GetApplicantEmail,
   StartApplicantContainer,
   StopApplicantContainer,
 } from "./APIFunctions";
@@ -63,7 +62,7 @@ const ViewApplicant = () => {
 
   const handleCopyEmail = async (id) => {
     try {
-      const response = await GetApplicantEmail(id);
+      const response = await ApplicantDetails(id);
       const email = response.ais_username;
       await navigator.clipboard.writeText(email);
       alert("Email copied to clipboard");
