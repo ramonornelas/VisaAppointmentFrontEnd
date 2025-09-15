@@ -1,22 +1,22 @@
-import { BASE_URL } from './config.js';
+import { BASE_URL } from "./config.js";
 
 // Get all users
 const getUsers = async () => {
   try {
     const response = await fetch(`${BASE_URL}/users`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     });
     if (response.status === 200) {
       return await response.json();
     } else {
-      throw new Error('Failed to fetch users');
+      throw new Error("Failed to fetch users");
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return [];
   }
 };
@@ -25,19 +25,19 @@ const getUsers = async () => {
 const getRoles = async () => {
   try {
     const response = await fetch(`${BASE_URL}/roles`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     });
     if (response.status === 200) {
       return await response.json();
     } else {
-      throw new Error('Failed to fetch roles');
+      throw new Error("Failed to fetch roles");
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return [];
   }
 };
@@ -46,21 +46,21 @@ const getRoles = async () => {
 const updateUser = async (id, userData) => {
   try {
     const body = JSON.stringify(userData);
-  const response = await fetch(`${BASE_URL}/users/${id}`, {
-      method: 'PUT',
+    const response = await fetch(`${BASE_URL}/users/${id}`, {
+      method: "PUT",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
       body,
     });
     if (response.status === 200) {
       return await response.json();
     } else {
-      throw new Error('Failed to update user');
+      throw new Error("Failed to update user");
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return null;
   }
 };
@@ -68,20 +68,20 @@ const updateUser = async (id, userData) => {
 const UserDetails = async (fastVisa_userid) => {
   try {
     const response = await fetch(`${BASE_URL}/users/${fastVisa_userid}`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     });
 
     if (response.status === 200) {
       return await response.json();
     } else {
-      throw new Error('Failed to fetch user data');
+      throw new Error("Failed to fetch user data");
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
 };
 
@@ -89,10 +89,10 @@ const ApplicantSearch = async (fastVisa_userid) => {
   const requestBody = { fastVisa_userid };
   try {
     const response = await fetch(`${BASE_URL}/applicants/search`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
     });
@@ -100,40 +100,40 @@ const ApplicantSearch = async (fastVisa_userid) => {
     if (response.status === 200) {
       return await response.json();
     } else {
-      throw new Error('Failed to fetch applicant data');
+      throw new Error("Failed to fetch applicant data");
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
 };
 
 const ApplicantDetails = async (applicant_userid) => {
   try {
     const response = await fetch(`${BASE_URL}/applicants/${applicant_userid}`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     });
 
     if (response.status === 200) {
       return await response.json();
     } else {
-      throw new Error('Failed to fetch applicant data');
+      throw new Error("Failed to fetch applicant data");
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
 };
 
 const ApplicantUpdate = async (applicant_userid, requestBody) => {
   try {
     const response = await fetch(`${BASE_URL}/applicants/${applicant_userid}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
     });
@@ -141,20 +141,20 @@ const ApplicantUpdate = async (applicant_userid, requestBody) => {
     if (response.status === 200) {
       return await response.json();
     } else {
-      throw new Error('Failed to update applicant data');
+      throw new Error("Failed to update applicant data");
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
 };
 
 const ApplicantDelete = async (applicant_userid) => {
   try {
     const response = await fetch(`${BASE_URL}/applicants/${applicant_userid}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     });
 
@@ -164,10 +164,10 @@ const ApplicantDelete = async (applicant_userid) => {
     } else if (response.status === 200) {
       return await response.json();
     } else {
-      throw new Error('Failed to delete applicant');
+      throw new Error("Failed to delete applicant");
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return { success: false, error };
   }
 };
@@ -176,10 +176,10 @@ const StartApplicantContainer = async (applicant_userid) => {
   const requestBody = { applicant_id: applicant_userid };
   try {
     const response = await fetch(`${BASE_URL}/applicants/start`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
     });
@@ -187,10 +187,10 @@ const StartApplicantContainer = async (applicant_userid) => {
     if (response.status === 200) {
       return await response.json();
     } else {
-      throw new Error('Failed to start container');
+      throw new Error("Failed to start container");
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
 };
 
@@ -198,10 +198,10 @@ const StopApplicantContainer = async (applicant_userid) => {
   const requestBody = { applicant_id: applicant_userid };
   try {
     const response = await fetch(`${BASE_URL}/applicants/stop`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
     });
@@ -209,43 +209,67 @@ const StopApplicantContainer = async (applicant_userid) => {
     if (response.status === 200) {
       return await response.json();
     } else {
-      throw new Error('Failed to stop container');
+      throw new Error("Failed to stop container");
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
 };
 
 const GetApplicantPassword = async (applicant_userid) => {
   try {
-    const response = await fetch(`${BASE_URL}/applicants/${applicant_userid}/password`, {
-      method: 'GET',
+    const response = await fetch(
+      `${BASE_URL}/applicants/${applicant_userid}/password`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to fetch applicant password");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
+const GetApplicantEmail = async (applicant_userid) => {
+  try {
+    const response = await fetch(`${BASE_URL}/applicants/${applicant_userid}`, {
+      method: "GET",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     });
 
     if (response.status === 200) {
       return await response.json();
     } else {
-      throw new Error('Failed to fetch applicant password');
+      throw new Error("Failed to fetch applicant email");
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
 };
 
-export { 
-  UserDetails, 
-  ApplicantSearch, 
-  ApplicantDetails, 
-  ApplicantUpdate, 
-  StartApplicantContainer, 
-  StopApplicantContainer, 
-  ApplicantDelete, 
-  GetApplicantPassword 
-  , getUsers
-  , updateUser
-  , getRoles
+export {
+  UserDetails,
+  ApplicantSearch,
+  ApplicantDetails,
+  ApplicantUpdate,
+  StartApplicantContainer,
+  StopApplicantContainer,
+  ApplicantDelete,
+  GetApplicantPassword,
+  GetApplicantEmail,
+  getUsers,
+  updateUser,
+  getRoles,
 };
