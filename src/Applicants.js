@@ -306,7 +306,7 @@ const Applicants = () => {
               <th>Target End Date</th>
               <th>Search Status</th>
               {canViewAllApplicants && <th>Registered By</th>}
-              <th colSpan={4} style={{ textAlign: "center" }}>
+              <th colSpan={5} style={{ textAlign: "center" }}>
                 Actions
               </th>
             </tr>
