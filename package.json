@@ -3,13 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@paypal/react-paypal-js": "^8.9.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "i18next": "^25.6.0",
     "react": "^16.14.0",
     "react-dom": "^16.12.0",
+    "react-i18next": "^16.2.1",
     "react-router-dom": "^6.22.3",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "react-select": "^5.10.2"
   },
   "scripts": {
     "start": "react-scripts start",

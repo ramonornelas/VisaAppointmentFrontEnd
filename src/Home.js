@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
+import PremiumBanner from './PremiumBanner';
 import { UserDetails } from './APIFunctions';
 import { useNavigate } from 'react-router-dom';   
 import { useAuth } from './utils/AuthContext';
 import { APP_TITLE } from './constants';
+
+import LanguageSelector from './LanguageSelector';
 
 const Home = () => {
     const [userData, setUserData] = useState(null);
@@ -50,8 +53,10 @@ const Home = () => {
             <div className="content-wrap">
             <HamburgerMenu />
             <div style={{ marginBottom: '5px' }}></div>
+            <LanguageSelector />
             <Banner />
             <div style={{ marginBottom: '5px' }}></div>
+            <PremiumBanner />
             <p className="username-right">{username}</p>
             <h2>{APP_TITLE}</h2>
             {filteredUserData && (

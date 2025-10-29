@@ -1,26 +1,99 @@
 // HamburgerMenu.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
+import { UserDetails, getRoles } from './APIFunctions';
 import './HamburgerMenu.css';
 
 import { permissions } from './utils/permissions';
 
 const HamburgerMenu = () => {
   const { isAuthenticated } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [userRole, setUserRole] = useState('');
+  const userMenuRef = useRef(null);
+  const fastVisa_userid = sessionStorage.getItem('fastVisa_userid');
+  const fastVisa_username = sessionStorage.getItem('fastVisa_username');
+  const fastVisa_name = sessionStorage.getItem('fastVisa_name');
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    // Menu is now always open
+  };
+
+  const toggleUserMenu = () => {
+    setShowUserMenu((prev) => !prev);
+  };
+  // Close user menu when clicking outside
+  useEffect(() => {
+    if (!showUserMenu) return;
+    function handleClickOutside(event) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setShowUserMenu(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserMenu]);
+
+  const getUserInitial = () => {
+    if (fastVisa_name && fastVisa_name.trim().length > 0) {
+      return fastVisa_name.charAt(0).toUpperCase();
+    } else if (fastVisa_username && fastVisa_username.trim().length > 0) {
+      return fastVisa_username.charAt(0).toUpperCase();
+    }
+    return '';
+  };
+
+  const mapRoleName = (roleName) => {
+    const roleMap = {
+      'basic_user': 'Basic user',
+      'visa_agent': 'Visa agent',
+      'administrator': 'Administrator',
+      'premium_user': 'Premium user'
+    };
+    return roleMap[roleName] || roleName;
   };
 
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.classList.add('menu-open');
-    } else {
-      document.body.classList.remove('menu-open');
-    }
-  }, [isMenuOpen]);
+    const checkUserRoleAndName = async () => {
+      try {
+        if (!fastVisa_userid || !isAuthenticated) {
+          setShowUpgrade(false);
+          return;
+        }
+
+        const [userData, rolesData] = await Promise.all([
+          UserDetails(fastVisa_userid),
+          getRoles()
+        ]);
+
+        if (userData && rolesData) {
+          const currentRole = rolesData.find(role => role.id === userData.role_id);
+          const roleName = currentRole ? currentRole.name : 'unknown';
+          setUserRole(roleName);
+          setShowUpgrade(roleName === 'basic_user');
+
+          // Store user's name in sessionStorage if not already present
+          if (userData.name && sessionStorage.getItem('fastVisa_name') !== userData.name) {
+            sessionStorage.setItem('fastVisa_name', userData.name);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking user role or name:', error);
+        setShowUpgrade(false);
+      }
+    };
+
+    checkUserRoleAndName();
+  }, [fastVisa_userid, isAuthenticated]);
+
+  useEffect(() => {
+    // Menu is now always visible
+    document.body.classList.add('menu-open');
+  }, []);
 
   if (!isAuthenticated) {
     return null;
@@ -28,16 +101,52 @@ const HamburgerMenu = () => {
   
   return (
     <div className="hamburger-menu-icon">
-      <div className={`menu-icon ${isMenuOpen ? 'open' : ''}`} onClick={toggleMenu}>
-        <div className="line"></div>
-        <div className="line"></div>
-        <div className="line"></div>
-      </div>
-      <nav className={`menu ${isMenuOpen ? 'open' : ''}`}>
+      <nav className="menu open">
         <div className="menu-items">
-          <Link to="/applicants">Applicants</Link>
-          {permissions.canManageUsers() && <Link to="/users">Users</Link>}
-          <Link to="/logout">Log Out</Link>
+          {showUpgrade && (
+            <div className="menu-item premium-section">
+              <Link to="/premium-upgrade" className="premium-link shiny-btn">
+                <i className="fas fa-crown"></i>
+                <span className="menu-text">Upgrade to Premium</span>
+              </Link>
+            </div>
+          )}
+          <div className="regular-menu-items">
+            <Link to="/applicants" className={showUpgrade ? "first-after-premium" : ""} title="Applicants">
+              <i className="fas fa-users"></i>
+            </Link>
+            {permissions.canManageUsers() && (
+              <Link to="/users" title="Users">
+                <i className="fas fa-user-cog"></i>
+              </Link>
+            )}
+            <div className="user-menu-container" ref={userMenuRef}>
+              <div className="user-initial" onClick={toggleUserMenu} title="User Menu">
+                {getUserInitial()}
+              </div>
+              {showUserMenu && (
+                <div className="user-dropdown">
+                  <div className="user-info">
+                    <div className="user-name">
+                      {fastVisa_name && fastVisa_name.trim().length > 0 ? (
+                        <>
+                          <span style={{ fontWeight: 'bold' }}>{fastVisa_name}</span>
+                          <br />
+                          <span style={{ color: '#888', fontSize: '0.95em' }}>{fastVisa_username}</span>
+                        </>
+                      ) : (
+                        fastVisa_username || 'User'
+                      )}
+                    </div>
+                    <div className="user-role">{mapRoleName(userRole)}</div>
+                  </div>
+                  <Link to="/logout" className="logout-link" title="Log Out">
+                    <i className="fas fa-sign-out-alt"></i>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </nav>
     </div>

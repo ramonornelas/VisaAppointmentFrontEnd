@@ -55,8 +55,11 @@ body {
 }
 
 .banner-image {
-  max-width: 10%;
+  max-width: 120px;
+  min-width: 80px;
+  width: 20vw;
   height: auto;
+  display: block;
 }
 
 .footer {
@@ -93,16 +96,19 @@ body {
   display: flex;
   align-items: center;
   margin-bottom: 5px;
+  justify-content: flex-start;
 }
 
 .form-field label {
   width: 200px;
   /* Adjust the width as needed */
   margin-right: 10px;
+  text-align: left;
 }
 
 .form-field input,
 .form-field select,
 .form-field textarea {
   flex: 0 1 auto;
+  text-align: left;
 }

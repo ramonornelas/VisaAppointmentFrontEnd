@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Banner from "./Banner";
 import HamburgerMenu from "./HamburgerMenu";
-import Footer from "./Footer";
 import {
   ApplicantSearch,
   GetApplicantPassword,
@@ -13,6 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./utils/AuthContext";
 import "./index.css";
+import "./Applicants.css";
 import { permissions } from "./utils/permissions";
 
 const Applicants = () => {
@@ -21,9 +21,8 @@ const Applicants = () => {
   const [allRegisteredUsers, setAllRegisteredUsers] = useState([]);
   const [registeredByFilter, setRegisteredByFilter] = useState("");
   const [filterActive, setFilterActive] = useState(true);
-  const [filterRunning, setFilterRunning] = useState(true);
+  const [filterRunning, setFilterRunning] = useState(false);
   const fastVisaUserId = sessionStorage.getItem("fastVisa_userid");
-  const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
   const navigate = useNavigate();
   const [refreshFlag, setRefreshFlag] = useState(false);
 
@@ -33,8 +32,8 @@ const Applicants = () => {
     "ais_username",
     "name",
     "applicant_active",
-    "target_end_date",
     "search_status",
+    "target_end_date",
   ];
   // Use centralized permissions utility
   const canViewAllApplicants = permissions.canViewAllApplicants();
@@ -86,13 +85,12 @@ const Applicants = () => {
       }
     };
 
-    if (fastVisaUsername || fastVisaUserId) {
+    if (fastVisaUserId) {
       fetchData();
     }
   }, [
     isAuthenticated,
     fastVisaUserId,
-    fastVisaUsername,
     filterActive,
     filterRunning,
     registeredByFilter,
@@ -102,7 +100,11 @@ const Applicants = () => {
   ]);
 
   const handleRegisterApplicant = () => {
-    navigate("/RegisterApplicant");
+    navigate("/applicant-form");
+  };
+
+  const handleEditApplicant = (id) => {
+    navigate(`/applicant-form?id=${id}`);
   };
 
   const handleView = (id) => {
@@ -183,171 +185,297 @@ const Applicants = () => {
     }
   };
 
-  const renderViewButton = (id) => (
-    <td key={`edit-${id}`} style={{ textAlign: "left" }}>
-      <button onClick={() => handleView(id)}>View Details</button>
+
+  const renderBooleanValue = (value) => (
+    <span style={{
+      display: 'inline-block',
+      padding: '2px 10px',
+      borderRadius: '12px',
+      fontWeight: 600,
+      fontSize: '0.95em',
+      color: value ? '#fff' : '#888',
+      background: value ? '#4caf50' : '#e0e0e0',
+      letterSpacing: '0.5px',
+      minWidth: 60,
+      textAlign: 'center',
+    }}>{value ? "Active" : "Inactive"}</span>
+  );
+
+  const renderSearchStatusBadge = (status) => {
+    const statusStyles = {
+      'Running': {
+        background: '#2196f3',
+        color: '#fff',
+      },
+      'Inactive': {
+        background: '#e0e0e0',
+        color: '#888',
+      },
+      'Stopped': {
+        background: '#ff9800',
+        color: '#fff',
+      },
+      'Error': {
+        background: '#f44336',
+        color: '#fff',
+      },
+      'Completed': {
+        background: '#4caf50',
+        color: '#fff',
+      },
+    };
+
+    const style = statusStyles[status] || { background: '#9e9e9e', color: '#fff' };
+
+    return (
+      <span style={{
+        display: 'inline-block',
+        padding: '2px 10px',
+        borderRadius: '12px',
+        fontWeight: 600,
+        fontSize: '0.95em',
+        color: style.color,
+        background: style.background,
+        letterSpacing: '0.5px',
+        minWidth: 60,
+        textAlign: 'center',
+      }}>{status}</span>
+    );
+  };
+
+  const renderActionButton = (id, isActive) => (
+    <td key={`toggle-${id}`} style={{ textAlign: "center" }}>
+      <button
+        className="applicants-action-btn"
+        title={isActive === "Inactive" ? "Start Search" : "Stop Search"}
+        onClick={() => handleAction(id, isActive)}
+      >
+        <i className={isActive === "Inactive" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
+      </button>
     </td>
   );
 
-  const renderBooleanValue = (value) => (
-    <span>{value ? "Active" : "Inactive"}</span>
-  );
-
-  const renderActionButton = (id, isActive) => (
-    <td key={`toggle-${id}`} style={{ textAlign: "left" }}>
-      <button onClick={() => handleAction(id, isActive)}>
-        {isActive === "Inactive" ? "Start Search" : "Stop Search"}
+  const renderViewButton = (id) => (
+    <td key={`edit-${id}`} style={{ textAlign: "center" }}>
+      <button
+        className="applicants-action-btn"
+        title="View Details"
+        onClick={() => handleView(id)}
+      >
+        <i className="fas fa-eye"></i>
       </button>
     </td>
   );
 
   const renderPasswordButton = (id) => (
-    <td key={`password-${id}`} style={{ textAlign: "left" }}>
-      <button onClick={() => handleCopyPassword(id)}>
+    <td key={`password-${id}`} style={{ textAlign: "center" }}>
+      <button
+        className="applicants-action-btn"
+        title="Copy Password"
+        onClick={() => handleCopyPassword(id)}
+      >
         <i className="fas fa-key"></i>
       </button>
     </td>
   );
 
   const renderEmailButton = (id) => (
-    <td key={`email-${id}`} style={{ textAlign: "left" }}>
-      <button onClick={() => handleCopyEmail(id)}>
+    <td key={`email-${id}`} style={{ textAlign: "center" }}>
+      <button
+        className="applicants-action-btn"
+        title="Copy Email"
+        onClick={() => handleCopyEmail(id)}
+      >
         <i className="fas fa-envelope"></i>
       </button>
     </td>
   );
 
   const renderResetStatusButton = (id) => (
-    <td key={`reset-${id}`} style={{ textAlign: "left" }}>
-      <button onClick={() => handleResetStatus(id)}>Reset Status</button>
+    <td key={`reset-${id}`} style={{ textAlign: "center" }}>
+      <button
+        className="applicants-action-btn"
+        title="Reset Status"
+        onClick={() => handleResetStatus(id)}
+      >
+        <i className="fas fa-undo"></i>
+      </button>
     </td>
   );
 
   return (
-    <div className="page-container">
-      <div className="content-wrap">
-        <HamburgerMenu />
-        <div style={{ marginBottom: "5px" }}></div>
-        <Banner />
-        <div style={{ marginBottom: "5px" }}></div>
-        <p className="username-right">{fastVisaUsername}</p>
-        <h2>Applicants</h2>
-        <div style={{ marginBottom: "5px" }}></div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            marginBottom: "5px",
-          }}
-        >
-          <div
-            className="toggle-switch"
-            title="Filter only active"
-            onClick={() => setFilterActive(!filterActive)}
-          >
-            <div
-              className={`switch-track${filterActive ? " active" : ""}`}
-            ></div>
-            <div
-              className={`switch-thumb${filterActive ? " active" : ""}`}
-            ></div>
+    <>
+      <HamburgerMenu />
+      <div className="applicants-main-container">
+        <h2 className="applicants-title">Applicants</h2>
+        <div className="applicants-filters-bar">
+        <div className="applicants-filters">
+          <div className="toggle-switch" title="Filter only active" onClick={() => setFilterActive(!filterActive)}>
+            <div className={`switch-track${filterActive ? " active" : ""}`}></div>
+            <div className={`switch-thumb${filterActive ? " active" : ""}`}></div>
           </div>
-          <span style={{ fontWeight: "bold" }}>Only active</span>
-          <div
-            className="toggle-switch"
-            title="Filter only Running"
-            onClick={() => setFilterRunning(!filterRunning)}
-          >
-            <div
-              className={`switch-track${filterRunning ? " active" : ""}`}
-            ></div>
-            <div
-              className={`switch-thumb${filterRunning ? " active" : ""}`}
-            ></div>
+          <label>Only Active</label>
+          <div className="toggle-switch" title="Filter only Running" onClick={() => setFilterRunning(!filterRunning)}>
+            <div className={`switch-track${filterRunning ? " active" : ""}`}></div>
+            <div className={`switch-thumb${filterRunning ? " active" : ""}`}></div>
           </div>
-          <span style={{ fontWeight: "bold" }}>Only Running</span>
+          <label>Only Running</label>
+          {canViewAllApplicants && allRegisteredUsers.length > 0 && (
+            <>
+              <label htmlFor="registeredByFilter" style={{ marginLeft: '48px' }}>Registered by:</label>
+              <select
+                id="registeredByFilter"
+                value={registeredByFilter}
+                onChange={(e) => setRegisteredByFilter(e.target.value)}
+                style={{ minWidth: 120, padding: '4px 8px', borderRadius: 5, border: '1px solid #e3eaf3' }}
+              >
+                <option value="">All</option>
+                {allRegisteredUsers.map((username) => (
+                  <option key={username} value={username}>
+                    {username}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
         </div>
-        {/* Dropdown para filtrar por Registered By solo para admin, en renglón aparte con más separación */}
-        {canViewAllApplicants && allRegisteredUsers.length > 0 && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              marginBottom: "20px",
-              marginTop: "20px",
-            }}
-          >
-            <label htmlFor="registeredByFilter" style={{ fontWeight: "bold" }}>
-              Registered by:&nbsp;
-            </label>
-            <select
-              id="registeredByFilter"
-              value={registeredByFilter}
-              onChange={(e) => setRegisteredByFilter(e.target.value)}
-            >
-              <option value="">All</option>
-              {allRegisteredUsers.map((username) => (
-                <option key={username} value={username}>
-                  {username}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-        <table className="table-content" style={{ textAlign: "left" }}>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button className="applicants-register-btn" onClick={handleRegisterApplicant}>
+            <i className="fas fa-user-plus" style={{marginRight: 8}}></i>Register Applicant
+          </button>
+        </div>
+      </div>
+      <div className="applicants-table-container">
+        <table className="applicants-table">
           <thead>
             <tr>
               <th>AIS ID</th>
               <th>AIS Username</th>
               <th>Name</th>
               <th>Applicant Status</th>
-              <th>Target End Date</th>
               <th>Search Status</th>
+              <th>Target End Date</th>
               {canViewAllApplicants && <th>Registered By</th>}
-              <th colSpan={5} style={{ textAlign: "center" }}>
-                Actions
-              </th>
             </tr>
           </thead>
           <tbody>
-            {data &&
+            {data && data.length > 0 ? (
               data.map((item, index) => (
                 <tr key={item.id || index}>
                   {includeFields.map((field) => (
-                    <td
-                      key={`${item.id}-${field}`}
-                      style={{ textAlign: "left" }}
-                    >
+                    <td key={`${item.id}-${field}`} style={{ textAlign: "left" }}>
                       {field === "applicant_active"
                         ? renderBooleanValue(item[field])
+                        : field === "search_status"
+                        ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {renderSearchStatusBadge(item[field])}
+                            <button
+                              className="applicants-action-btn"
+                              title={item.search_status === "Inactive" ? "Start Search" : "Stop Search"}
+                              onClick={() => handleAction(item.id, item.search_status)}
+                              style={{ padding: '4px 8px', fontSize: '12px' }}
+                            >
+                              <i className={item.search_status === "Inactive" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
+                            </button>
+                            {canResetStatus && (
+                              <button
+                                className="applicants-action-btn"
+                                title="Reset Status"
+                                onClick={() => handleResetStatus(item.id)}
+                                style={{ padding: '4px 8px', fontSize: '12px' }}
+                              >
+                                <i className="fas fa-undo"></i>
+                              </button>
+                            )}
+                          </div>
+                        )
+                        : field === "ais_schedule_id"
+                        ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <a
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleView(item.id);
+                              }}
+                              className="applicants-id-link"
+                              title="Click to view details"
+                            >
+                              {item[field]}
+                            </a>
+                            <button
+                              className="applicants-action-btn"
+                              title="Edit with new form"
+                              onClick={() => handleEditApplicant(item.id)}
+                              style={{ padding: '6px 10px', fontSize: '14px' }}
+                            >
+                              <i className="fas fa-edit"></i>
+                            </button>
+                          </div>
+                        )
+                        : field === "ais_username"
+                        ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span>{item[field]}</span>
+                            <button
+                              className="applicants-action-btn"
+                              title="Copy Email"
+                              onClick={() => handleCopyEmail(item.id)}
+                              style={{ padding: '4px 8px', fontSize: '12px' }}
+                            >
+                              <i className="fas fa-copy"></i>
+                            </button>
+                            <button
+                              className="applicants-action-btn"
+                              title="Copy Password"
+                              onClick={() => handleCopyPassword(item.id)}
+                              style={{ padding: '4px 8px', fontSize: '12px' }}
+                            >
+                              <i className="fas fa-key"></i>
+                            </button>
+                          </div>
+                        )
                         : item[field]}
                     </td>
                   ))}
                   {canViewAllApplicants && (
-                    <td
-                      key={`${item.id}-registeredby`}
-                      style={{ textAlign: "left" }}
-                    >
+                    <td key={`${item.id}-registeredby`} style={{ textAlign: "left" }}>
                       {item.fastVisa_username || ""}
                     </td>
                   )}
-                  {renderActionButton(item.id, item.search_status)}
-                  {renderViewButton(item.id)}
-                  {canResetStatus && renderResetStatusButton(item.id)}
-                  {renderPasswordButton(item.id)}
-                  {renderEmailButton(item.id)}
                 </tr>
-              ))}
+              ))
+            ) : (
+              <tr>
+                <td colSpan={canViewAllApplicants ? 7 : 6} style={{ textAlign: "center", padding: "40px 20px" }}>
+                  <div style={{ 
+                    display: "flex", 
+                    flexDirection: "column", 
+                    alignItems: "center", 
+                    justifyContent: "center",
+                    color: "#888",
+                    gap: "15px"
+                  }}>
+                    <i className="fas fa-users" style={{ fontSize: "48px", color: "#ddd" }}></i>
+                    <div style={{ fontSize: "18px", fontWeight: "500", color: "#666" }}>
+                      No applicants found
+                    </div>
+                    <div style={{ fontSize: "14px", color: "#999" }}>
+                      {filterActive || filterRunning || registeredByFilter
+                        ? "Try adjusting your filters or register a new applicant to get started."
+                        : "Click 'Register Applicant' to add your first applicant."}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
-        <div style={{ marginBottom: "5px" }}></div>
-        <button onClick={handleRegisterApplicant}>Register Applicant</button>
       </div>
-      <Footer />
-    </div>
+        </div>
+      </>
   );
-};
+}
 
 export default Applicants;

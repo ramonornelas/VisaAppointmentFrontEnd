@@ -8,7 +8,6 @@ import { useAuth } from './utils/AuthContext';
 const About = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
   
   useEffect(() => {
       if (!isAuthenticated) {
@@ -25,7 +24,6 @@ const About = () => {
       <div style={{ marginBottom: '5px' }}></div>
       <Banner />
       <div style={{ marginBottom: '5px' }}></div>
-      <p className="username-right">{fastVisaUsername}</p>
       <h2>About</h2>
       <p>We are Orion Scaled</p>
       <p>Find your way in IT with Orion Scaled</p>

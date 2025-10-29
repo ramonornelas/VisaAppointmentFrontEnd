@@ -1,0 +1,173 @@
+/* Button row for horizontal alignment */
+.button-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.button-row .registration-button,
+.button-row .cancel-button {
+  width: 100%;
+  margin-top: 0;
+}
+
+@media (max-width: 600px) {
+  .button-row {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+}
+/* RegisterUser.css - Professional, responsive registration form styling */
+
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
+}
+
+.content-wrap {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.registration-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 1rem 2rem 1.5rem 2rem;
+  max-width: 400px;
+  width: 100%;
+  margin: 1rem auto 2rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.registration-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a365d;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.registration-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.7rem;
+}
+
+.form-field label {
+  font-size: 1rem;
+  color: #1a365d;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+  width: 340px;
+  max-width: 95vw;
+  text-align: left;
+}
+
+
+.form-field input,
+.form-field select {
+  width: 340px;
+  max-width: 95vw;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.97rem;
+  background: #f9fafb;
+  transition: border 0.2s;
+  box-sizing: border-box;
+  min-height: 36px;
+  max-height: 40px;
+  margin-left: auto;
+  margin-right: auto;
+}
+/* Make react-select dropdown match the width of other fields */
+.form-field .react-select__control {
+  width: 340px !important;
+  max-width: 95vw !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+.form-field input:focus,
+.form-field select:focus {
+  border: 1.5px solid #2563eb;
+  outline: none;
+  background: #fff;
+}
+
+.form-error {
+  color: #e11d48;
+  font-size: 0.98rem;
+  margin: 0.2rem 0 0.5rem 0;
+  text-align: left;
+}
+
+
+.registration-button,
+.cancel-button {
+  width: 100%;
+  padding: 0.8rem 0;
+  background: linear-gradient(90deg, #60a5fa 0%, #2563eb 100%);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+}
+
+.cancel-button {
+  background: #f87171;
+  color: #fff;
+  margin-top: 0.5rem;
+}
+
+
+.registration-button:hover, .registration-button:focus {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(30,64,175,0.12);
+}
+
+.cancel-button:hover, .cancel-button:focus {
+  background: #dc2626;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .registration-container {
+    max-width: 98vw;
+    padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+    border-radius: 10px;
+  }
+  .registration-title {
+    font-size: 1.4rem;
+  }
+  .registration-form {
+    gap: 0.8rem;
+  }
+}

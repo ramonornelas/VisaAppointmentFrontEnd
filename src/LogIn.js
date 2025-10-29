@@ -1,12 +1,17 @@
+
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Banner from './Banner';
 import Footer from './Footer';
+import './LogIn.css';
+import LanguageSelector from './LanguageSelector';
 
 const LogIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const permissionsErrorMsg = "Please contact the administrator to grant you access to the system.";
+  const { t } = useTranslation();
+  const permissionsErrorMsg = t('permissionsErrorMsg', 'Please contact the administrator to grant you access to the system.');
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -44,10 +49,14 @@ const LogIn = () => {
           const searchusername = searchuserdata[0].username;
           const countryCode = searchuserdata[0].country_code;
           const concurrentApplicants = searchuserdata[0].concurrent_applicants;
+          const searchname = searchuserdata[0].name;
           sessionStorage.setItem("fastVisa_userid", searchuserid);
           sessionStorage.setItem("fastVisa_username", searchusername);
           sessionStorage.setItem("country_code", countryCode);
           sessionStorage.setItem("concurrent_applicants", concurrentApplicants);
+          if (searchname) {
+            sessionStorage.setItem("fastVisa_name", searchname);
+          }
 
           // Fetch and store user permissions
           try {
@@ -78,29 +87,87 @@ const LogIn = () => {
   };
 
   return (
-    <div>
+    <div className="login-root">
+      <LanguageSelector />
       <div className="content-wrap">
-      <div style={{ marginBottom: '5px' }}></div>
-      <Banner />
-      <div style={{ marginBottom: '5px' }}></div>
-      <div style={{ textAlign: 'center' }}>
-        <h2>Welcome to FastVisa</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="username">Username:</label>
-            <input type="text" id="username" value={username} onChange={handleUsernameChange} style={{ marginLeft: '1em' }} />
+        <Banner />
+        <div className="login-container">
+          <div style={{height: '24px'}}></div>
+
+          {/* Try the app button - prominently placed before login */}
+          <div style={{ textAlign: 'center', margin: '0 0 30px 0' }}>
+            <button
+              type="button"
+              className="quick-start-button"
+              onClick={() => window.location.href = '/quickstart'}
+              style={{
+                width: '100%',
+                maxWidth: '340px',
+                padding: '14px 24px',
+                backgroundColor: '#10b981',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '17px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                boxShadow: '0 4px 6px rgba(16, 185, 129, 0.3)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = '#059669';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 6px 12px rgba(16, 185, 129, 0.4)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = '#10b981';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 6px rgba(16, 185, 129, 0.3)';
+              }}
+            >
+              ⚡ {t('tryAppNow', 'Try the app now')}
+            </button>
+            <p style={{ color: '#666', fontSize: '14px', marginTop: '8px', marginBottom: '0' }}>
+              {t('noRegistrationRequired', 'No registration required')}
+            </p>
+            <p style={{ color: '#999', fontSize: '14px', marginBottom: '0' }}>
+              {t('orLoginBelow', 'Or login to access all features')}
+            </p>
           </div>
-          <div style={{ marginBottom: '5px' }}></div>
-          <div>
-            <label htmlFor="password">Password:</label>
-            &nbsp;
-            <input type="password" id="password" value={password} onChange={handlePasswordChange} style={{ marginLeft: '1em' }} />
-          </div>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          <div style={{ marginBottom: '5px' }}></div>
-          <button type="submit">Log In</button>
-        </form>
-        <p>Don't have an account? <a href="/registeruser">Register here</a></p>
+
+          <form className="login-form" onSubmit={handleSubmit} autoComplete="on">
+            <div className="input-group">
+              <label htmlFor="username" className="login-label">{t('username', 'E-mail')}</label>
+              <input
+                type="text"
+                id="username"
+                className="login-input"
+                value={username}
+                onChange={handleUsernameChange}
+                autoComplete="username"
+                required
+              />
+            </div>
+            <div className="input-group">
+              <label htmlFor="password" className="login-label">{t('password', 'Password')}</label>
+              <input
+                type="password"
+                id="password"
+                className="login-input"
+                value={password}
+                onChange={handlePasswordChange}
+                autoComplete="current-password"
+                required
+              />
+            </div>
+            {error && <p className="login-error">{error}</p>}
+            <button type="submit" className="login-button">{t('login', 'Log In')}</button>
+          </form>
+          <p className="register-link">{t('noAccount', "Don't have an account?")} <a href="/registeruser">{t('register', 'Register here')}</a></p>
         </div>
       </div>
       <Footer />

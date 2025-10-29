@@ -239,6 +239,30 @@ const GetApplicantPassword = async (applicant_userid) => {
   }
 };
 
+
+// Get PayPal config from API Gateway endpoint
+const getPayPalConfig = async () => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/paypal-config`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to fetch PayPal config");
+    }
+  } catch (error) {
+    console.error("Error fetching PayPal config:", error);
+    return null;
+  }
+};
+
 export {
   UserDetails,
   ApplicantSearch,
@@ -251,4 +275,5 @@ export {
   getUsers,
   updateUser,
   getRoles,
+  getPayPalConfig,
 };

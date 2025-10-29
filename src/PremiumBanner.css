@@ -1,0 +1,92 @@
+/* PremiumBanner.css */
+.premium-banner {
+  background: linear-gradient(135deg, #ff4757 0%, #3742fa 50%, #ffffff 100%);
+  color: white;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(255, 71, 87, 0.2);
+  animation: slideInFromTop 0.5s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.premium-banner-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.premium-banner-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.premium-icon {
+  font-size: 1.5rem;
+  animation: sparkle 2s infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.premium-message {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.premium-banner-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 10px 20px;
+  border: 2px solid white;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.premium-banner-button:hover {
+  background-color: white;
+  color: #ff4757;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .premium-banner-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .premium-banner-text {
+    justify-content: center;
+  }
+  
+  .premium-banner-button {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .premium-message {
+    font-size: 0.9rem;
+  }
+}

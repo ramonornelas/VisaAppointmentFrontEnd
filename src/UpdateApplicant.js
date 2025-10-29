@@ -74,6 +74,7 @@ const UpdateApplicant = ({ data, setIsEditing }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setCityError('');
+
     // Require at least one city if more than one is available
     if (CITIES.length > 1) {
       const selectedCities = (formData.target_city_codes || '').split(',').filter(Boolean);

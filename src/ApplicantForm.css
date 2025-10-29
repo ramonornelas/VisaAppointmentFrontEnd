@@ -1,0 +1,476 @@
+/* ApplicantForm.css - Modern form styling aligned with application theme */
+
+.applicant-form-container {
+  margin-top: 10px;
+  margin-left: 80px;
+  margin-right: 40px;
+  margin-bottom: 60px;
+  max-width: 1200px;
+}
+
+.applicant-form-header {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #e3eaf3;
+}
+
+.applicant-form-header-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  align-items: flex-start;
+  padding-top: 4px;
+}
+
+.applicant-form-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2C6BA0;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  letter-spacing: 0.5px;
+}
+
+.applicant-form-title i {
+  font-size: 2rem;
+}
+
+.applicant-form-subtitle {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+  font-weight: 400;
+}
+
+.applicant-form {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(44, 107, 160, 0.07);
+  padding: 40px;
+}
+
+.applicant-form-section {
+  margin-bottom: 36px;
+  padding-bottom: 36px;
+  border-bottom: 2px solid #e3eaf3;
+}
+
+.applicant-form-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.applicant-form-section-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2C6BA0;
+  margin: 0 0 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.applicant-form-section-title i {
+  color: #2C6BA0;
+  font-size: 1.2rem;
+}
+
+.applicant-form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.applicant-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.applicant-form-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.applicant-form-label .required {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.applicant-form-input {
+  padding: 12px 16px;
+  font-size: 1rem;
+  border: 2px solid #e3eaf3;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  background: #ffffff;
+  width: 100%;
+}
+
+.applicant-form-input:focus {
+  outline: none;
+  border-color: #2C6BA0;
+  box-shadow: 0 0 0 3px rgba(44, 107, 160, 0.1);
+}
+
+.applicant-form-input.error {
+  border-color: #ef4444;
+}
+
+.applicant-form-input.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.applicant-form-input.disabled {
+  background: #f8fafc;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.applicant-form-input-small {
+  max-width: 150px;
+}
+
+.applicant-form-input-medium {
+  max-width: 350px;
+}
+
+.applicant-form-input-date {
+  max-width: 200px;
+}
+
+.applicant-form-error {
+  font-size: 0.875rem;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: -4px;
+}
+
+.applicant-form-error::before {
+  content: "⚠";
+}
+
+.applicant-form-error-banner {
+  background: #fef2f2;
+  border: 2px solid #fecaca;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #991b1b;
+  font-weight: 500;
+}
+
+.applicant-form-error-banner i {
+  font-size: 1.25rem;
+}
+
+.applicant-form-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+}
+
+.applicant-form-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #2C6BA0;
+}
+
+.applicant-form-radio-group {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.applicant-form-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+  padding: 10px 20px;
+  border: 2px solid #e3eaf3;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.applicant-form-radio-label:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.applicant-form-radio-label:has(input:checked) {
+  border-color: #2C6BA0;
+  background: #eaf4fb;
+  color: #2C6BA0;
+  font-weight: 600;
+}
+
+.applicant-form-radio {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #2C6BA0;
+}
+
+.applicant-form-cities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.applicant-form-city-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid #e3eaf3;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  user-select: none;
+}
+
+.applicant-form-city-card:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(44, 107, 160, 0.08);
+}
+
+.applicant-form-city-card:has(input:checked) {
+  border-color: #2C6BA0;
+  background: #eaf4fb;
+  box-shadow: 0 4px 12px rgba(44, 107, 160, 0.15);
+}
+
+.applicant-form-city-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #2C6BA0;
+  flex-shrink: 0;
+}
+
+.applicant-form-city-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.applicant-form-city-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.applicant-form-city-code-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #666;
+  background: #f4f8fb;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.applicant-form-city-card:has(input:checked) .applicant-form-city-name {
+  color: #2C6BA0;
+}
+
+.applicant-form-city-card:has(input:checked) .applicant-form-city-code-badge {
+  background: #2C6BA0;
+  color: #ffffff;
+}
+
+.applicant-form-city-single {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #eaf4fb;
+  border: 2px solid #2C6BA0;
+  border-radius: 10px;
+  color: #2C6BA0;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.applicant-form-city-single i {
+  font-size: 1.2rem;
+}
+
+.applicant-form-city-single .applicant-form-city-code {
+  color: #666;
+  font-weight: 500;
+}
+
+.applicant-form-no-cities {
+  color: #888;
+  font-style: italic;
+  padding: 20px;
+  text-align: center;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.applicant-form-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 2px solid #e3eaf3;
+}
+
+.applicant-form-btn {
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: inherit;
+}
+
+.applicant-form-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.applicant-form-btn i {
+  font-size: 1.1rem;
+}
+
+.applicant-form-btn-cancel {
+  background: #f4f8fb;
+  color: #666;
+  border: 1px solid #e3eaf3;
+}
+
+.applicant-form-btn-cancel:hover:not(:disabled) {
+  background: #e3eaf3;
+  color: #333;
+}
+
+.applicant-form-btn-submit {
+  background: linear-gradient(90deg, #2C6BA0 0%, #4A9EFF 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(44, 107, 160, 0.3);
+}
+
+.applicant-form-btn-submit:hover:not(:disabled) {
+  background: linear-gradient(90deg, #4A9EFF 0%, #2C6BA0 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(44, 107, 160, 0.4);
+}
+
+.applicant-form-btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.applicant-form-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 20px;
+}
+
+.applicant-form-loading i {
+  font-size: 3rem;
+  color: #2C6BA0;
+}
+
+.applicant-form-loading p {
+  font-size: 1.2rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .applicant-form-container {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+  }
+
+  .applicant-form {
+    padding: 24px;
+  }
+
+  .applicant-form-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .applicant-form-header-actions {
+    width: 100%;
+    padding-top: 16px;
+  }
+
+  .applicant-form-header-actions button {
+    flex: 1;
+  }
+
+  .applicant-form-title {
+    font-size: 1.8rem;
+  }
+
+  .applicant-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .applicant-form-cities-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .applicant-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .applicant-form-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .applicant-form-radio-group {
+    flex-direction: column;
+  }
+}
+
+/* Remove dark mode styles to keep consistent with application theme */

@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
-import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';  
 import { useAuth } from './utils/AuthContext';
 import './index.css';
+import './Applicants.css';
 import { ALL_CITIES } from './utils/cities';
 import { NameField, EmailField, PasswordField, ScheduleIdField, NumberOfApplicantsField } from './utils/ApplicantFormFields';
 
 const RegisterApplicant = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const fastVisaUsername = sessionStorage.getItem("fastVisa_username"); 
+  const { isAuthenticated } = useAuth(); 
   
   useEffect(() => {
       if (!isAuthenticated) {
@@ -186,123 +185,137 @@ const RegisterApplicant = () => {
   }, [CITIES]);
 
   return (
-    <div className="page-container">
-      <div className="content-wrap">
+    <>
       <HamburgerMenu />
-      <div style={{ marginBottom: '5px' }}></div>
-      <Banner />
-      <div style={{ marginBottom: '5px' }}></div>
-      <p className="username-right">{fastVisaUsername}</p>
-      <h2>User Data Request Form</h2>
-      <form onSubmit={handleSubmit}>
-        <NameField value={name} onChange={e => { setName(e.target.value); clearError('name'); }} error={errors.name} />
-        <EmailField value={email} onChange={e => { setEmail(e.target.value); clearError('email'); }} error={errors.email} />
-        <PasswordField value={password} onChange={e => { setPassword(e.target.value); clearError('password'); }} error={errors.password} />
-        <ScheduleIdField value={scheduleId} onChange={e => { setScheduleId(e.target.value); clearError('scheduleId'); }} error={errors.scheduleId} />
-        <NumberOfApplicantsField value={numberofapplicants} onChange={e => { setNumberofApplicants(e.target.value); clearError('numberofapplicants'); }} error={errors.numberofapplicants} />
-        <div className="form-field">
-          <label htmlFor="targetStartMode">Target Start Mode: <span style={{ color: 'red' }}>*</span></label>
-          <select
-            id="targetStartMode"
-            value={targetStartMode}
-            onChange={(e) => setTargetStartMode(e.target.value)}
-            required
-          >
-            <option value="date">Date</option>
-            <option value="days">Days</option>
-          </select>
-        </div>
-        {targetStartMode === 'days' && (
-          <div className="form-field">
-            <label htmlFor="targetStartDays">Target Start Days: <span style={{ color: 'red' }}>*</span></label>
-            <input
-              type="number"
-              id="targetStartDays"
-              value={targetStartDays}
-              onChange={(e) => {
-                setTargetStartDays(parseInt(e.target.value));
-                clearError('targetStartDays');
-              }}
-              style={{ borderColor: errors.targetStartDays ? 'red' : '', width: '80px' }}
-              required
-            />
-            {errors.targetStartDays && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.targetStartDays}</div>}
-          </div>
-        )}
-        {targetStartMode === 'date' && (
-          <div className="form-field">
-            <label htmlFor="targetStartDate">Target Start Date: <span style={{ color: 'red' }}>*</span></label>
-            <input
-              type="date"
-              id="targetStartDate"
-              value={targetStartDate}
-              onChange={(e) => {
-                setTargetStartDate(e.target.value);
-                clearError('targetStartDate');
-              }}
-              style={{ borderColor: errors.targetStartDate ? 'red' : '' }}
-              required
-            />
-            {errors.targetStartDate && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.targetStartDate}</div>}
-          </div>
-        )}
-        <div className="form-field">
-          <label htmlFor="targetEndDate">Target End Date: <span style={{ color: 'red' }}>*</span></label>
-          <input
-            type="date"
-            id="targetEndDate"
-            value={targetEndDate}
-            onChange={(e) => {
-              setTargetEndDate(e.target.value);
-              clearError('targetEndDate');
-            }}
-            style={{ borderColor: errors.targetEndDate ? 'red' : '' }}
-            required
-          />
-          {errors.targetEndDate && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.targetEndDate}</div>}
-        </div>
-        <div>
-          <h3>Target Cities</h3>
-          {CITIES.length === 1 ? (
+      <div className="applicants-main-container">
+        <h2 className="applicants-title">Register New Applicant</h2>
+        <div className="applicants-table-container" style={{ padding: '30px' }}>
+          <form onSubmit={handleSubmit}>
+            <NameField value={name} onChange={e => { setName(e.target.value); clearError('name'); }} error={errors.name} />
+            <EmailField value={email} onChange={e => { setEmail(e.target.value); clearError('email'); }} error={errors.email} />
+            <PasswordField value={password} onChange={e => { setPassword(e.target.value); clearError('password'); }} error={errors.password} />
+            <ScheduleIdField value={scheduleId} onChange={e => { setScheduleId(e.target.value); clearError('scheduleId'); }} error={errors.scheduleId} />
+            <NumberOfApplicantsField value={numberofapplicants} onChange={e => { setNumberofApplicants(e.target.value); clearError('numberofapplicants'); }} error={errors.numberofapplicants} />
+            
             <div className="form-field">
-              <input
-                type="checkbox"
-                id={CITIES[0].city_code}
-                value={CITIES[0].city_code}
-                checked={true}
-                disabled
-              />
-              <label htmlFor={CITIES[0].city_code}>{CITIES[0].city_name}</label>
+              <label htmlFor="targetStartMode">Target Start Mode: <span style={{ color: 'red' }}>*</span></label>
+              <select
+                id="targetStartMode"
+                value={targetStartMode}
+                onChange={(e) => setTargetStartMode(e.target.value)}
+                required
+              >
+                <option value="date">Date</option>
+                <option value="days">Days</option>
+              </select>
             </div>
-          ) : (
-            CITIES.map((city) => (
-              <div key={city.city_code} className="form-field">
+            
+            {targetStartMode === 'days' && (
+              <div className="form-field">
+                <label htmlFor="targetStartDays">Target Start Days: <span style={{ color: 'red' }}>*</span></label>
                 <input
-                  type="checkbox"
-                  id={city.city_code}
-                  value={city.city_code}
-                  checked={cityCodes.split(',').includes(city.city_code)}
-                  onChange={handleCityCodeChange}
+                  type="number"
+                  id="targetStartDays"
+                  value={targetStartDays}
+                  onChange={(e) => {
+                    setTargetStartDays(parseInt(e.target.value));
+                    clearError('targetStartDays');
+                  }}
+                  style={{ borderColor: errors.targetStartDays ? 'red' : '', width: '80px' }}
+                  required
                 />
-                <label htmlFor={city.city_code}>{city.city_name}</label>
+                {errors.targetStartDays && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.targetStartDays}</div>}
               </div>
-            ))
-          )}
-          {cityError && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{cityError}</div>}
+            )}
+            
+            {targetStartMode === 'date' && (
+              <div className="form-field">
+                <label htmlFor="targetStartDate">Target Start Date: <span style={{ color: 'red' }}>*</span></label>
+                <input
+                  type="date"
+                  id="targetStartDate"
+                  value={targetStartDate}
+                  onChange={(e) => {
+                    setTargetStartDate(e.target.value);
+                    clearError('targetStartDate');
+                  }}
+                  style={{ borderColor: errors.targetStartDate ? 'red' : '' }}
+                  required
+                />
+                {errors.targetStartDate && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.targetStartDate}</div>}
+              </div>
+            )}
+            
+            <div className="form-field">
+              <label htmlFor="targetEndDate">Target End Date: <span style={{ color: 'red' }}>*</span></label>
+              <input
+                type="date"
+                id="targetEndDate"
+                value={targetEndDate}
+                onChange={(e) => {
+                  setTargetEndDate(e.target.value);
+                  clearError('targetEndDate');
+                }}
+                style={{ borderColor: errors.targetEndDate ? 'red' : '' }}
+                required
+              />
+              {errors.targetEndDate && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.targetEndDate}</div>}
+            </div>
+            
+            <div style={{ marginTop: '20px', marginBottom: '20px' }}>
+              <h3 style={{ color: '#2C6BA0', fontSize: '1.2rem', marginBottom: '15px' }}>Target Cities</h3>
+              {CITIES.length === 1 ? (
+                <div className="form-field">
+                  <input
+                    type="checkbox"
+                    id={CITIES[0].city_code}
+                    value={CITIES[0].city_code}
+                    checked={true}
+                    disabled
+                  />
+                  <label htmlFor={CITIES[0].city_code}>{CITIES[0].city_name}</label>
+                </div>
+              ) : (
+                CITIES.map((city) => (
+                  <div key={city.city_code} className="form-field">
+                    <input
+                      type="checkbox"
+                      id={city.city_code}
+                      value={city.city_code}
+                      checked={cityCodes.split(',').includes(city.city_code)}
+                      onChange={handleCityCodeChange}
+                    />
+                    <label htmlFor={city.city_code}>{city.city_name}</label>
+                  </div>
+                ))
+              )}
+              {cityError && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{cityError}</div>}
+            </div>
+            
+            <div style={{ marginTop: '30px', display: 'flex', gap: '10px', justifyContent: 'flex-start' }}>
+              <button
+                type="button"
+                className="applicants-register-btn"
+                style={{ 
+                  margin: 0,
+                  background: 'linear-gradient(90deg, #6c757d 0%, #495057 100%)'
+                }}
+                onClick={() => navigate('/applicants')}
+              >
+                <i className="fas fa-times" style={{marginRight: 8}}></i>Cancel
+              </button>
+              <button 
+                type="submit"
+                className="applicants-register-btn"
+                style={{ margin: 0 }}
+              >
+                <i className="fas fa-check" style={{marginRight: 8}}></i>Submit
+              </button>
+            </div>
+          </form>
         </div>
-        <div style={{ marginBottom: '20px' }}></div>
-        <button type="submit">Submit</button>
-        <button
-          type="button"
-          style={{ marginLeft: '10px' }}
-          onClick={() => navigate('/applicants')}
-        >
-          Cancel
-        </button>
-      </form>
       </div>
-      <Footer />
-    </div>
+    </>
   );
 };
 

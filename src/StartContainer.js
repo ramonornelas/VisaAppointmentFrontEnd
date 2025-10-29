@@ -8,7 +8,6 @@ import { useAuth } from './utils/AuthContext';
 import './index.css';
 
 const StartContainer = () => {
-    const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
     const applicantUserId = sessionStorage.getItem("applicant_userid");
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
@@ -44,7 +43,6 @@ const StartContainer = () => {
             <div style={{ marginBottom: '5px' }}></div>
             <Banner />
             <div style={{ marginBottom: '5px' }}></div>
-            <p className="username-right">{fastVisaUsername}</p>
             <h2>Applicants</h2>
             <p>Successfully sent request to start search for applicant id: {applicantUserId}</p>
             <p>Search Status will change to "Running" upon completion</p>
