@@ -4,8 +4,9 @@ import PayPalPayment from './PayPalPayment';
 import HamburgerMenu from './HamburgerMenu';
 import Banner from './Banner';
 import Footer from './Footer';
-import { UserDetails, updateUser, getRoles } from './APIFunctions';
+import { UserDetails, updateUser, getRoles, getUSDMXNExchangeRate } from './APIFunctions';
 import './PremiumUpgrade.css';
+
 
 const PremiumUpgrade = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -15,7 +16,16 @@ const PremiumUpgrade = () => {
   const [showPayment, setShowPayment] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState(null);
+  const [priceUSD] = useState(10.0);
+  const [priceMXN, setPriceMXN] = useState(null);
   const navigate = useNavigate();
+
+  // Language detection (from i18n.js or browser)
+  let selectedLanguage = 'en';
+  if (window && window.localStorage) {
+    selectedLanguage = window.localStorage.getItem('i18nextLng') || 'en';
+  }
 
   const fastVisa_userid = sessionStorage.getItem('fastVisa_userid');
 
@@ -53,6 +63,23 @@ const PremiumUpgrade = () => {
 
     fetchUserData();
   }, [fastVisa_userid, navigate]);
+
+  // Fetch exchange rate on mount
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      try {
+        const rate = await getUSDMXNExchangeRate();
+        setExchangeRate(rate);
+        if (rate) {
+          setPriceMXN((priceUSD * rate).toFixed(2));
+        }
+      } catch (err) {
+        setExchangeRate(null);
+        setPriceMXN(null);
+      }
+    };
+    fetchExchangeRate();
+  }, [priceUSD]);
 
   const getCurrentRoleName = () => {
     if (!userDetails || !roles.length) return 'Unknown';
@@ -128,16 +155,22 @@ const PremiumUpgrade = () => {
     setUpgrading(false);
   };
 
+  const MainContainer = ({ children }) => (
+    <div className="main-centered-container">
+      <HamburgerMenu />
+      <Banner />
+      {children}
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="page-container">
-        <div className="content-wrap">
-          <HamburgerMenu />
-          <Banner />
+        <MainContainer>
           <div className="premium-upgrade-container">
             <div className="loading">Loading...</div>
           </div>
-        </div>
+        </MainContainer>
         <Footer />
       </div>
     );
@@ -146,13 +179,11 @@ const PremiumUpgrade = () => {
   if (!userDetails) {
     return (
       <div className="page-container">
-        <div className="content-wrap">
-          <HamburgerMenu />
-          <Banner />
+        <MainContainer>
           <div className="premium-upgrade-container">
             <div className="error">Failed to load user information</div>
           </div>
-        </div>
+        </MainContainer>
         <Footer />
       </div>
     );
@@ -161,9 +192,7 @@ const PremiumUpgrade = () => {
   if (success) {
     return (
       <div className="page-container">
-        <div className="content-wrap">
-          <HamburgerMenu />
-          <Banner />
+        <MainContainer>
           <div className="premium-upgrade-container">
             <div className="success-message">
               <h2>Upgrade Successful!</h2>
@@ -182,7 +211,7 @@ const PremiumUpgrade = () => {
               </div>
             </div>
           </div>
-        </div>
+        </MainContainer>
         <Footer />
       </div>
     );
@@ -190,130 +219,145 @@ const PremiumUpgrade = () => {
 
   return (
     <div className="page-container">
-      <div className="content-wrap">
-        <HamburgerMenu />
-        <Banner />
+      <MainContainer>
         <div className="premium-upgrade-container">
-        <div className="upgrade-header">
-        <h1>Upgrade to Premium</h1>
-        <p className="current-plan">
-          Current Plan: <span className="plan-name">{getCurrentRoleName()}</span>
-        </p>
-      </div>
-
-      {error && (
-        <div className="error-message">
-          {error}
-          <button onClick={() => setError(null)} className="close-error">×</button>
-        </div>
-      )}
-
-      {isPremiumUser() ? (
-        <div className="already-premium">
-          <div className="premium-badge">
-            <h2>✨ You're Already Premium!</h2>
-            <p>You have access to all premium features.</p>
-            <button 
-              onClick={() => navigate('/applicants')} 
-              className="btn btn-primary"
-            >
-              Access Premium Features
-            </button>
+          <div className="upgrade-header">
+            <h1>Upgrade to Premium</h1>
+            <p className="current-plan">
+              Current Plan: <span className="plan-name">{getCurrentRoleName()}</span>
+            </p>
           </div>
-        </div>
-      ) : (
-        <div className="upgrade-content">
-          <div className="plans-comparison">
-            <div className="plan current-plan-card">
-              <h3>Basic Plan</h3>
-              <div className="plan-price">$0/month</div>
-              <ul className="plan-features">
-                <li>✅ Search starts from 6 months ahead</li>
-                <li>✅ Basic notifications every 2 hours</li>
-                <li>✅ Standard search queue</li>
-                <li>❌ Custom notification settings</li>
-                <li>❌ Priority support</li>
-              </ul>
-              <div className="plan-status">Your Current Plan</div>
-            </div>
 
-            <div className="plan premium-plan-card">
-              <div className="popular-badge">Most Popular</div>
-              <h3>Premium Plan</h3>
-              <div className="plan-price">
-                <span className="currency">$</span>10
-                <span className="period">/month</span>
-              </div>
-              <ul className="plan-features">
-                <li>✅ All basic features</li>
-                <li>🚀 Search can start as early as tomorrow</li>
-                <li>🔔 Customizable notifications (when & how you want)</li>
-                <li>⭐ Priority search queue</li>
-                <li>🛡️ Priority customer support</li>
-              </ul>
-              
-              {!showPayment ? (
+          {error && (
+            <div className="error-message">
+              {error}
+              <button onClick={() => setError(null)} className="close-error">×</button>
+            </div>
+          )}
+
+          {isPremiumUser() ? (
+            <div className="already-premium">
+              <div className="premium-badge">
+                <h2>✨ You're Already Premium!</h2>
+                <p>You have access to all premium features.</p>
                 <button 
-                  onClick={handleUpgradeClick}
-                  className="btn btn-upgrade"
-                  disabled={upgrading}
+                  onClick={() => navigate('/applicants')} 
+                  className="btn btn-primary"
                 >
-                  {upgrading ? 'Processing...' : 'Upgrade Now'}
+                  Access Premium Features
                 </button>
-              ) : (
-                <div className="payment-section">
-                  <h4>Complete Your Upgrade</h4>
-                  <p>Secure payment powered by PayPal</p>
-                  <PayPalPayment
-                    amount="1.00"
-                    amountMXN="20.00"
-                    defaultCurrency="USD"
-                    description="FastVisa Premium Upgrade"
-                    onSuccess={handlePaymentSuccess}
-                    onError={handlePaymentError}
-                    onCancel={handlePaymentCancel}
-                  />
-                  <button 
-                    onClick={() => setShowPayment(false)}
-                    className="btn btn-cancel"
-                  >
-                    Cancel
-                  </button>
+              </div>
+            </div>
+          ) : (
+            <div className="upgrade-content">
+              <div className="plans-comparison">
+                <div className="plan current-plan-card">
+                  <h3>Basic Plan</h3>
+                  <div className="plan-price">$0/month</div>
+                  <ul className="plan-features">
+                    <li>✅ Search starts from 6 months ahead</li>
+                    <li>✅ Basic notifications every 2 hours</li>
+                    <li>✅ Standard search queue</li>
+                    <li>❌ Custom notification settings</li>
+                    <li>❌ Priority support</li>
+                  </ul>
+                  <div className="plan-status">Your Current Plan</div>
                 </div>
-              )}
+
+                <div className="plan premium-plan-card">
+                  <div className="popular-badge">Most Popular</div>
+                  <h3>Premium Plan</h3>
+                  <div className="plan-price">
+                    {selectedLanguage === 'es' ? (
+                      <>
+                        <span className="currency">$</span>
+                        {priceMXN === null
+                          ? <span className="loading-rate">Cargando...</span>
+                          : priceMXN}
+                        <span className="currency-code"> MXN</span>
+                        <span className="period">/mes</span>
+                        {exchangeRate === null && (
+                          <div className="exchange-error" style={{fontSize: '0.8rem', color: '#c00'}}>
+                            No se pudo obtener el tipo de cambio. El precio puede variar.
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <span className="currency">$</span>{priceUSD}
+                        <span className="currency-code"> USD</span>
+                        <span className="period">/month</span>
+                      </>
+                    )}
+                  </div>
+                  <ul className="plan-features">
+                    <li>✅ All basic features</li>
+                    <li>🚀 Search can start as early as tomorrow</li>
+                    <li>🔔 Customizable notifications (when & how you want)</li>
+                    <li>⭐ Priority search queue</li>
+                    <li>🛡️ Priority customer support</li>
+                  </ul>
+                  {!showPayment ? (
+                    <button 
+                      onClick={handleUpgradeClick}
+                      className="btn btn-upgrade"
+                      disabled={upgrading}
+                    >
+                      {upgrading ? (selectedLanguage === 'es' ? 'Procesando...' : 'Processing...') : (selectedLanguage === 'es' ? 'Actualizar ahora' : 'Upgrade Now')}
+                    </button>
+                  ) : (
+                    <div className="payment-section">
+                      <h4>{selectedLanguage === 'es' ? 'Completa tu actualización' : 'Complete Your Upgrade'}</h4>
+                      <p>{selectedLanguage === 'es' ? 'Pago seguro con PayPal' : 'Secure payment powered by PayPal'}</p>
+                      <PayPalPayment
+                        amount={priceUSD}
+                        amountMXN={priceMXN}
+                        defaultCurrency={selectedLanguage === 'es' ? 'MXN' : 'USD'}
+                        description={selectedLanguage === 'es' ? 'Actualización a FastVisa Premium' : 'FastVisa Premium Upgrade'}
+                        onSuccess={handlePaymentSuccess}
+                        onError={handlePaymentError}
+                        onCancel={handlePaymentCancel}
+                      />
+                      <button 
+                        onClick={() => setShowPayment(false)}
+                        className="btn btn-cancel"
+                      >
+                        {selectedLanguage === 'es' ? 'Cancelar' : 'Cancel'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="upgrade-benefits">
+                <h3>Why Upgrade to Premium?</h3>
+                <div className="benefits-grid">
+                  <div className="benefit">
+                    <div className="benefit-icon">🚀</div>
+                    <h4>Next-Day Search</h4>
+                    <p>Start searching for appointments as early as tomorrow, vs 6 months ahead with Basic</p>
+                  </div>
+                  <div className="benefit">
+                    <div className="benefit-icon">🔔</div>
+                    <h4>Custom Notifications</h4>
+                    <p>Choose when and how you get notified vs basic alerts every 2 hours</p>
+                  </div>
+                  <div className="benefit">
+                    <div className="benefit-icon">⭐</div>
+                    <h4>Priority Search Queue</h4>
+                    <p>Your searches get priority over Basic users for faster results</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="upgrade-guarantee">
+                <h4>30-Day Money Back Guarantee</h4>
+                <p>Not satisfied? Get a full refund within 30 days, no questions asked.</p>
+              </div>
             </div>
-          </div>
-
-          <div className="upgrade-benefits">
-            <h3>Why Upgrade to Premium?</h3>
-            <div className="benefits-grid">
-              <div className="benefit">
-                <div className="benefit-icon">🚀</div>
-                <h4>Next-Day Search</h4>
-                <p>Start searching for appointments as early as tomorrow, vs 6 months ahead with Basic</p>
-              </div>
-              <div className="benefit">
-                <div className="benefit-icon">🔔</div>
-                <h4>Custom Notifications</h4>
-                <p>Choose when and how you get notified vs basic alerts every 2 hours</p>
-              </div>
-              <div className="benefit">
-                <div className="benefit-icon">⭐</div>
-                <h4>Priority Search Queue</h4>
-                <p>Your searches get priority over Basic users for faster results</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="upgrade-guarantee">
-            <h4>30-Day Money Back Guarantee</h4>
-            <p>Not satisfied? Get a full refund within 30 days, no questions asked.</p>
-          </div>
+          )}
         </div>
-
-      )}
-        </div>
-      </div>
+      </MainContainer>
       <Footer />
     </div>
   );

@@ -5,12 +5,44 @@ import React, { useEffect, useState } from 'react';
 import HamburgerMenu from './HamburgerMenu';
 import { permissions } from './utils/permissions';
 import { getUsers, updateUser, getRoles } from './APIFunctions';
+import { deleteUser } from './APIFunctions';
+import Modal from './Modal';
 import './index.css';
 import './Applicants.css';
 import { ALL_COUNTRIES } from './utils/countries';
 
 const Users = () => {
     const [users, setUsers] = useState([]);
+    // Modal state for delete confirmation
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [pendingDeleteUserId, setPendingDeleteUserId] = useState(null);
+
+    // Show modal when delete is requested
+    const requestDeleteUser = (userId) => {
+        setPendingDeleteUserId(userId);
+        setShowDeleteModal(true);
+    };
+
+    // Confirm delete action
+    const confirmDeleteUser = async () => {
+        if (pendingDeleteUserId) {
+            const result = await deleteUser(pendingDeleteUserId);
+            setShowDeleteModal(false);
+            setPendingDeleteUserId(null);
+            if (result && result.success) {
+                setRefreshFlag(flag => !flag);
+            } else {
+                // Show error modal (optional, for now use alert)
+                alert('Failed to delete user.');
+            }
+        }
+    };
+
+    // Cancel delete action
+    const cancelDeleteUser = () => {
+        setShowDeleteModal(false);
+        setPendingDeleteUserId(null);
+    };
     const [roles, setRoles] = useState([]);
     const [editIndex, setEditIndex] = useState(null);
     const [editData, setEditData] = useState({});
@@ -146,20 +178,30 @@ const Users = () => {
                                                         className="applicants-action-btn" 
                                                         onClick={() => setEditIndex(null)}
                                                         title="Cancel"
-                                                        style={{ padding: '4px 8px', fontSize: '12px' }}
+                                                        style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
                                                     >
                                                         <i className="fas fa-times"></i>
                                                     </button>
                                                 </>
                                             ) : (
-                                                <button 
-                                                    className="applicants-action-btn" 
-                                                    onClick={() => handleEdit(idx)}
-                                                    title="Edit"
-                                                    style={{ padding: '4px 8px', fontSize: '12px' }}
-                                                >
-                                                    <i className="fas fa-edit"></i>
-                                                </button>
+                                                <>
+                                                    <button 
+                                                        className="applicants-action-btn" 
+                                                        onClick={() => handleEdit(idx)}
+                                                        title="Edit"
+                                                        style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
+                                                    >
+                                                        <i className="fas fa-edit"></i>
+                                                    </button>
+                                                    <button 
+                                                        className="applicants-action-btn" 
+                                                        onClick={() => requestDeleteUser(user.id)}
+                                                        title="Delete"
+                                                        style={{ padding: '4px 8px', fontSize: '12px', color: '#fff', background: '#e53935' }}
+                                                    >
+                                                        <i className="fas fa-trash"></i>
+                                                    </button>
+                                                </>
                                             )}
                                         </td>
                                     </tr>
@@ -190,6 +232,18 @@ const Users = () => {
                     </table>
                 </div>
             </div>
+        {/* Delete confirmation modal */}
+        <Modal
+            isOpen={showDeleteModal}
+            title="Delete User"
+            message="Are you sure you want to delete this user? This action cannot be undone."
+            type="confirm"
+            onClose={cancelDeleteUser}
+            onConfirm={confirmDeleteUser}
+            confirmText="Delete"
+            cancelText="Cancel"
+            showCancel={true}
+        />
         </>
     );
 };

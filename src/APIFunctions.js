@@ -1,5 +1,29 @@
 import { BASE_URL } from "./config.js";
 
+// Delete user by ID
+const deleteUser = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/${userId}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status === 204) {
+      // 204 No Content: deletion successful, no body
+      return { success: true };
+    } else if (response.status === 200) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to delete user");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, error };
+  }
+};
+
 // Get all users
 const getUsers = async () => {
   try {
@@ -263,6 +287,31 @@ const getPayPalConfig = async () => {
   }
 };
 
+// Get current USD to MXN exchange rate from open.er-api.com (no access key required)
+const getUSDMXNExchangeRate = async () => {
+  try {
+    const response = await fetch(
+      "https://open.er-api.com/v6/latest/USD",
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+    if (response.status === 200) {
+      const data = await response.json();
+      // data.rates.MXN contains the exchange rate
+      return data.rates.MXN;
+    } else {
+      throw new Error("Failed to fetch exchange rate");
+    }
+  } catch (error) {
+    console.error("Error fetching exchange rate:", error);
+    return null;
+  }
+};
+
 export {
   UserDetails,
   ApplicantSearch,
@@ -276,4 +325,6 @@ export {
   updateUser,
   getRoles,
   getPayPalConfig,
+  deleteUser,
+  getUSDMXNExchangeRate,
 };
