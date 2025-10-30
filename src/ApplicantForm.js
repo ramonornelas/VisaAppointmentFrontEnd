@@ -29,8 +29,8 @@ const ApplicantForm = () => {
     aisScheduleId: '',
     numberOfApplicants: '1',
     applicantActive: true,
-    targetStartMode: 'date',
-    targetStartDays: '3',
+    targetStartMode: 'days',
+    targetStartDays: '1',
     targetStartDate: '',
     targetEndDate: '',
     selectedCities: [],
@@ -40,6 +40,21 @@ const ApplicantForm = () => {
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
   const [cities, setCities] = useState([]);
+
+  // Format date for display
+  const formatDate = (date) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options);
+  };
+
+  // Calculate search start date based on days
+  const getSearchStartDate = () => {
+    const today = new Date();
+    const startDate = new Date(today);
+    const daysToAdd = parseInt(formData.targetStartDays) || 3;
+    startDate.setDate(today.getDate() + daysToAdd);
+    return startDate;
+  };
 
   // Authentication check
   useEffect(() => {
@@ -459,17 +474,6 @@ const ApplicantForm = () => {
                   <input
                     type="radio"
                     name="targetStartMode"
-                    value="date"
-                    checked={formData.targetStartMode === 'date'}
-                    onChange={handleInputChange}
-                    className="applicant-form-radio"
-                  />
-                  <span>Specific Date</span>
-                </label>
-                <label className="applicant-form-radio-label">
-                  <input
-                    type="radio"
-                    name="targetStartMode"
                     value="days"
                     checked={formData.targetStartMode === 'days'}
                     onChange={handleInputChange}
@@ -477,12 +481,59 @@ const ApplicantForm = () => {
                   />
                   <span>Days from Now</span>
                 </label>
+                <label className="applicant-form-radio-label">
+                  <input
+                    type="radio"
+                    name="targetStartMode"
+                    value="date"
+                    checked={formData.targetStartMode === 'date'}
+                    onChange={handleInputChange}
+                    className="applicant-form-radio"
+                  />
+                  <span>Specific Date</span>
+                </label>
               </div>
             </div>
 
             <div className="applicant-form-row">
+              {formData.targetStartMode === 'days' && (
+                <div className="applicant-form-field" style={{ marginTop: '1rem' }}>
+                  <label htmlFor="targetStartDays" className="applicant-form-label">
+                    Start After (Days) <span className="required">*</span>
+                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                    <input
+                      type="number"
+                      id="targetStartDays"
+                      name="targetStartDays"
+                      value={formData.targetStartDays}
+                      onChange={handleInputChange}
+                      min="1"
+                      className={`applicant-form-input applicant-form-input-small ${errors.targetStartDays ? 'error' : ''}`}
+                      style={{ margin: 0 }}
+                    />
+                    {formData.targetStartDays && (
+                      <div style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#f0f9ff',
+                        border: '1px solid #bae6fd',
+                        borderRadius: '6px',
+                        fontSize: '0.875rem',
+                        color: '#059669',
+                        fontWeight: '600',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
+                        Start date: {formatDate(getSearchStartDate())}
+                      </div>
+                    )}
+                  </div>
+                  {errors.targetStartDays && <span className="applicant-form-error">{errors.targetStartDays}</span>}
+                </div>
+              )}
+
               {formData.targetStartMode === 'date' && (
-                <div className="applicant-form-field">
+                <div className="applicant-form-field" style={{ marginTop: '1rem' }}>
                   <label htmlFor="targetStartDate" className="applicant-form-label">
                     Target Start Date <span className="required">*</span>
                   </label>
@@ -495,24 +546,6 @@ const ApplicantForm = () => {
                     className={`applicant-form-input applicant-form-input-date ${errors.targetStartDate ? 'error' : ''}`}
                   />
                   {errors.targetStartDate && <span className="applicant-form-error">{errors.targetStartDate}</span>}
-                </div>
-              )}
-
-              {formData.targetStartMode === 'days' && (
-                <div className="applicant-form-field">
-                  <label htmlFor="targetStartDays" className="applicant-form-label">
-                    Start After (Days) <span className="required">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    id="targetStartDays"
-                    name="targetStartDays"
-                    value={formData.targetStartDays}
-                    onChange={handleInputChange}
-                    min="1"
-                    className={`applicant-form-input applicant-form-input-small ${errors.targetStartDays ? 'error' : ''}`}
-                  />
-                  {errors.targetStartDays && <span className="applicant-form-error">{errors.targetStartDays}</span>}
                 </div>
               )}
 

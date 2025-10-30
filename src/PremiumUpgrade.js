@@ -266,7 +266,8 @@ const PremiumUpgrade = () => {
                   <p>Secure payment powered by PayPal</p>
                   <PayPalPayment
                     amount="1.00"
-                    currency="USD"
+                    amountMXN="20.00"
+                    defaultCurrency="USD"
                     description="FastVisa Premium Upgrade"
                     onSuccess={handlePaymentSuccess}
                     onError={handlePaymentError}

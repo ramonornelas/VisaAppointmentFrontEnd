@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Banner from "./Banner";
 import HamburgerMenu from "./HamburgerMenu";
+import Modal from "./Modal";
 import {
   ApplicantSearch,
   GetApplicantPassword,
@@ -25,6 +26,14 @@ const Applicants = () => {
   const fastVisaUserId = sessionStorage.getItem("fastVisa_userid");
   const navigate = useNavigate();
   const [refreshFlag, setRefreshFlag] = useState(false);
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+    onConfirm: null,
+    showCancel: false
+  });
 
   // Define the included fields
   const includeFields = [
@@ -124,22 +133,44 @@ const Applicants = () => {
           (a) => a.search_status === "Running"
         ).length;
         if (runningCount >= concurrentLimit) {
-          alert(
-            `You have reached your concurrent applicants limit (${concurrentLimit}).\nTo start a new applicant, please end one of your currently running applicants first.`
-          );
+          setModal({
+            isOpen: true,
+            title: 'Limit Reached',
+            message: `You have reached your concurrent applicants limit (${concurrentLimit}).\nTo start a new applicant, please end one of your currently running applicants first.`,
+            type: 'warning',
+            showCancel: false
+          });
           return;
         }
         // Start search using API function
         await StartApplicantContainer(id);
-        alert("Search started successfully.");
+        setModal({
+          isOpen: true,
+          title: 'Success',
+          message: 'Search started successfully.',
+          type: 'success',
+          showCancel: false
+        });
       } else {
         // Stop search using API function
         await StopApplicantContainer(id);
-        alert("Search stopped successfully.");
+        setModal({
+          isOpen: true,
+          title: 'Success',
+          message: 'Search stopped successfully.',
+          type: 'success',
+          showCancel: false
+        });
       }
       setRefreshFlag((flag) => !flag);
     } catch (error) {
-      alert("Error performing action.");
+      setModal({
+        isOpen: true,
+        title: 'Error',
+        message: 'Error performing action.',
+        type: 'error',
+        showCancel: false
+      });
       console.error(error);
     }
   };
@@ -160,7 +191,13 @@ const Applicants = () => {
       const response = await ApplicantDetails(id);
       const email = response.ais_username;
       await navigator.clipboard.writeText(email);
-      alert("Email copied to clipboard");
+      setModal({
+        isOpen: true,
+        title: 'Copied',
+        message: 'Email copied to clipboard',
+        type: 'success',
+        showCancel: false
+      });
     } catch (error) {
       console.error("Error copying email:", error);
     }
@@ -174,14 +211,32 @@ const Applicants = () => {
         container_start_datetime: null,
       });
       if (response) {
-        alert("Status reset successfully.");
+        setModal({
+          isOpen: true,
+          title: 'Success',
+          message: 'Status reset successfully.',
+          type: 'success',
+          showCancel: false
+        });
         setRefreshFlag((flag) => !flag);
       } else {
-        alert("Failed to reset status.");
+        setModal({
+          isOpen: true,
+          title: 'Error',
+          message: 'Failed to reset status.',
+          type: 'error',
+          showCancel: false
+        });
       }
     } catch (error) {
       console.error("Error resetting status:", error);
-      alert("Error resetting status.");
+      setModal({
+        isOpen: true,
+        title: 'Error',
+        message: 'Error resetting status.',
+        type: 'error',
+        showCancel: false
+      });
     }
   };
 
@@ -474,6 +529,16 @@ const Applicants = () => {
         </table>
       </div>
         </div>
+
+      <Modal
+        isOpen={modal.isOpen}
+        onClose={() => setModal({ ...modal, isOpen: false })}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+        showCancel={modal.showCancel}
+      />
       </>
   );
 }

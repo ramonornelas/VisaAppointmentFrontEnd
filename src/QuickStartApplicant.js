@@ -194,13 +194,10 @@ const QuickStartApplicant = () => {
     if (!formData.targetEndDate) {
       newErrors.targetEndDate = t('endDateRequired', 'Target end date is required');
     } else {
-      // Validate that target end date is at least 290 days from today
-      const today = new Date();
-      const minEndDate = new Date(today);
-      minEndDate.setDate(today.getDate() + 290);
-      const selectedEndDate = new Date(formData.targetEndDate);
-
-      if (selectedEndDate < minEndDate) {
+      // Validar usando solo la parte de la fecha (YYYY-MM-DD) para evitar diferencias de horas
+      const minEndDateStr = minEndDate; // minEndDate ya es YYYY-MM-DD
+      const selectedEndDateStr = formData.targetEndDate;
+      if (selectedEndDateStr < minEndDateStr) {
         newErrors.targetEndDate = t('endDateMinimum', 'Target end date must be at least 290 days from today');
       }
     }

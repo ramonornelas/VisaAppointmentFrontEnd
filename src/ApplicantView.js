@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
 import HamburgerMenu from './HamburgerMenu';
+import Modal from './Modal';
 import { 
   ApplicantDetails, 
   ApplicantDelete,
@@ -26,6 +27,14 @@ const ApplicantView = () => {
   const [loading, setLoading] = useState(true);
   const [cities, setCities] = useState([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+    onConfirm: null,
+    showCancel: false
+  });
 
   // Authentication check
   useEffect(() => {
@@ -62,48 +71,109 @@ const ApplicantView = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this applicant?')) {
-      return;
-    }
+    setModal({
+      isOpen: true,
+      title: 'Delete Applicant',
+      message: 'Are you sure you want to delete this applicant?',
+      type: 'confirm',
+      showCancel: true,
+      onConfirm: async () => {
+        const isSearchRunning = data && (data.search_status === 'Running');
+        
+        if (isSearchRunning) {
+          setModal({
+            isOpen: true,
+            title: 'Search in Progress',
+            message: 'Search is in progress. Do you want to stop the search before deleting?',
+            type: 'warning',
+            showCancel: true,
+            onConfirm: async () => {
+              try {
+                await StopApplicantContainer(applicantId);
+                setModal({
+                  isOpen: true,
+                  title: 'Search Stopped',
+                  message: 'Search stopped. The applicant will now be deleted.',
+                  type: 'info',
+                  showCancel: false,
+                  onConfirm: async () => {
+                    try {
+                      const response = await ApplicantDelete(applicantId);
+                      if (response && response.success) {
+                        setModal({
+                          isOpen: true,
+                          title: 'Success',
+                          message: 'Applicant deleted successfully.',
+                          type: 'success',
+                          showCancel: false,
+                          onConfirm: () => navigate('/applicants')
+                        });
+                      } else {
+                        setModal({
+                          isOpen: true,
+                          title: 'Error',
+                          message: 'Unexpected response when deleting applicant.',
+                          type: 'error',
+                          showCancel: false
+                        });
+                      }
+                    } catch (error) {
+                      setModal({
+                        isOpen: true,
+                        title: 'Error',
+                        message: 'Failed to delete applicant. Please try again.',
+                        type: 'error',
+                        showCancel: false
+                      });
+                    }
+                  }
+                });
+              } catch (error) {
+                setModal({
+                  isOpen: true,
+                  title: 'Error',
+                  message: 'Failed to stop search or delete applicant. Please try again.',
+                  type: 'error',
+                  showCancel: false
+                });
+              }
+            }
+          });
+          return;
+        }
 
-    const isSearchRunning = data && (data.search_status === 'Running');
-    
-    if (isSearchRunning) {
-      const confirmStop = window.confirm(
-        'Search is in progress. Do you want to stop the search before deleting?'
-      );
-      
-      if (confirmStop) {
         try {
-          await StopApplicantContainer(applicantId);
-          alert('Search stopped. The applicant will now be deleted.');
-          
           const response = await ApplicantDelete(applicantId);
           if (response && response.success) {
-            alert('Applicant deleted successfully.');
-            navigate('/applicants');
+            setModal({
+              isOpen: true,
+              title: 'Success',
+              message: 'Applicant deleted successfully.',
+              type: 'success',
+              showCancel: false,
+              onConfirm: () => navigate('/applicants')
+            });
           } else {
-            alert('Unexpected response when deleting applicant.');
+            setModal({
+              isOpen: true,
+              title: 'Error',
+              message: 'Unexpected response when deleting applicant.',
+              type: 'error',
+              showCancel: false
+            });
           }
         } catch (error) {
-          alert('Failed to stop search or delete applicant. Please try again.');
+          console.error('Error deleting applicant:', error);
+          setModal({
+            isOpen: true,
+            title: 'Error',
+            message: 'Error deleting applicant.',
+            type: 'error',
+            showCancel: false
+          });
         }
       }
-      return;
-    }
-
-    try {
-      const response = await ApplicantDelete(applicantId);
-      if (response && response.success) {
-        alert('Applicant deleted successfully.');
-        navigate('/applicants');
-      } else {
-        alert('Unexpected response when deleting applicant.');
-      }
-    } catch (error) {
-      console.error('Error deleting applicant:', error);
-      alert('Error deleting applicant.');
-    }
+    });
   };
 
   const handleToggleSearch = async () => {
@@ -114,20 +184,44 @@ const ApplicantView = () => {
         const runningCount = applicantsResponse.filter(a => a.search_status === 'Running').length;
         
         if (runningCount >= concurrentLimit) {
-          alert(`You have reached your concurrent applicants limit (${concurrentLimit}).\nTo start a new applicant, please end one of your currently running applicants first.`);
+          setModal({
+            isOpen: true,
+            title: 'Limit Reached',
+            message: `You have reached your concurrent applicants limit (${concurrentLimit}).\nTo start a new applicant, please end one of your currently running applicants first.`,
+            type: 'warning',
+            showCancel: false
+          });
           return;
         }
         
         await StartApplicantContainer(applicantId);
-        alert('Search started successfully.');
+        setModal({
+          isOpen: true,
+          title: 'Success',
+          message: 'Search started successfully.',
+          type: 'success',
+          showCancel: false
+        });
       } else {
         await StopApplicantContainer(applicantId);
-        alert('Search stopped successfully.');
+        setModal({
+          isOpen: true,
+          title: 'Success',
+          message: 'Search stopped successfully.',
+          type: 'success',
+          showCancel: false
+        });
       }
       
       setRefreshFlag(flag => !flag);
     } catch (error) {
-      alert('Error performing action.');
+      setModal({
+        isOpen: true,
+        title: 'Error',
+        message: 'Error performing action.',
+        type: 'error',
+        showCancel: false
+      });
       console.error(error);
     }
   };
@@ -135,7 +229,13 @@ const ApplicantView = () => {
   const handleCopyEmail = async () => {
     try {
       await navigator.clipboard.writeText(data.ais_username);
-      alert('Email copied to clipboard');
+      setModal({
+        isOpen: true,
+        title: 'Copied',
+        message: 'Email copied to clipboard',
+        type: 'success',
+        showCancel: false
+      });
     } catch (error) {
       console.error('Error copying email:', error);
     }
@@ -145,7 +245,13 @@ const ApplicantView = () => {
     try {
       const response = await GetApplicantPassword(applicantId);
       await navigator.clipboard.writeText(response.password);
-      alert('Password copied to clipboard');
+      setModal({
+        isOpen: true,
+        title: 'Copied',
+        message: 'Password copied to clipboard',
+        type: 'success',
+        showCancel: false
+      });
     } catch (error) {
       console.error('Error copying password:', error);
     }
@@ -409,6 +515,16 @@ const ApplicantView = () => {
           )}
         </div>
       </div>
+
+      <Modal
+        isOpen={modal.isOpen}
+        onClose={() => setModal({ ...modal, isOpen: false })}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+        showCancel={modal.showCancel}
+      />
     </>
   );
 };
