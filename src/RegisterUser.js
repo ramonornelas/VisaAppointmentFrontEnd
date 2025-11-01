@@ -70,6 +70,7 @@ const UserRegistrationForm = () => {
   }, []);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -122,6 +123,7 @@ const UserRegistrationForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setApiError(""); // Clear previous API error
 
     if (!rolesLoaded || !formData.role_id) {
       setRoleError("Roles are still loading. Please wait.");
@@ -143,7 +145,7 @@ const UserRegistrationForm = () => {
       },
       body: JSON.stringify(submitData),
     })
-      .then((response) => {
+      .then(async (response) => {
         if (response.status === 201) {
           // Store name in sessionStorage for use in menu
           if (formData.name) {
@@ -151,11 +153,19 @@ const UserRegistrationForm = () => {
           }
           setRegistrationSuccess(true);
         } else {
-          throw new Error("Network response was not ok");
+          let errorMessage = 'Registration failed';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.message || errorData.error || 'Registration failed';
+          } catch {
+            // If not JSON, use status text or default
+            errorMessage = response.statusText || 'Registration failed';
+          }
+          setApiError(errorMessage);
         }
       })
       .catch((error) => {
-        console.error("Error:", error);
+        setApiError(error.message || 'An unexpected error occurred');
       });
   };
 
@@ -172,6 +182,9 @@ const UserRegistrationForm = () => {
           <h2 className="registration-title">{t('signUp', 'Sign Up')}</h2>
           {roleError && (
             <div className="form-error" style={{ marginBottom: '1rem', textAlign: 'center' }}>{roleError}</div>
+          )}
+          {apiError && (
+            <div className="form-error" style={{ marginBottom: '1rem', textAlign: 'center' }}>{apiError}</div>
           )}
           {registrationSuccess ? (
             <>

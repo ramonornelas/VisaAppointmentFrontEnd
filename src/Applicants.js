@@ -180,7 +180,13 @@ const Applicants = () => {
       const response = await GetApplicantPassword(id);
       const password = response.password;
       await navigator.clipboard.writeText(password);
-      alert("Password copied to clipboard");
+      setModal({
+        isOpen: true,
+        title: 'Copied',
+        message: 'Password copied to clipboard',
+        type: 'success',
+        showCancel: false
+      });
     } catch (error) {
       console.error("Error copying password:", error);
     }
