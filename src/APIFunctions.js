@@ -311,6 +311,28 @@ const getUSDMXNExchangeRate = async () => {
     return null;
   }
 };
+// Authenticate AIS credentials and get user info
+const authenticateAIS = async ({ username, password, country_code }) => {
+  try {
+    const response = await fetch(`${BASE_URL}/ais/auth`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password, country_code }),
+    });
+    if (response.status === 200) {
+      // Expected output: { schedule_id, username, country_code }
+      return await response.json();
+    } else {
+      throw new Error("Failed to authenticate AIS credentials");
+    }
+  } catch (error) {
+    console.error("AIS Auth Error:", error);
+    return null;
+  }
+};
 
 export {
   UserDetails,
@@ -327,4 +349,5 @@ export {
   getPayPalConfig,
   deleteUser,
   getUSDMXNExchangeRate,
+  authenticateAIS,
 };

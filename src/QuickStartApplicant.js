@@ -6,7 +6,7 @@ import Footer from './Footer';
 import LanguageSelector from './LanguageSelector';
 import { getTranslatedCountries } from './utils/countries';
 import { ALL_CITIES } from './utils/cities';
-import { getRoles } from './APIFunctions';
+import { getRoles, authenticateAIS } from './APIFunctions';
 import { BASE_URL } from './config.js';
 import Select from 'react-select';
 import './ApplicantForm.css';
@@ -232,21 +232,18 @@ const QuickStartApplicant = () => {
       // Use AIS email as username
       const username = formData.aisEmail;
       
-      // TODO: Call API to get user information from AIS credentials
-      // This API should return: name, aisScheduleId, numberOfApplicants
-      // const aisUserInfo = await fetch(`${BASE_URL}/ais/user-info`, {
-      //   method: 'POST',
-      //   body: JSON.stringify({ 
-      //     ais_username: formData.aisEmail, 
-      //     ais_password: formData.aisPassword 
-      //   })
-      // });
-      // const { name, schedule_id, number_of_applicants } = await aisUserInfo.json();
-      
-      // For now, use placeholders that will be replaced by the API call
-      const userName = 'User'; // TODO: Replace with API response
-      const aisScheduleId = formData.aisScheduleId || '0'; // TODO: Replace with API response
-      const numberOfApplicants = formData.numberOfApplicants || '1'; // TODO: Replace with API response
+      // Call API to get user information from AIS credentials
+      const aisUserInfo = await authenticateAIS({
+        username: formData.aisEmail,
+        password: formData.aisPassword,
+        country_code: formData.country_code,
+      });
+      if (!aisUserInfo || !aisUserInfo.schedule_id) {
+        throw new Error(t('aisAuthFailed', 'Failed to authenticate AIS credentials or retrieve schedule ID'));
+      }
+      const userName = aisUserInfo.username;
+      const aisScheduleId = aisUserInfo.schedule_id;
+      const numberOfApplicants = '1'; // Default to 1, update if API returns more
       
       // Step 1: Create User
       setCurrentStep(2);
