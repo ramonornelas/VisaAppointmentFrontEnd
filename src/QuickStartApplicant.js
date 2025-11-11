@@ -79,7 +79,7 @@ const QuickStartApplicant = () => {
     targetStartMode: 'days',
     targetStartDays: '180', // 6 months = ~180 days
     targetStartDate: '',
-    targetEndDate: '',
+    targetEndDate: getMinEndDate(), // Set default to minimum date (290 days from today)
     selectedCities: [],
   });
 
@@ -174,15 +174,17 @@ const QuickStartApplicant = () => {
       newErrors.country_code = t('countryRequired', 'Country selection is required');
     }
 
-    // AIS credentials validations
-    if (!formData.aisEmail.trim()) {
-      newErrors.aisEmail = t('aisEmailRequired', 'AIS Email is required');
-    } else if (!/\S+@\S+\.\S+/.test(formData.aisEmail)) {
-      newErrors.aisEmail = t('invalidEmail', 'Please enter a valid email');
-    }
+    // AIS credentials validations - only if country has cities
+    if (cities.length > 0) {
+      if (!formData.aisEmail.trim()) {
+        newErrors.aisEmail = t('aisEmailRequired', 'AIS Email is required');
+      } else if (!/\S+@\S+\.\S+/.test(formData.aisEmail)) {
+        newErrors.aisEmail = t('invalidEmail', 'Please enter a valid email');
+      }
 
-    if (!formData.aisPassword.trim()) {
-      newErrors.aisPassword = t('aisPasswordRequired', 'AIS Password is required');
+      if (!formData.aisPassword.trim()) {
+        newErrors.aisPassword = t('aisPasswordRequired', 'AIS Password is required');
+      }
     }
 
     // AIS Schedule ID and Number of Applicants will be obtained via API
@@ -223,27 +225,41 @@ const QuickStartApplicant = () => {
       return;
     }
 
+    // Scroll to top to see loading progress
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     setLoading(true);
 
     try {
       // Generate automatic password
       const generatedPassword = generatePassword();
       
-      // Use AIS email as username
-      const username = formData.aisEmail;
+      // Use AIS email as username (or generate one if no cities)
+      let username, userName, aisScheduleId, numberOfApplicants;
       
-      // Call API to get user information from AIS credentials
-      const aisUserInfo = await authenticateAIS({
-        username: formData.aisEmail,
-        password: formData.aisPassword,
-        country_code: formData.country_code,
-      });
-      if (!aisUserInfo || !aisUserInfo.schedule_id) {
-        throw new Error(t('aisAuthFailed', 'Failed to authenticate AIS credentials or retrieve schedule ID'));
+      if (cities.length > 0) {
+        // If country has cities, authenticate with AIS
+        username = formData.aisEmail;
+        
+        // Call API to get user information from AIS credentials
+        const aisUserInfo = await authenticateAIS({
+          username: formData.aisEmail,
+          password: formData.aisPassword,
+          country_code: formData.country_code,
+        });
+        if (!aisUserInfo || !aisUserInfo.schedule_id) {
+          throw new Error(t('aisAuthFailed', 'Failed to authenticate AIS credentials or retrieve schedule ID'));
+        }
+        userName = aisUserInfo.username;
+        aisScheduleId = aisUserInfo.schedule_id;
+        numberOfApplicants = '1'; // Default to 1, update if API returns more
+      } else {
+        // If country has no cities, use default values
+        username = formData.aisEmail || `user_${Date.now()}@fastvisa.com`;
+        userName = 'Quick Start User';
+        aisScheduleId = '-';
+        numberOfApplicants = '1';
       }
-      const userName = aisUserInfo.username;
-      const aisScheduleId = aisUserInfo.schedule_id;
-      const numberOfApplicants = '1'; // Default to 1, update if API returns more
       
       // Step 1: Create User
       setCurrentStep(2);
@@ -294,11 +310,11 @@ const QuickStartApplicant = () => {
       const applicantPayload = {
         fastVisa_userid: userId,
         fastVisa_username: username,
-        name: userName, // From AIS API
-        ais_username: formData.aisEmail,
-        ais_password: formData.aisPassword,
-        ais_schedule_id: aisScheduleId, // From AIS API
-        number_of_applicants: numberOfApplicants, // From AIS API
+        name: userName, // From AIS API or default
+        ais_username: formData.aisEmail || '-',
+        ais_password: cities.length > 0 ? formData.aisPassword : '-',
+        ais_schedule_id: aisScheduleId, // From AIS API or default
+        number_of_applicants: numberOfApplicants, // From AIS API or default
         applicant_active: true,
         target_start_mode: formData.targetStartMode,
         target_start_days: formData.targetStartMode === 'days' ? formData.targetStartDays : '-',
@@ -650,14 +666,32 @@ const QuickStartApplicant = () => {
 
             {/* Target Cities Section */}
             {formData.country_code && (
-              <div className="applicant-form-section">
+              <div className="applicant-form-section" style={{ borderBottom: 'none', marginBottom: '36px', paddingBottom: 0 }}>
                 <h2 className="applicant-form-section-title">
                   <i className="fas fa-map-marker-alt"></i>
                   {t('targetCities', 'Target Cities')} {cities.length > 1 && <span className="required">*</span>}
                 </h2>
                 
                 {cities.length === 0 ? (
-                  <p className="applicant-form-no-cities">{t('noCitiesAvailable', 'No cities available for this country')}</p>
+                  <div style={{
+                    backgroundColor: '#f0f9ff',
+                    border: '1px solid #bae6fd',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    display: 'flex',
+                    gap: '0.75rem',
+                    alignItems: 'flex-start'
+                  }}>
+                    <i className="fas fa-globe" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                        <strong>{t('searchAllCities', 'Search in all cities:')}</strong> {t('searchAllCitiesDesc', 'The search will be performed in all available cities for this country.')}
+                      </p>
+                      <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
+                        💎 <strong>{t('premiumCitySelection', 'Premium users')}</strong> {t('premiumCanSelectCities', 'can select specific cities for their search.')}
+                      </p>
+                    </div>
+                  </div>
                 ) : cities.length === 1 ? (
                   <div className="applicant-form-city-single">
                     <i className="fas fa-check-circle"></i>
@@ -685,7 +719,6 @@ const QuickStartApplicant = () => {
                 {errors.selectedCities && <span className="applicant-form-error">{errors.selectedCities}</span>}
               </div>
             )}
-
             {/* Form Actions */}
             <div className="applicant-form-actions">
               <button
