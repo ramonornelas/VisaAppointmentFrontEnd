@@ -72,7 +72,7 @@ const LogIn = () => {
             console.error('Error fetching permissions:', permError);
           }
 
-          window.location.href = '/applicants'; // Redirect to applicants page since it's the only active page so far
+          window.location.href = '/applicants';
         } else {
           throw new Error('Failed to fetch user data');
         }
@@ -91,7 +91,37 @@ const LogIn = () => {
       <LanguageSelector />
       <div className="content-wrap">
         <Banner />
-        <div className="login-container">
+        
+        {/* Info Sidebar - Right side */}
+        <div className="info-sidebar">
+          <div className="info-sidebar-item" data-tooltip={t('securityBenefitText', 'Your data is encrypted and protected.')}>
+            <div className="info-sidebar-icon">🔒</div>
+            <div className="info-sidebar-tooltip">
+              <strong>{t('securityBenefit', 'Security')}</strong>
+              <p>{t('securityBenefitText', 'Your data is encrypted and protected.')}</p>
+            </div>
+          </div>
+          
+          <div className="info-sidebar-item" data-tooltip={t('globalCoverageText', 'Compatible with embassies and consulates worldwide.')}>
+            <div className="info-sidebar-icon">🌍</div>
+            <div className="info-sidebar-tooltip">
+              <strong>{t('globalCoverage', 'Global Coverage')}</strong>
+              <p>{t('globalCoverageText', 'Compatible with embassies and consulates worldwide.')}</p>
+            </div>
+          </div>
+          
+          <div className="info-sidebar-item info-sidebar-warning" data-tooltip={t('moneyBackGuarantee', 'We cannot guarantee finding a date as it depends on embassy availability, but if you don\'t get results within one month, we\'ll refund your money.')}>
+            <div className="info-sidebar-icon">⚠️</div>
+            <div className="info-sidebar-tooltip">
+              <strong>{t('importantNote', 'Important')}</strong>
+              <p>{t('moneyBackGuarantee', 'We cannot guarantee finding a date as it depends on embassy availability, but if you don\'t get results within one month, we\'ll refund your money.')}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="login-page-layout">
+          {/* Login Panel - Left side */}
+          <div className="login-container">
           <div style={{height: '24px'}}></div>
 
           {/* Try the app button - prominently placed before login */}
@@ -168,6 +198,37 @@ const LogIn = () => {
             <button type="submit" className="login-button">{t('login', 'Log In')}</button>
           </form>
           <p className="register-link">{t('noAccount', "Don't have an account?")} <a href="/registeruser">{t('register', 'Register here')}</a></p>
+          </div>
+
+          {/* Benefits Panel - Right side (AWS style) */}
+          <div className="benefits-panel">
+            <h2 className="benefits-title">{t('howItWorks', 'How does it work?')}</h2>
+            <div className="benefits-list">
+              <div className="benefit-item">
+                <div className="benefit-number">1</div>
+                <div className="benefit-content">
+                  <h3>{t('step1Title', 'Continuous Monitoring')}</h3>
+                  <p>{t('step1Desc', 'Our system monitors 24/7 the availability of appointments at the consulates and date ranges you select.')}</p>
+                </div>
+              </div>
+
+              <div className="benefit-item">
+                <div className="benefit-number">2</div>
+                <div className="benefit-content">
+                  <h3>{t('step2Title', 'Regular Updates')}</h3>
+                  <p>{t('step2Desc', 'We send you continuous notifications so you know how your search is progressing.')}</p>
+                </div>
+              </div>
+
+              <div className="benefit-item">
+                <div className="benefit-number">3</div>
+                <div className="benefit-content">
+                  <h3>{t('step3Title', 'Automatic Reservation')}</h3>
+                  <p>{t('step3Desc', 'When we find a date that matches your criteria, we automatically make the reservation so no one else can take it.')}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <Footer />
