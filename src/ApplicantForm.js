@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
+import { permissions } from './utils/permissions';
 import HamburgerMenu from './HamburgerMenu';
 import { ApplicantDetails, ApplicantUpdate } from './APIFunctions';
 import { ALL_CITIES } from './utils/cities';
@@ -45,6 +46,14 @@ const ApplicantForm = () => {
   const formatDate = (date) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return date.toLocaleDateString(undefined, options);
+  };
+
+  // Calculate minimum end date (290 days from today) for basic users
+  const getMinEndDate = () => {
+    const today = new Date();
+    const minDate = new Date(today);
+    minDate.setDate(today.getDate() + 290);
+    return minDate.toISOString().split('T')[0];
   };
 
   // Calculate search start date based on days
@@ -213,7 +222,12 @@ const ApplicantForm = () => {
       if (isEditMode) {
         // Update existing applicant
         await ApplicantUpdate(applicantId, payload);
-        navigate('/applicants');
+        // Redirect based on permissions
+        if (permissions.canManageApplicants()) {
+          navigate('/applicants');
+        } else {
+          navigate(`/view-applicant/${applicantId}`);
+        }
       } else {
         // Create new applicant - password is required
         if (!formData.aisPassword.trim()) {
@@ -248,7 +262,13 @@ const ApplicantForm = () => {
           throw new Error('Failed to create applicant');
         }
 
-        navigate('/applicants');
+        const newApplicant = await response.json();
+        // Redirect based on permissions
+        if (permissions.canManageApplicants()) {
+          navigate('/applicants');
+        } else {
+          navigate(`/view-applicant/${newApplicant.id}`);
+        }
       }
     } catch (error) {
       console.error('Submit error:', error);
@@ -281,8 +301,8 @@ const ApplicantForm = () => {
             <h1 className="applicant-form-title">
               {isEditMode ? (
                 <>
-                  <i className="fas fa-edit"></i>
-                  Edit Applicant
+                  <i className={permissions.canManageApplicants() ? "fas fa-edit" : "fas fa-calendar-check"}></i>
+                  {permissions.canManageApplicants() ? 'Edit Applicant' : 'My Appointment'}
                 </>
               ) : (
                 <>
@@ -293,7 +313,9 @@ const ApplicantForm = () => {
             </h1>
             <p className="applicant-form-subtitle">
               {isEditMode 
-                ? 'Update the information for this applicant'
+                ? (permissions.canManageApplicants() 
+                    ? 'Update the information for this applicant' 
+                    : 'Update your appointment search settings')
                 : 'Fill in the details to register a new applicant'}
             </p>
           </div>
@@ -302,7 +324,15 @@ const ApplicantForm = () => {
           <div className="applicant-form-header-actions">
             <button
               type="button"
-              onClick={() => navigate('/applicants')}
+              onClick={() => {
+                if (permissions.canManageApplicants()) {
+                  navigate('/applicants');
+                } else if (isEditMode) {
+                  navigate(`/view-applicant/${applicantId}`);
+                } else {
+                  navigate('/');
+                }
+              }}
               className="applicant-form-btn applicant-form-btn-cancel"
               disabled={loading}
             >
@@ -361,22 +391,6 @@ const ApplicantForm = () => {
                 />
                 {errors.name && <span className="applicant-form-error">{errors.name}</span>}
               </div>
-
-              <div className="applicant-form-field">
-                <label htmlFor="numberOfApplicants" className="applicant-form-label">
-                  Number of Applicants <span className="required">*</span>
-                </label>
-                <input
-                  type="number"
-                  id="numberOfApplicants"
-                  name="numberOfApplicants"
-                  value={formData.numberOfApplicants}
-                  onChange={handleInputChange}
-                  min="1"
-                  className={`applicant-form-input applicant-form-input-small ${errors.numberOfApplicants ? 'error' : ''}`}
-                />
-                {errors.numberOfApplicants && <span className="applicant-form-error">{errors.numberOfApplicants}</span>}
-              </div>
             </div>
 
             {isEditMode && (
@@ -399,7 +413,7 @@ const ApplicantForm = () => {
           <div className="applicant-form-section">
             <h2 className="applicant-form-section-title">
               <i className="fas fa-key"></i>
-              AIS Credentials
+              AIS Appointment System Credentials
             </h2>
             
             <div className="applicant-form-row">
@@ -414,48 +428,33 @@ const ApplicantForm = () => {
                   value={formData.aisEmail}
                   onChange={handleInputChange}
                   className={`applicant-form-input applicant-form-input-medium ${errors.aisEmail ? 'error' : ''}`}
-                  placeholder="email@example.com"
+                  placeholder="ais@example.com"
                 />
                 {errors.aisEmail && <span className="applicant-form-error">{errors.aisEmail}</span>}
               </div>
 
               <div className="applicant-form-field">
-                <label htmlFor="aisScheduleId" className="applicant-form-label">
-                  AIS Schedule ID <span className="required">*</span>
+                <label htmlFor="aisPassword" className="applicant-form-label">
+                  AIS Password {!isEditMode && <span className="required">*</span>}
                 </label>
                 <input
-                  type="number"
-                  id="aisScheduleId"
-                  name="aisScheduleId"
-                  value={formData.aisScheduleId}
+                  type="password"
+                  id="aisPassword"
+                  name="aisPassword"
+                  value={formData.aisPassword}
                   onChange={handleInputChange}
-                  className={`applicant-form-input applicant-form-input-small ${errors.aisScheduleId ? 'error' : ''}`}
-                  placeholder="12345"
+                  className={`applicant-form-input applicant-form-input-medium ${errors.aisPassword ? 'error' : ''}`}
+                  placeholder={isEditMode ? "Leave empty to keep current password" : "Enter AIS password"}
                 />
-                {errors.aisScheduleId && <span className="applicant-form-error">{errors.aisScheduleId}</span>}
+                {errors.aisPassword && <span className="applicant-form-error">{errors.aisPassword}</span>}
               </div>
             </div>
-
-            <div className="applicant-form-field">
-              <label htmlFor="aisPassword" className="applicant-form-label">
-                AIS Password {!isEditMode && <span className="required">*</span>}
-              </label>
-              <input
-                type="password"
-                id="aisPassword"
-                name="aisPassword"
-                value={formData.aisPassword}
-                onChange={handleInputChange}
-                className={`applicant-form-input applicant-form-input-medium ${errors.aisPassword ? 'error' : ''}`}
-                placeholder={isEditMode ? "Leave empty to keep current password" : "Enter password"}
-              />
-              {errors.aisPassword && <span className="applicant-form-error">{errors.aisPassword}</span>}
-              {isEditMode && (
-                <small style={{ color: '#666', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
-                  Leave empty to keep the current password unchanged
-                </small>
-              )}
-            </div>
+            
+            {isEditMode && (
+              <small style={{ color: '#666', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
+                Leave empty to keep the current password unchanged
+              </small>
+            )}
           </div>
 
           {/* Target Dates Section */}
@@ -465,75 +464,135 @@ const ApplicantForm = () => {
               Target Dates
             </h2>
 
-            <div className="applicant-form-field">
-              <label htmlFor="targetStartMode" className="applicant-form-label">
-                Start Mode <span className="required">*</span>
-              </label>
-              <div className="applicant-form-radio-group">
-                <label className="applicant-form-radio-label">
-                  <input
-                    type="radio"
-                    name="targetStartMode"
-                    value="days"
-                    checked={formData.targetStartMode === 'days'}
-                    onChange={handleInputChange}
-                    className="applicant-form-radio"
-                  />
-                  <span>Days from Now</span>
-                </label>
-                <label className="applicant-form-radio-label">
-                  <input
-                    type="radio"
-                    name="targetStartMode"
-                    value="date"
-                    checked={formData.targetStartMode === 'date'}
-                    onChange={handleInputChange}
-                    className="applicant-form-radio"
-                  />
-                  <span>Specific Date</span>
-                </label>
+            {!permissions.canManageApplicants() && formData.targetStartMode === 'days' && formData.targetStartDays === '180' && (
+              <div style={{
+                backgroundColor: '#f0f9ff',
+                border: '1px solid #bae6fd',
+                borderRadius: '8px',
+                padding: '1rem',
+                marginBottom: '1.5rem',
+                display: 'flex',
+                gap: '0.75rem',
+                alignItems: 'flex-start'
+              }}>
+                <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
+                <div style={{ flex: 1 }}>
+                  <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                    <strong>Basic User Search Settings:</strong> Your appointment search will start 6 months from today.
+                  </p>
+                  <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
+                    💎 <strong>Premium users</strong> can search for appointments starting from tomorrow.
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
+
+            {permissions.canManageApplicants() && (
+              <div className="applicant-form-field">
+                <label htmlFor="targetStartMode" className="applicant-form-label">
+                  Start Mode <span className="required">*</span>
+                </label>
+                <div className="applicant-form-radio-group">
+                  <label className="applicant-form-radio-label">
+                    <input
+                      type="radio"
+                      name="targetStartMode"
+                      value="days"
+                      checked={formData.targetStartMode === 'days'}
+                      onChange={handleInputChange}
+                      className="applicant-form-radio"
+                    />
+                    <span>Days from Now</span>
+                  </label>
+                  <label className="applicant-form-radio-label">
+                    <input
+                      type="radio"
+                      name="targetStartMode"
+                      value="date"
+                      checked={formData.targetStartMode === 'date'}
+                      onChange={handleInputChange}
+                      className="applicant-form-radio"
+                    />
+                    <span>Specific Date</span>
+                  </label>
+                </div>
+              </div>
+            )}
 
             <div className="applicant-form-row">
               {formData.targetStartMode === 'days' && (
-                <div className="applicant-form-field" style={{ marginTop: '1rem' }}>
-                  <label htmlFor="targetStartDays" className="applicant-form-label">
-                    Start After (Days) <span className="required">*</span>
-                  </label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-                    <input
-                      type="number"
-                      id="targetStartDays"
-                      name="targetStartDays"
-                      value={formData.targetStartDays}
-                      onChange={handleInputChange}
-                      min="1"
-                      className={`applicant-form-input applicant-form-input-small ${errors.targetStartDays ? 'error' : ''}`}
-                      style={{ margin: 0 }}
-                    />
-                    {formData.targetStartDays && (
-                      <div style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#f0f9ff',
-                        border: '1px solid #bae6fd',
-                        borderRadius: '6px',
-                        fontSize: '0.875rem',
-                        color: '#059669',
-                        fontWeight: '600',
-                        whiteSpace: 'nowrap'
-                      }}>
-                        <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
-                        Start date: {formatDate(getSearchStartDate())}
+                <div className="applicant-form-field">
+                  {permissions.canManageApplicants() ? (
+                    <>
+                      <label htmlFor="targetStartDays" className="applicant-form-label">
+                        Start After (Days) <span className="required">*</span>
+                      </label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                        <input
+                          type="number"
+                          id="targetStartDays"
+                          name="targetStartDays"
+                          value={formData.targetStartDays}
+                          onChange={handleInputChange}
+                          min="1"
+                          className={`applicant-form-input applicant-form-input-small ${errors.targetStartDays ? 'error' : ''}`}
+                          style={{ margin: 0 }}
+                        />
+                        {formData.targetStartDays && (
+                          <div style={{
+                            padding: '8px 16px',
+                            backgroundColor: '#f0f9ff',
+                            border: '1px solid #bae6fd',
+                            borderRadius: '6px',
+                            fontSize: '0.875rem',
+                            color: '#059669',
+                            fontWeight: '600',
+                            whiteSpace: 'nowrap'
+                          }}>
+                            <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
+                            Start date: {formatDate(getSearchStartDate())}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                  {errors.targetStartDays && <span className="applicant-form-error">{errors.targetStartDays}</span>}
+                      {errors.targetStartDays && <span className="applicant-form-error">{errors.targetStartDays}</span>}
+                    </>
+                  ) : (
+                    <>
+                      <label className="applicant-form-label">
+                        Search Starts In
+                      </label>
+                      <div style={{
+                        padding: '12px 16px',
+                        backgroundColor: '#f3f4f6',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        color: '#4b5563',
+                        fontSize: '1rem',
+                        fontWeight: '500'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+                          <i className="fas fa-clock" style={{ marginRight: '8px', color: '#6b7280' }}></i>
+                          6 months from today (180 days)
+                        </div>
+                        <div style={{
+                          marginTop: '8px',
+                          paddingTop: '8px',
+                          borderTop: '1px solid #d1d5db',
+                          fontSize: '0.95rem',
+                          color: '#059669',
+                          fontWeight: '600'
+                        }}>
+                          <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
+                          Start date: {formatDate(getSearchStartDate())}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 
               {formData.targetStartMode === 'date' && (
-                <div className="applicant-form-field" style={{ marginTop: '1rem' }}>
+                <div className="applicant-form-field">
                   <label htmlFor="targetStartDate" className="applicant-form-label">
                     Target Start Date <span className="required">*</span>
                   </label>
@@ -559,9 +618,22 @@ const ApplicantForm = () => {
                   name="targetEndDate"
                   value={formData.targetEndDate}
                   onChange={handleInputChange}
+                  min={!permissions.canManageApplicants() ? getMinEndDate() : undefined}
                   className={`applicant-form-input applicant-form-input-date ${errors.targetEndDate ? 'error' : ''}`}
                 />
                 {errors.targetEndDate && <span className="applicant-form-error">{errors.targetEndDate}</span>}
+                {!permissions.canManageApplicants() && (
+                  <small style={{ 
+                    display: 'block', 
+                    marginTop: '6px', 
+                    color: '#6b7280', 
+                    fontSize: '0.875rem',
+                    lineHeight: '1.4'
+                  }}>
+                    <i className="fas fa-info-circle" style={{ marginRight: '4px', color: '#9ca3af' }}></i>
+                    This is the latest date you would accept for an appointment. The search will look for appointments between 6 months from now and this date. Minimum: 290 days from today.
+                  </small>
+                )}
               </div>
             </div>
           </div>
@@ -574,7 +646,27 @@ const ApplicantForm = () => {
             </h2>
             
             {cities.length === 0 ? (
-              <p className="applicant-form-no-cities">No cities available for this country</p>
+              <div style={{
+                backgroundColor: '#f0f9ff',
+                border: '1px solid #bae6fd',
+                borderRadius: '8px',
+                padding: '1rem',
+                display: 'flex',
+                gap: '0.75rem',
+                alignItems: 'flex-start'
+              }}>
+                <i className="fas fa-globe" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
+                <div style={{ flex: 1 }}>
+                  <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                    <strong>Search in all cities:</strong> The search will be performed in all available cities for this country.
+                  </p>
+                  {!permissions.canManageApplicants() && (
+                    <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
+                      💎 <strong>Premium users</strong> can select specific cities for their search.
+                    </p>
+                  )}
+                </div>
+              </div>
             ) : cities.length === 1 ? (
               <div className="applicant-form-city-single">
                 <i className="fas fa-check-circle"></i>
@@ -606,7 +698,15 @@ const ApplicantForm = () => {
           <div className="applicant-form-actions">
             <button
               type="button"
-              onClick={() => navigate('/applicants')}
+              onClick={() => {
+                if (permissions.canManageApplicants()) {
+                  navigate('/applicants');
+                } else if (isEditMode) {
+                  navigate(`/view-applicant/${applicantId}`);
+                } else {
+                  navigate('/');
+                }
+              }}
               className="applicant-form-btn applicant-form-btn-cancel"
               disabled={loading}
             >

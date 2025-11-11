@@ -112,9 +112,17 @@ const HamburgerMenu = () => {
             </div>
           )}
           <div className="regular-menu-items">
-            <Link to="/applicants" className={showUpgrade ? "first-after-premium" : ""} title="Applicants">
-              <i className="fas fa-users"></i>
-            </Link>
+            {permissions.canManageApplicants() ? (
+              <Link to="/applicants" className={showUpgrade ? "first-after-premium" : ""} title="Applicants">
+                <i className="fas fa-users"></i>
+              </Link>
+            ) : (
+              sessionStorage.getItem('applicant_userid') && (
+                <Link to={`/view-applicant/${sessionStorage.getItem('applicant_userid')}`} className={showUpgrade ? "first-after-premium" : ""} title="My Appointment">
+                  <i className="fas fa-calendar-check"></i>
+                </Link>
+              )
+            )}
             {permissions.canManageUsers() && (
               <Link to="/users" title="Users">
                 <i className="fas fa-user-cog"></i>

@@ -392,8 +392,8 @@ const QuickStartApplicant = () => {
       // API call to send email with password and instructions to change it
       // await sendPasswordEmail(username, generatedPassword);
 
-      // Redirect to applicants page
-      window.location.href = '/applicants';
+      // Redirect to applicant details page
+      window.location.href = `/view-applicant/${applicantId}`;
 
     } catch (error) {
       console.error('Quick start error:', error);

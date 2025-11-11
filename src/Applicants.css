@@ -109,9 +109,8 @@
 .applicants-action-btn[title]:hover::after {
   content: attr(title);
   position: absolute;
-  left: 50%;
+  left: 0;
   bottom: -28px;
-  transform: translateX(-50%);
   background: #222;
   color: #fff;
   padding: 4px 10px;

@@ -35,6 +35,7 @@ ReactDOM.render(
         <Route path="/registerapplicant" element={<RegisterApplicant />} />
         <Route path="/applicant-form" element={<ApplicantForm />} />
         <Route path="/viewapplicant" element={<ApplicantView />} />
+        <Route path="/view-applicant/:id" element={<ApplicantView />} />
         <Route path="/deleteapplicant" element={<DeleteApplicant />} />
         <Route path="/startcontainer" element={<StartContainer />} />
         <Route path="/stopcontainer" element={<StopContainer />} />

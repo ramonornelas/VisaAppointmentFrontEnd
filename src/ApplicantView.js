@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
+import { permissions } from './utils/permissions';
 import HamburgerMenu from './HamburgerMenu';
 import Modal from './Modal';
 import { 
@@ -18,8 +19,10 @@ import './index.css';
 const ApplicantView = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { id } = useParams(); // Get ID from URL parameter
   
-  const applicantId = sessionStorage.getItem('applicant_userid');
+  // Use ID from URL parameter if available, otherwise use sessionStorage
+  const applicantId = id || sessionStorage.getItem('applicant_userid');
   const fastVisaUserId = sessionStorage.getItem('fastVisa_userid');
   const countryCode = sessionStorage.getItem('country_code');
 
@@ -42,6 +45,13 @@ const ApplicantView = () => {
       navigate('/');
     }
   }, [isAuthenticated, navigate]);
+
+  // Store applicantId in sessionStorage if received from URL
+  useEffect(() => {
+    if (id && id !== sessionStorage.getItem('applicant_userid')) {
+      sessionStorage.setItem('applicant_userid', id);
+    }
+  }, [id]);
 
   // Load cities
   useEffect(() => {
@@ -315,9 +325,11 @@ const ApplicantView = () => {
           <div className="applicant-view-error">
             <i className="fas fa-exclamation-triangle"></i>
             <p>Applicant not found</p>
-            <button onClick={() => navigate('/applicants')} className="applicant-view-btn">
-              Back to Applicants
-            </button>
+            {permissions.canManageApplicants() && (
+              <button onClick={() => navigate('/applicants')} className="applicant-view-btn">
+                Back to Applicants
+              </button>
+            )}
           </div>
         </div>
       </>
@@ -331,26 +343,30 @@ const ApplicantView = () => {
         <div className="applicant-view-header">
           <div>
             <h1 className="applicant-view-title">
-              <i className="fas fa-user-circle"></i>
-              Applicant Details
+              <i className={permissions.canManageApplicants() ? "fas fa-user-circle" : "fas fa-calendar-check"}></i>
+              {permissions.canManageApplicants() ? 'Applicant Details' : 'My Appointment'}
             </h1>
             <p className="applicant-view-subtitle">
-              View and manage applicant information
+              {permissions.canManageApplicants() ? 'View and manage applicant information' : 'View and manage your appointment search'}
             </p>
           </div>
           <div className="applicant-view-header-actions">
-            <button onClick={() => navigate('/applicants')} className="applicant-view-btn applicant-view-btn-secondary">
-              <i className="fas fa-arrow-left"></i>
-              Back
-            </button>
+            {permissions.canManageApplicants() && (
+              <button onClick={() => navigate('/applicants')} className="applicant-view-btn applicant-view-btn-secondary">
+                <i className="fas fa-arrow-left"></i>
+                Back
+              </button>
+            )}
             <button onClick={handleEdit} className="applicant-view-btn applicant-view-btn-primary">
               <i className="fas fa-edit"></i>
               Edit
             </button>
-            <button onClick={handleDelete} className="applicant-view-btn" style={{ background: '#f44336', color: '#fff' }}>
-              <i className="fas fa-trash-alt"></i>
-              Delete
-            </button>
+            {permissions.canManageApplicants() && (
+              <button onClick={handleDelete} className="applicant-view-btn" style={{ background: '#f44336', color: '#fff' }}>
+                <i className="fas fa-trash-alt"></i>
+                Delete
+              </button>
+            )}
           </div>
         </div>
 
@@ -437,6 +453,29 @@ const ApplicantView = () => {
               Target Dates
             </h2>
             
+            {!permissions.canManageApplicants() && data.target_start_mode === 'days' && data.target_start_days === '180' && (
+              <div style={{
+                backgroundColor: '#f0f9ff',
+                border: '1px solid #bae6fd',
+                borderRadius: '8px',
+                padding: '1rem',
+                marginBottom: '1.5rem',
+                display: 'flex',
+                gap: '0.75rem',
+                alignItems: 'flex-start'
+              }}>
+                <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
+                <div style={{ flex: 1 }}>
+                  <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                    <strong>Basic User Search Settings:</strong> Your appointment search will start 6 months from today.
+                  </p>
+                  <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
+                    💎 <strong>Premium users</strong> can search for appointments starting from tomorrow.
+                  </p>
+                </div>
+              </div>
+            )}
+            
             <div className="applicant-view-grid">
               <div className="applicant-view-field">
                 <label>Start Mode</label>
@@ -476,7 +515,7 @@ const ApplicantView = () => {
             </h2>
             
             <div className="applicant-view-cities">
-              {data.target_city_codes ? (
+              {data.target_city_codes && data.target_city_codes.split(',').filter(Boolean).length > 0 ? (
                 data.target_city_codes.split(',').filter(Boolean).map(code => {
                   const city = cities.find(c => c.city_code === code);
                   return (
@@ -487,7 +526,27 @@ const ApplicantView = () => {
                   );
                 })
               ) : (
-                <div className="applicant-view-value">No cities selected</div>
+                <div style={{
+                  backgroundColor: '#f0f9ff',
+                  border: '1px solid #bae6fd',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  display: 'flex',
+                  gap: '0.75rem',
+                  alignItems: 'flex-start'
+                }}>
+                  <i className="fas fa-globe" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                      <strong>Search in all cities:</strong> The search will be performed in all available cities for this country.
+                    </p>
+                    {!permissions.canManageApplicants() && (
+                      <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
+                        💎 <strong>Premium users</strong> can select specific cities for their search.
+                      </p>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
           </div>

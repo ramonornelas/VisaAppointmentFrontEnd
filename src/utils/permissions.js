@@ -5,6 +5,7 @@ export const hasPermission = (permissionName) => {
 
 export const permissions = {
     canViewAllApplicants: () => hasPermission('view_all_applicants'),
+    canManageApplicants: () => hasPermission('manage_applicants'),
     canManageUsers: () => hasPermission('manage_users'),
     canResetStatus: () => hasPermission('reset_status')
 };
