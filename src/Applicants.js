@@ -424,36 +424,38 @@ const Applicants = () => {
               data.map((item, index) => (
                 <tr key={item.id || index}>
                   {includeFields.map((field) => (
-                    <td key={`${item.id}-${field}`} style={{ textAlign: "left" }}>
+                    <td key={`${item.id}-${field}`} style={{ textAlign: "left", verticalAlign: "top" }}>
                       {field === "applicant_active"
                         ? renderBooleanValue(item[field])
                         : field === "search_status"
                         ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
                             {renderSearchStatusBadge(item[field])}
-                            <button
-                              className="applicants-action-btn"
-                              title={item.search_status === "Inactive" ? "Start Search" : "Stop Search"}
-                              onClick={() => handleAction(item.id, item.search_status)}
-                              style={{ padding: '4px 8px', fontSize: '12px' }}
-                            >
-                              <i className={item.search_status === "Inactive" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
-                            </button>
-                            {canResetStatus && (
+                            <div style={{ display: 'flex', gap: '4px' }}>
                               <button
                                 className="applicants-action-btn"
-                                title="Reset Status"
-                                onClick={() => handleResetStatus(item.id)}
+                                title={item.search_status === "Inactive" ? "Start Search" : "Stop Search"}
+                                onClick={() => handleAction(item.id, item.search_status)}
                                 style={{ padding: '4px 8px', fontSize: '12px' }}
                               >
-                                <i className="fas fa-undo"></i>
+                                <i className={item.search_status === "Inactive" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
                               </button>
-                            )}
+                              {canResetStatus && (
+                                <button
+                                  className="applicants-action-btn"
+                                  title="Reset Status"
+                                  onClick={() => handleResetStatus(item.id)}
+                                  style={{ padding: '4px 8px', fontSize: '12px' }}
+                                >
+                                  <i className="fas fa-undo"></i>
+                                </button>
+                              )}
+                            </div>
                           </div>
                         )
                         : field === "ais_schedule_id"
                         ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
                             <a
                               href="#"
                               onClick={(e) => {
@@ -465,44 +467,50 @@ const Applicants = () => {
                             >
                               {item[field]}
                             </a>
-                            <button
-                              className="applicants-action-btn"
-                              title="Edit with new form"
-                              onClick={() => handleEditApplicant(item.id)}
-                              style={{ padding: '6px 10px', fontSize: '14px' }}
-                            >
-                              <i className="fas fa-edit"></i>
-                            </button>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button
+                                className="applicants-action-btn"
+                                title="Edit with new form"
+                                onClick={() => handleEditApplicant(item.id)}
+                                style={{ padding: '6px 10px', fontSize: '14px' }}
+                              >
+                                <i className="fas fa-edit"></i>
+                              </button>
+                            </div>
                           </div>
                         )
                         : field === "ais_username"
                         ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
                             <span>{item[field]}</span>
-                            <button
-                              className="applicants-action-btn"
-                              title="Copy Email"
-                              onClick={() => handleCopyEmail(item.id)}
-                              style={{ padding: '4px 8px', fontSize: '12px' }}
-                            >
-                              <i className="fas fa-copy"></i>
-                            </button>
-                            <button
-                              className="applicants-action-btn"
-                              title="Copy Password"
-                              onClick={() => handleCopyPassword(item.id)}
-                              style={{ padding: '4px 8px', fontSize: '12px' }}
-                            >
-                              <i className="fas fa-key"></i>
-                            </button>
+                            <div style={{ display: 'flex', gap: '4px' }}>
+                              <button
+                                className="applicants-action-btn"
+                                title="Copy Email"
+                                onClick={() => handleCopyEmail(item.id)}
+                                style={{ padding: '4px 8px', fontSize: '12px' }}
+                              >
+                                <i className="fas fa-copy"></i>
+                              </button>
+                              <button
+                                className="applicants-action-btn"
+                                title="Copy Password"
+                                onClick={() => handleCopyPassword(item.id)}
+                                style={{ padding: '4px 8px', fontSize: '12px' }}
+                              >
+                                <i className="fas fa-key"></i>
+                              </button>
+                            </div>
                           </div>
                         )
                         : item[field]}
                     </td>
                   ))}
                   {canViewAllApplicants && (
-                    <td key={`${item.id}-registeredby`} style={{ textAlign: "left" }}>
-                      {item.fastVisa_username || ""}
+                    <td key={`${item.id}-registeredby`} style={{ textAlign: "left", verticalAlign: "top" }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+                        <span>{item.fastVisa_username || ""}</span>
+                      </div>
                     </td>
                   )}
                 </tr>
