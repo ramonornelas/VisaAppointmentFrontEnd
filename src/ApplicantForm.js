@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
 import { permissions } from './utils/permissions';
 import HamburgerMenu from './HamburgerMenu';
-import { ApplicantDetails, ApplicantUpdate } from './APIFunctions';
+import { ApplicantDetails, ApplicantUpdate, authenticateAIS } from './APIFunctions';
 import { ALL_CITIES } from './utils/cities';
 import { BASE_URL } from './config.js';
 import './ApplicantForm.css';
@@ -41,6 +41,8 @@ const ApplicantForm = () => {
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
   const [cities, setCities] = useState([]);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [aisAuthSuccess, setAisAuthSuccess] = useState(false);
 
   // Format date for display
   const formatDate = (date) => {
@@ -146,6 +148,75 @@ const ApplicantForm = () => {
     }
   };
 
+  // Function to authenticate Visa credentials and get schedule info
+  const handleAuthenticateAIS = async () => {
+    // Validate email and password first
+    const newErrors = {};
+    if (!formData.aisEmail.trim()) {
+      newErrors.aisEmail = 'Visa Appointment System Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.aisEmail)) {
+      newErrors.aisEmail = 'Please enter a valid email';
+    }
+    if (!formData.aisPassword.trim()) {
+      newErrors.aisPassword = 'Visa Appointment System Password is required';
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setIsAuthenticating(true);
+    setAisAuthSuccess(false);
+    
+    try {
+      const aisUserInfo = await authenticateAIS({
+        username: formData.aisEmail,
+        password: formData.aisPassword,
+        country_code: countryCode,
+      });
+
+      if (!aisUserInfo || !aisUserInfo.schedule_id) {
+        setErrors({ 
+          ...errors, 
+          aisEmail: 'Failed to authenticate Visa Appointment System credentials. Please check your email and password.',
+        });
+        setFormData(prev => ({
+          ...prev,
+          aisScheduleId: '',
+          numberOfApplicants: '1',
+        }));
+        return;
+      }
+
+      // Successfully authenticated - update fields
+      setFormData(prev => ({
+        ...prev,
+        aisScheduleId: aisUserInfo.schedule_id,
+        numberOfApplicants: '1', // Default to 1 until API provides this info
+        // Name field is manual - don't auto-fill
+      }));
+      setAisAuthSuccess(true);
+      
+      // Clear any existing errors
+      setErrors({});
+      
+    } catch (error) {
+      console.error('AIS authentication error:', error);
+      setErrors({ 
+        ...errors, 
+        aisEmail: 'An error occurred while authenticating. Please try again.',
+      });
+      setFormData(prev => ({
+        ...prev,
+        aisScheduleId: '',
+        numberOfApplicants: '1',
+      }));
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
   // Validation
   const validateForm = () => {
     const newErrors = {};
@@ -155,18 +226,13 @@ const ApplicantForm = () => {
     }
 
     if (!formData.aisEmail.trim()) {
-      newErrors.aisEmail = 'AIS Email is required';
+      newErrors.aisEmail = 'Visa Appointment System Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.aisEmail)) {
       newErrors.aisEmail = 'Please enter a valid email';
     }
 
-    if (!formData.aisScheduleId.trim()) {
-      newErrors.aisScheduleId = 'Schedule ID is required';
-    }
-
-    if (!formData.numberOfApplicants || formData.numberOfApplicants < 1) {
-      newErrors.numberOfApplicants = 'Must be at least 1';
-    }
+    // Schedule ID and number of applicants will be auto-filled from Visa
+    // No need to validate manually entered values anymore
 
     if (formData.targetStartMode === 'days' && !formData.targetStartDays) {
       newErrors.targetStartDays = 'Required when using days mode';
@@ -409,44 +475,136 @@ const ApplicantForm = () => {
             )}
           </div>
 
-          {/* AIS Credentials Section */}
+          {/* Visa Credentials Section */}
           <div className="applicant-form-section">
             <h2 className="applicant-form-section-title">
               <i className="fas fa-key"></i>
-              AIS Appointment System Credentials
+              Visa Appointment System Credentials
             </h2>
             
             <div className="applicant-form-row">
               <div className="applicant-form-field">
                 <label htmlFor="aisEmail" className="applicant-form-label">
-                  AIS Email <span className="required">*</span>
+                  Visa Appointment System Email <span className="required">*</span>
                 </label>
                 <input
                   type="email"
                   id="aisEmail"
                   name="aisEmail"
                   value={formData.aisEmail}
-                  onChange={handleInputChange}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setAisAuthSuccess(false);
+                  }}
                   className={`applicant-form-input applicant-form-input-medium ${errors.aisEmail ? 'error' : ''}`}
-                  placeholder="ais@example.com"
+                  placeholder="visa@example.com"
                 />
                 {errors.aisEmail && <span className="applicant-form-error">{errors.aisEmail}</span>}
               </div>
 
               <div className="applicant-form-field">
                 <label htmlFor="aisPassword" className="applicant-form-label">
-                  AIS Password {!isEditMode && <span className="required">*</span>}
+                  Visa Appointment System Password {!isEditMode && <span className="required">*</span>}
                 </label>
                 <input
                   type="password"
                   id="aisPassword"
                   name="aisPassword"
                   value={formData.aisPassword}
-                  onChange={handleInputChange}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setAisAuthSuccess(false);
+                  }}
                   className={`applicant-form-input applicant-form-input-medium ${errors.aisPassword ? 'error' : ''}`}
-                  placeholder={isEditMode ? "Leave empty to keep current password" : "Enter AIS password"}
+                  placeholder={isEditMode ? "Leave empty to keep current password" : "Enter Visa Appointment System password"}
                 />
                 {errors.aisPassword && <span className="applicant-form-error">{errors.aisPassword}</span>}
+              </div>
+            </div>
+            
+            {/* Button to authenticate Visa and auto-fill schedule info */}
+            <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+              <button
+                type="button"
+                onClick={handleAuthenticateAIS}
+                disabled={isAuthenticating || !formData.aisEmail || !formData.aisPassword}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: aisAuthSuccess ? '#10b981' : '#2563eb',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: isAuthenticating || !formData.aisEmail || !formData.aisPassword ? 'not-allowed' : 'pointer',
+                  opacity: isAuthenticating || !formData.aisEmail || !formData.aisPassword ? 0.6 : 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '0.95rem',
+                  fontWeight: '500',
+                  transition: 'all 0.2s',
+                }}
+              >
+                {isAuthenticating ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin"></i>
+                    Authenticating...
+                  </>
+                ) : aisAuthSuccess ? (
+                  <>
+                    <i className="fas fa-check-circle"></i>
+                    Authentication Successful
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-key"></i>
+                    Authenticate
+                  </>
+                )}
+              </button>
+              <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '8px', display: 'block' }}>
+                Click to verify your Visa Appointment System credentials and automatically retrieve your Schedule ID
+              </small>
+            </div>
+
+            {/* Schedule ID - read-only, auto-filled */}
+            <div className="applicant-form-row">
+              <div className="applicant-form-field">
+                <label htmlFor="aisScheduleId" className="applicant-form-label">
+                  Visa Appointment System Schedule ID <span className="required">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="aisScheduleId"
+                  name="aisScheduleId"
+                  value={formData.aisScheduleId}
+                  readOnly
+                  className="applicant-form-input applicant-form-input-medium"
+                  style={{ 
+                    backgroundColor: '#f3f4f6', 
+                    cursor: 'not-allowed',
+                    color: '#4b5563'
+                  }}
+                  placeholder="Auto-filled after authentication"
+                />
+                <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
+                  This field is automatically filled after authenticating with Visa Appointment System
+                </small>
+              </div>
+
+              <div className="applicant-form-field">
+                <label htmlFor="numberOfApplicants" className="applicant-form-label">
+                  Number of Applicants <span className="required">*</span>
+                </label>
+                <input
+                  type="number"
+                  id="numberOfApplicants"
+                  name="numberOfApplicants"
+                  value={formData.numberOfApplicants}
+                  onChange={handleInputChange}
+                  min="1"
+                  className={`applicant-form-input applicant-form-input-small ${errors.numberOfApplicants ? 'error' : ''}`}
+                />
+                {errors.numberOfApplicants && <span className="applicant-form-error">{errors.numberOfApplicants}</span>}
               </div>
             </div>
             

@@ -6,7 +6,8 @@ import { useAuth } from './utils/AuthContext';
 import './index.css';
 import './Applicants.css';
 import { ALL_CITIES } from './utils/cities';
-import { NameField, EmailField, PasswordField, ScheduleIdField, NumberOfApplicantsField } from './utils/ApplicantFormFields';
+import { NameField, EmailField, PasswordField, ScheduleIdField } from './utils/ApplicantFormFields';
+import { authenticateAIS } from './APIFunctions';
 
 const RegisterApplicant = () => {
   const navigate = useNavigate();
@@ -40,6 +41,8 @@ const RegisterApplicant = () => {
   const [cityCodes, setCityCodes] = useState('');
   const [cityError, setCityError] = useState('');
   const [errors, setErrors] = useState({});
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [aisAuthSuccess, setAisAuthSuccess] = useState(false);
 
   // Function to validate form
   const validateForm = () => {
@@ -50,22 +53,17 @@ const RegisterApplicant = () => {
     }
     
     if (!email.trim()) {
-      newErrors.email = 'AIS Email is required';
+      newErrors.email = 'Visa Appointment System Email is required';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = 'Please enter a valid email address';
     }
     
     if (!password.trim()) {
-      newErrors.password = 'AIS Password is required';
+      newErrors.password = 'Visa Appointment System Password is required';
     }
     
-    if (!scheduleId.trim()) {
-      newErrors.scheduleId = 'AIS Schedule ID is required';
-    }
-    
-    if (!numberofapplicants.trim()) {
-      newErrors.numberofapplicants = 'Number of Applicants is required';
-    }
+    // Schedule ID and number of applicants will be auto-filled from Visa
+    // No need to validate manually entered values anymore
     
     if (targetStartMode === 'days' && !targetStartDays) {
       newErrors.targetStartDays = 'Target Start Days is required';
@@ -81,6 +79,66 @@ const RegisterApplicant = () => {
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // Function to authenticate Visa credentials and get schedule info
+  const handleAuthenticateAIS = async () => {
+    // Validate email and password first
+    const newErrors = {};
+    if (!email.trim()) {
+      newErrors.email = 'Visa Appointment System Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    if (!password.trim()) {
+      newErrors.password = 'Visa Appointment System Password is required';
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setIsAuthenticating(true);
+    setAisAuthSuccess(false);
+    
+    try {
+      const aisUserInfo = await authenticateAIS({
+        username: email,
+        password: password,
+        country_code: countryCode,
+      });
+
+      if (!aisUserInfo || !aisUserInfo.schedule_id) {
+        setErrors({ 
+          ...errors, 
+          email: 'Failed to authenticate Visa Appointment System credentials. Please check your email and password.',
+        });
+        setScheduleId('');
+        setNumberofApplicants('');
+        return;
+      }
+
+      // Successfully authenticated - update fields
+      setScheduleId(aisUserInfo.schedule_id);
+      setNumberofApplicants('1'); // Default to 1 until API provides this info
+      // Name field is manual - don't auto-fill
+      setAisAuthSuccess(true);
+      
+      // Clear any existing errors
+      setErrors({});
+      
+    } catch (error) {
+      console.error('AIS authentication error:', error);
+      setErrors({ 
+        ...errors, 
+        email: 'An error occurred while authenticating. Please try again.',
+      });
+      setScheduleId('');
+      setNumberofApplicants('');
+    } finally {
+      setIsAuthenticating(false);
+    }
   };
 
   // Function to handle form submission
@@ -192,10 +250,73 @@ const RegisterApplicant = () => {
         <div className="applicants-table-container" style={{ padding: '30px' }}>
           <form onSubmit={handleSubmit}>
             <NameField value={name} onChange={e => { setName(e.target.value); clearError('name'); }} error={errors.name} />
-            <EmailField value={email} onChange={e => { setEmail(e.target.value); clearError('email'); }} error={errors.email} />
-            <PasswordField value={password} onChange={e => { setPassword(e.target.value); clearError('password'); }} error={errors.password} />
-            <ScheduleIdField value={scheduleId} onChange={e => { setScheduleId(e.target.value); clearError('scheduleId'); }} error={errors.scheduleId} />
-            <NumberOfApplicantsField value={numberofapplicants} onChange={e => { setNumberofApplicants(e.target.value); clearError('numberofapplicants'); }} error={errors.numberofapplicants} />
+            <EmailField value={email} onChange={e => { setEmail(e.target.value); clearError('email'); setAisAuthSuccess(false); }} error={errors.email} />
+            <PasswordField value={password} onChange={e => { setPassword(e.target.value); clearError('password'); setAisAuthSuccess(false); }} error={errors.password} />
+            
+            {/* Button to authenticate AIS and auto-fill schedule info */}
+            <div className="form-field" style={{ marginBottom: '20px' }}>
+              <button
+                type="button"
+                onClick={handleAuthenticateAIS}
+                disabled={isAuthenticating || !email || !password}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: aisAuthSuccess ? '#10b981' : '#2563eb',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: isAuthenticating || !email || !password ? 'not-allowed' : 'pointer',
+                  opacity: isAuthenticating || !email || !password ? 0.6 : 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                }}
+              >
+                {isAuthenticating ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin"></i>
+                    Authenticating...
+                  </>
+                ) : aisAuthSuccess ? (
+                  <>
+                    <i className="fas fa-check-circle"></i>
+                    Authentication Successful
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-key"></i>
+                    Authenticate
+                  </>
+                )}
+              </button>
+              <small style={{ color: '#666', fontSize: '12px', marginTop: '5px', display: 'block' }}>
+                Click to verify your Visa Appointment System credentials
+              </small>
+            </div>
+
+            <ScheduleIdField 
+              value={scheduleId} 
+              onChange={e => { setScheduleId(e.target.value); clearError('scheduleId'); }} 
+              error={errors.scheduleId}
+              disabled={true}
+              style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }}
+            />
+            
+            <div className="form-field">
+              <label htmlFor="numberofapplicants">Number of Applicants: <span style={{ color: 'red' }}>*</span></label>
+              <input
+                type="number"
+                id="numberofapplicants"
+                name="numberofapplicants"
+                value={numberofapplicants}
+                onChange={e => { setNumberofApplicants(e.target.value); clearError('numberofapplicants'); }}
+                style={{ borderColor: errors.numberofapplicants ? 'red' : '', width: '80px' }}
+                required
+              />
+              {errors.numberofapplicants && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{errors.numberofapplicants}</div>}
+            </div>
             
             <div className="form-field">
               <label htmlFor="targetStartMode">Target Start Mode: <span style={{ color: 'red' }}>*</span></label>
