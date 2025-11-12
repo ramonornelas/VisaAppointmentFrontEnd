@@ -135,7 +135,12 @@ const UserRegistrationForm = () => {
     }
 
     // Remove confirmPassword before sending
-    const submitData = { ...formData };
+    const submitData = { 
+      ...formData,
+      email: formData.username, // Email is the same as username
+      sendEmail: true,
+      includePassword: false, // RegisterUser does NOT send password in email
+    };
     delete submitData.confirmPassword;
     fetch("https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users", {
       method: "POST",

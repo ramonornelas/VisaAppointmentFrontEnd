@@ -266,12 +266,15 @@ const QuickStartApplicant = () => {
       const userPayload = {
         name: userName, // TODO: From AIS API
         username: username, // Using AIS email as username
+        email: username, // Email is the same as username
         password: generatedPassword,
         phone_number: formData.phone_number,
         active: true,
         expiration_date: getExpirationDate(),
         country_code: formData.country_code,
         role_id: basicRoleId,
+        sendEmail: true,
+        includePassword: true, // QuickStart always sends password in email
       };
 
       const userResponse = await fetch(`${BASE_URL}/users`, {
