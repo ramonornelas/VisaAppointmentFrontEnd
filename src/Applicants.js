@@ -46,7 +46,7 @@ const Applicants = () => {
   ];
   // Use centralized permissions utility
   const canViewAllApplicants = permissions.canViewAllApplicants();
-  const canResetStatus = permissions.canResetStatus();
+  const canClearStatus = permissions.canClearStatus();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -220,7 +220,7 @@ const Applicants = () => {
         setModal({
           isOpen: true,
           title: 'Success',
-          message: 'Status reset successfully.',
+          message: 'Status cleared successfully.',
           type: 'success',
           showCancel: false
         });
@@ -229,17 +229,17 @@ const Applicants = () => {
         setModal({
           isOpen: true,
           title: 'Error',
-          message: 'Failed to reset status.',
+          message: 'Failed to clear status.',
           type: 'error',
           showCancel: false
         });
       }
     } catch (error) {
-      console.error("Error resetting status:", error);
+      console.error("Error clearing status:", error);
       setModal({
         isOpen: true,
         title: 'Error',
-        message: 'Error resetting status.',
+        message: 'Error clearing status.',
         type: 'error',
         showCancel: false
       });
@@ -356,10 +356,10 @@ const Applicants = () => {
     <td key={`reset-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title="Reset Status"
+        title="Clear Status"
         onClick={() => handleResetStatus(id)}
       >
-        <i className="fas fa-undo"></i>
+        <i className="fas fa-eraser"></i>
       </button>
     </td>
   );
@@ -429,7 +429,7 @@ const Applicants = () => {
                         ? renderBooleanValue(item[field])
                         : field === "search_status"
                         ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             {renderSearchStatusBadge(item[field])}
                             <div style={{ display: 'flex', gap: '4px' }}>
                               <button
@@ -440,14 +440,14 @@ const Applicants = () => {
                               >
                                 <i className={item.search_status === "Inactive" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
                               </button>
-                              {canResetStatus && (
+                              {canClearStatus && (
                                 <button
                                   className="applicants-action-btn"
-                                  title="Reset Status"
+                                  title="Clear Status"
                                   onClick={() => handleResetStatus(item.id)}
                                   style={{ padding: '4px 8px', fontSize: '12px' }}
                                 >
-                                  <i className="fas fa-undo"></i>
+                                  <i className="fas fa-eraser"></i>
                                 </button>
                               )}
                             </div>
@@ -455,7 +455,7 @@ const Applicants = () => {
                         )
                         : field === "ais_schedule_id"
                         ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <a
                               href="#"
                               onClick={(e) => {
@@ -467,21 +467,19 @@ const Applicants = () => {
                             >
                               {item[field]}
                             </a>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                              <button
-                                className="applicants-action-btn"
-                                title="Edit with new form"
-                                onClick={() => handleEditApplicant(item.id)}
-                                style={{ padding: '6px 10px', fontSize: '14px' }}
-                              >
-                                <i className="fas fa-edit"></i>
-                              </button>
-                            </div>
+                            <button
+                              className="applicants-action-btn"
+                              title="Edit"
+                              onClick={() => handleEditApplicant(item.id)}
+                              style={{ padding: '6px 10px', fontSize: '14px' }}
+                            >
+                              <i className="fas fa-edit"></i>
+                            </button>
                           </div>
                         )
                         : field === "ais_username"
                         ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span>{item[field]}</span>
                             <div style={{ display: 'flex', gap: '4px' }}>
                               <button
@@ -507,10 +505,8 @@ const Applicants = () => {
                     </td>
                   ))}
                   {canViewAllApplicants && (
-                    <td key={`${item.id}-registeredby`} style={{ textAlign: "left", verticalAlign: "top" }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
-                        <span>{item.fastVisa_username || ""}</span>
-                      </div>
+                    <td key={`${item.id}-registeredby`} style={{ textAlign: "left", verticalAlign: "middle" }}>
+                      <span>{item.fastVisa_username || ""}</span>
                     </td>
                   )}
                 </tr>

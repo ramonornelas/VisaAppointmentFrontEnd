@@ -99,9 +99,17 @@
   cursor: pointer;
   padding: 4px 7px;
   border-radius: 5px;
-  transition: background 0.15s;
+  transition: all 0.2s ease;
   position: relative;
+  opacity: 0;
+  visibility: hidden;
 }
+
+.applicants-table tr:hover .applicants-action-btn {
+  opacity: 1;
+  visibility: visible;
+}
+
 .applicants-action-btn:hover {
   background: #e3eaf3;
 }
