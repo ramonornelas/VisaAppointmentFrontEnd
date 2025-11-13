@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
 import { permissions } from './utils/permissions';
@@ -17,6 +18,7 @@ import './ApplicantView.css';
 import './index.css';
 
 const ApplicantView = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { id } = useParams(); // Get ID from URL parameter
@@ -83,8 +85,8 @@ const ApplicantView = () => {
   const handleDelete = async () => {
     setModal({
       isOpen: true,
-      title: 'Delete Applicant',
-      message: 'Are you sure you want to delete this applicant?',
+      title: t('deleteApplicant', 'Delete Applicant'),
+      message: t('deleteApplicantConfirm', 'Are you sure you want to delete this applicant?'),
       type: 'confirm',
       showCancel: true,
       onConfirm: async () => {
@@ -93,8 +95,8 @@ const ApplicantView = () => {
         if (isSearchRunning) {
           setModal({
             isOpen: true,
-            title: 'Search in Progress',
-            message: 'Search is in progress. Do you want to stop the search before deleting?',
+            title: t('searchInProgress', 'Search in Progress'),
+            message: t('stopSearchBeforeDeleting', 'Search is in progress. Do you want to stop the search before deleting?'),
             type: 'warning',
             showCancel: true,
             onConfirm: async () => {
@@ -102,8 +104,8 @@ const ApplicantView = () => {
                 await StopApplicantContainer(applicantId);
                 setModal({
                   isOpen: true,
-                  title: 'Search Stopped',
-                  message: 'Search stopped. The applicant will now be deleted.',
+                  title: t('searchStopped', 'Search Stopped'),
+                  message: t('searchStoppedApplicantDeleted', 'Search stopped. The applicant will now be deleted.'),
                   type: 'info',
                   showCancel: false,
                   onConfirm: async () => {
@@ -112,8 +114,8 @@ const ApplicantView = () => {
                       if (response && response.success) {
                         setModal({
                           isOpen: true,
-                          title: 'Success',
-                          message: 'Applicant deleted successfully.',
+                          title: t('success', 'Success'),
+                          message: t('applicantDeletedSuccessfully', 'Applicant deleted successfully.'),
                           type: 'success',
                           showCancel: false,
                           onConfirm: () => navigate('/applicants')
@@ -121,8 +123,8 @@ const ApplicantView = () => {
                       } else {
                         setModal({
                           isOpen: true,
-                          title: 'Error',
-                          message: 'Unexpected response when deleting applicant.',
+                          title: t('error', 'Error'),
+                          message: t('unexpectedResponseDeleting', 'Unexpected response when deleting applicant.'),
                           type: 'error',
                           showCancel: false
                         });
@@ -130,8 +132,8 @@ const ApplicantView = () => {
                     } catch (error) {
                       setModal({
                         isOpen: true,
-                        title: 'Error',
-                        message: 'Failed to delete applicant. Please try again.',
+                        title: t('error', 'Error'),
+                        message: t('failedToDeleteApplicant', 'Failed to delete applicant. Please try again.'),
                         type: 'error',
                         showCancel: false
                       });
@@ -141,8 +143,8 @@ const ApplicantView = () => {
               } catch (error) {
                 setModal({
                   isOpen: true,
-                  title: 'Error',
-                  message: 'Failed to stop search or delete applicant. Please try again.',
+                  title: t('error', 'Error'),
+                  message: t('failedToStopSearchOrDelete', 'Failed to stop search or delete applicant. Please try again.'),
                   type: 'error',
                   showCancel: false
                 });
@@ -157,8 +159,8 @@ const ApplicantView = () => {
           if (response && response.success) {
             setModal({
               isOpen: true,
-              title: 'Success',
-              message: 'Applicant deleted successfully.',
+              title: t('success', 'Success'),
+              message: t('applicantDeletedSuccessfully', 'Applicant deleted successfully.'),
               type: 'success',
               showCancel: false,
               onConfirm: () => navigate('/applicants')
@@ -166,8 +168,8 @@ const ApplicantView = () => {
           } else {
             setModal({
               isOpen: true,
-              title: 'Error',
-              message: 'Unexpected response when deleting applicant.',
+              title: t('error', 'Error'),
+              message: t('unexpectedResponseDeleting', 'Unexpected response when deleting applicant.'),
               type: 'error',
               showCancel: false
             });
@@ -176,8 +178,8 @@ const ApplicantView = () => {
           console.error('Error deleting applicant:', error);
           setModal({
             isOpen: true,
-            title: 'Error',
-            message: 'Error deleting applicant.',
+            title: t('error', 'Error'),
+            message: t('errorDeletingApplicant', 'Error deleting applicant.'),
             type: 'error',
             showCancel: false
           });
@@ -196,8 +198,8 @@ const ApplicantView = () => {
         if (runningCount >= concurrentLimit) {
           setModal({
             isOpen: true,
-            title: 'Limit Reached',
-            message: `You have reached your concurrent applicants limit (${concurrentLimit}).\nTo start a new applicant, please end one of your currently running applicants first.`,
+            title: t('limitReached', 'Limit Reached'),
+            message: t('concurrentLimitMessage', `You have reached your concurrent applicants limit ({limit}).\nTo start a new applicant, please end one of your currently running applicants first.`).replace('{limit}', concurrentLimit),
             type: 'warning',
             showCancel: false
           });
@@ -207,8 +209,8 @@ const ApplicantView = () => {
         await StartApplicantContainer(applicantId);
         setModal({
           isOpen: true,
-          title: 'Success',
-          message: 'Search started successfully.',
+          title: t('success', 'Success'),
+          message: t('searchStartedSuccess', 'Search started successfully.'),
           type: 'success',
           showCancel: false
         });
@@ -216,8 +218,8 @@ const ApplicantView = () => {
         await StopApplicantContainer(applicantId);
         setModal({
           isOpen: true,
-          title: 'Success',
-          message: 'Search stopped successfully.',
+          title: t('success', 'Success'),
+          message: t('searchStoppedSuccess', 'Search stopped successfully.'),
           type: 'success',
           showCancel: false
         });
@@ -227,8 +229,8 @@ const ApplicantView = () => {
     } catch (error) {
       setModal({
         isOpen: true,
-        title: 'Error',
-        message: 'Error performing action.',
+        title: t('error', 'Error'),
+        message: t('errorPerformingAction', 'Error performing action.'),
         type: 'error',
         showCancel: false
       });
@@ -241,8 +243,8 @@ const ApplicantView = () => {
       await navigator.clipboard.writeText(data.ais_username);
       setModal({
         isOpen: true,
-        title: 'Copied',
-        message: 'Email copied to clipboard',
+        title: t('copied', 'Copied'),
+        message: t('emailCopied', 'Email copied to clipboard'),
         type: 'success',
         showCancel: false
       });
@@ -257,8 +259,8 @@ const ApplicantView = () => {
       await navigator.clipboard.writeText(response.password);
       setModal({
         isOpen: true,
-        title: 'Copied',
-        message: 'Password copied to clipboard',
+        title: t('copied', 'Copied'),
+        message: t('passwordCopied', 'Password copied to clipboard'),
         type: 'success',
         showCancel: false
       });
@@ -277,6 +279,14 @@ const ApplicantView = () => {
   };
 
   const renderStatusBadge = (status) => {
+    const statusTranslations = {
+      'Running': t('running', 'Running'),
+      'Inactive': t('inactive', 'Inactive'),
+      'Stopped': t('stopped', 'Stopped'),
+      'Error': t('error', 'Error'),
+      'Completed': t('completed', 'Completed'),
+    };
+
     const statusStyles = {
       'Running': { background: '#2196f3', color: '#fff' },
       'Inactive': { background: '#e0e0e0', color: '#888' },
@@ -289,7 +299,7 @@ const ApplicantView = () => {
 
     return (
       <span className="applicant-view-badge" style={{ background: style.background, color: style.color }}>
-        {status}
+        {statusTranslations[status] || status}
       </span>
     );
   };
@@ -299,7 +309,7 @@ const ApplicantView = () => {
       background: value ? '#4caf50' : '#e0e0e0',
       color: value ? '#fff' : '#888'
     }}>
-      {value ? 'Active' : 'Inactive'}
+      {value ? t('active', 'Active') : t('inactive', 'Inactive')}
     </span>
   );
 
@@ -310,7 +320,7 @@ const ApplicantView = () => {
         <div className="applicant-view-container">
           <div className="applicant-view-loading">
             <i className="fas fa-spinner fa-spin"></i>
-            <p>Loading applicant details...</p>
+            <p>{t('loadingApplicantDetails', 'Loading applicant details...')}</p>
           </div>
         </div>
       </>
@@ -324,10 +334,10 @@ const ApplicantView = () => {
         <div className="applicant-view-container">
           <div className="applicant-view-error">
             <i className="fas fa-exclamation-triangle"></i>
-            <p>Applicant not found</p>
+            <p>{t('applicantNotFound', 'Applicant not found')}</p>
             {permissions.canManageApplicants() && (
               <button onClick={() => navigate('/applicants')} className="applicant-view-btn">
-                Back to Applicants
+                {t('backToApplicants', 'Back to Applicants')}
               </button>
             )}
           </div>
@@ -344,27 +354,27 @@ const ApplicantView = () => {
           <div>
             <h1 className="applicant-view-title">
               <i className={permissions.canManageApplicants() ? "fas fa-user-circle" : "fas fa-calendar-check"}></i>
-              {permissions.canManageApplicants() ? 'Applicant Details' : 'My Appointment'}
+              {permissions.canManageApplicants() ? t('applicantDetails', 'Applicant Details') : t('myAppointment', 'My Appointment')}
             </h1>
             <p className="applicant-view-subtitle">
-              {permissions.canManageApplicants() ? 'View and manage applicant information' : 'View and manage your appointment search'}
+              {permissions.canManageApplicants() ? t('viewManageApplicantInfo', 'View and manage applicant information') : t('viewManageAppointment', 'View and manage your appointment search')}
             </p>
           </div>
           <div className="applicant-view-header-actions">
             {permissions.canManageApplicants() && (
               <button onClick={() => navigate('/applicants')} className="applicant-view-btn applicant-view-btn-secondary">
                 <i className="fas fa-arrow-left"></i>
-                Back
+                {t('back', 'Back')}
               </button>
             )}
             <button onClick={handleEdit} className="applicant-view-btn applicant-view-btn-primary">
               <i className="fas fa-edit"></i>
-              Edit
+              {t('edit', 'Edit')}
             </button>
             {permissions.canManageApplicants() && (
               <button onClick={handleDelete} className="applicant-view-btn" style={{ background: '#f44336', color: '#fff' }}>
                 <i className="fas fa-trash-alt"></i>
-                Delete
+                {t('delete', 'Delete')}
               </button>
             )}
           </div>
@@ -376,29 +386,29 @@ const ApplicantView = () => {
           <div className="applicant-view-section">
             <h2 className="applicant-view-section-title">
               <i className="fas fa-user"></i>
-              Basic Information
+              {t('basicInformation', 'Basic Information')}
             </h2>
             
             <div className="applicant-view-grid">
               <div className="applicant-view-field">
-                <label>Full Name</label>
+                <label>{t('fullName', 'Full Name')}</label>
                 <div className="applicant-view-value">{data.name || 'N/A'}</div>
               </div>
 
               <div className="applicant-view-field">
-                <label>Number of Applicants</label>
+                <label>{t('numberOfApplicants', 'Number of Applicants')}</label>
                 <div className="applicant-view-value">{data.number_of_applicants || 'N/A'}</div>
               </div>
 
               <div className="applicant-view-field">
-                <label>Applicant Status</label>
+                <label>{t('applicantStatus', 'Applicant Status')}</label>
                 <div className="applicant-view-value">
                   {renderBooleanBadge(data.applicant_active)}
                 </div>
               </div>
 
               <div className="applicant-view-field">
-                <label>Search Status</label>
+                <label>{t('searchStatus', 'Search Status')}</label>
                 <div className="applicant-view-value" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {renderStatusBadge(data.search_status)}
                   <button 
@@ -407,7 +417,7 @@ const ApplicantView = () => {
                     style={{ margin: 0, minWidth: '140px' }}
                   >
                     <i className={data.search_status === 'Inactive' ? 'fas fa-play-circle' : 'fas fa-stop-circle'}></i>
-                    {data.search_status === 'Inactive' ? 'Start Search' : 'Stop Search'}
+                    {data.search_status === 'Inactive' ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
                   </button>
                 </div>
               </div>
@@ -418,19 +428,19 @@ const ApplicantView = () => {
           <div className="applicant-view-section">
             <h2 className="applicant-view-section-title">
               <i className="fas fa-key"></i>
-              Visa Appointment System Credentials
+              {t('visaCredentials', 'Visa Appointment System Credentials')}
             </h2>
             
             <div className="applicant-view-grid">
               <div className="applicant-view-field">
-                <label>Visa Appointment System Email</label>
+                <label>{t('visaEmail', 'Visa Appointment System Email')}</label>
                 <div className="applicant-view-value applicant-view-value-code" style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
                   <span>{data.ais_username || 'N/A'}</span>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={handleCopyEmail} className="applicant-view-action-btn" style={{ margin: 0, padding: '6px 12px', fontSize: '0.9rem' }} title="Copy Email">
+                    <button onClick={handleCopyEmail} className="applicant-view-action-btn" style={{ margin: 0, padding: '6px 12px', fontSize: '0.9rem' }} title={t('copyEmail', 'Copy Email')}>
                       <i className="fas fa-copy"></i>
                     </button>
-                    <button onClick={handleCopyPassword} className="applicant-view-action-btn" style={{ margin: 0, padding: '6px 12px', fontSize: '0.9rem' }} title="Copy Password">
+                    <button onClick={handleCopyPassword} className="applicant-view-action-btn" style={{ margin: 0, padding: '6px 12px', fontSize: '0.9rem' }} title={t('copyPassword', 'Copy Password')}>
                       <i className="fas fa-key"></i>
                     </button>
                   </div>
@@ -438,7 +448,7 @@ const ApplicantView = () => {
               </div>
 
               <div className="applicant-view-field">
-                <label>Schedule ID</label>
+                <label>{t('scheduleId', 'Schedule ID')}</label>
                 <div className="applicant-view-value applicant-view-value-code">
                   {data.ais_schedule_id || 'N/A'}
                 </div>
@@ -450,7 +460,7 @@ const ApplicantView = () => {
           <div className="applicant-view-section">
             <h2 className="applicant-view-section-title">
               <i className="fas fa-calendar-alt"></i>
-              Target Dates
+              {t('targetDates', 'Target Dates')}
             </h2>
             
             {!permissions.canManageApplicants() && data.target_start_mode === 'days' && data.target_start_days === '180' && (
@@ -467,10 +477,10 @@ const ApplicantView = () => {
                 <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
                 <div style={{ flex: 1 }}>
                   <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                    <strong>Basic User Search Settings:</strong> Your appointment search will start 6 months from today.
+                    <strong>{t('basicUserSearchSettings', 'Basic User Search Settings:')}</strong> {t('appointmentSearchStartsSixMonths', 'Your appointment search will start 6 months from today.')}
                   </p>
                   <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
-                    💎 <strong>Premium users</strong> can search for appointments starting from tomorrow.
+                    💎 <strong>{t('premiumUsers', 'Premium users')}</strong> {t('searchStartingTomorrow', 'can search for appointments starting from tomorrow.')}
                   </p>
                 </div>
               </div>
@@ -478,30 +488,30 @@ const ApplicantView = () => {
             
             <div className="applicant-view-grid">
               <div className="applicant-view-field">
-                <label>Start Mode</label>
+                <label>{t('startMode', 'Start Mode')}</label>
                 <div className="applicant-view-value">
                   <span className="applicant-view-badge" style={{ background: '#eaf4fb', color: '#2C6BA0' }}>
-                    {data.target_start_mode === 'date' ? 'Specific Date' : 'Days from Now'}
+                    {data.target_start_mode === 'date' ? t('specificDate', 'Specific Date') : t('daysFromNow', 'Days from Now')}
                   </span>
                 </div>
               </div>
 
               {data.target_start_mode === 'date' && (
                 <div className="applicant-view-field">
-                  <label>Target Start Date</label>
+                  <label>{t('targetStartDate', 'Target Start Date')}</label>
                   <div className="applicant-view-value">{data.target_start_date || 'N/A'}</div>
                 </div>
               )}
 
               {data.target_start_mode === 'days' && (
                 <div className="applicant-view-field">
-                  <label>Target Start Days</label>
+                  <label>{t('targetStartDays', 'Target Start Days')}</label>
                   <div className="applicant-view-value">{data.target_start_days || 'N/A'}</div>
                 </div>
               )}
 
               <div className="applicant-view-field">
-                <label>Target End Date</label>
+                <label>{t('targetEndDate', 'Target End Date')}</label>
                 <div className="applicant-view-value">{data.target_end_date || 'N/A'}</div>
               </div>
             </div>
@@ -511,7 +521,7 @@ const ApplicantView = () => {
           <div className="applicant-view-section">
             <h2 className="applicant-view-section-title">
               <i className="fas fa-map-marker-alt"></i>
-              Target Cities
+              {t('targetCities', 'Target Cities')}
             </h2>
             
             <div className="applicant-view-cities">
@@ -538,11 +548,11 @@ const ApplicantView = () => {
                   <i className="fas fa-globe" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
                   <div style={{ flex: 1 }}>
                     <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                      <strong>Search in all cities:</strong> The search will be performed in all available cities for this country.
+                      <strong>{t('searchAllCities', 'Search in all cities:')}</strong> {t('searchPerformedAllCities', 'The search will be performed in all available cities for this country.')}
                     </p>
                     {!permissions.canManageApplicants() && (
                       <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
-                        💎 <strong>Premium users</strong> can select specific cities for their search.
+                        💎 <strong>{t('premiumUsers', 'Premium users')}</strong> {t('canSelectSpecificCities', 'can select specific cities for their search.')}
                       </p>
                     )}
                   </div>
@@ -556,18 +566,18 @@ const ApplicantView = () => {
             <div className="applicant-view-section">
               <h2 className="applicant-view-section-title">
                 <i className="fas fa-calendar-check"></i>
-                Reserved Appointments
+                {t('reservedAppointments', 'Reserved Appointments')}
               </h2>
               
               <div className="applicant-view-grid">
                 <div className="applicant-view-field">
-                  <label>Consulate Appointment Date</label>
-                  <div className="applicant-view-value">{data.consul_appointment_date || 'Not set'}</div>
+                  <label>{t('consulateAppointmentDate', 'Consulate Appointment Date')}</label>
+                  <div className="applicant-view-value">{data.consul_appointment_date || t('notSet', 'Not set')}</div>
                 </div>
 
                 <div className="applicant-view-field">
-                  <label>ASC Appointment Date</label>
-                  <div className="applicant-view-value">{data.asc_appointment_date || 'Not set'}</div>
+                  <label>{t('ascAppointmentDate', 'ASC Appointment Date')}</label>
+                  <div className="applicant-view-value">{data.asc_appointment_date || t('notSet', 'Not set')}</div>
                 </div>
               </div>
             </div>

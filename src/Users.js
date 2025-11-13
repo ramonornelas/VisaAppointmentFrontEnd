@@ -1,7 +1,7 @@
 
 
-
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import HamburgerMenu from './HamburgerMenu';
 import { permissions } from './utils/permissions';
 import { getUsers, updateUser, getRoles } from './APIFunctions';
@@ -12,6 +12,7 @@ import './Applicants.css';
 import { ALL_COUNTRIES } from './utils/countries';
 
 const Users = () => {
+    const { t } = useTranslation();
     const [users, setUsers] = useState([]);
     // Modal state for delete confirmation
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -33,7 +34,7 @@ const Users = () => {
                 setRefreshFlag(flag => !flag);
             } else {
                 // Show error modal (optional, for now use alert)
-                alert('Failed to delete user.');
+                alert(t('failedToDeleteUser', 'Failed to delete user.'));
             }
         }
     };
@@ -78,26 +79,26 @@ const Users = () => {
     };
 
     if (!permissions.canManageUsers()) {
-        return <div>Access denied.</div>;
+        return <div>{t('accessDenied', 'Access denied.')}</div>;
     }
 
     return (
         <>
             <HamburgerMenu />
             <div className="applicants-main-container">
-                <h2 className="applicants-title">Users</h2>
+                <h2 className="applicants-title">{t('users', 'Users')}</h2>
                 <div className="applicants-table-container">
                     <table className="applicants-table">
                         <thead>
                             <tr>
-                                <th>Username</th>
-                                <th>Active</th>
-                                <th>Country</th>
-                                <th>Expiration Date</th>
-                                <th>Concurrent Applicants</th>
-                                <th>Phone Number</th>
-                                <th>Role</th>
-                                <th>Actions</th>
+                                <th>{t('username', 'Username')}</th>
+                                <th>{t('active', 'Active')}</th>
+                                <th>{t('country', 'Country')}</th>
+                                <th>{t('expirationDate', 'Expiration Date')}</th>
+                                <th>{t('concurrentApplicants', 'Concurrent Applicants')}</th>
+                                <th>{t('phoneNumber', 'Phone Number')}</th>
+                                <th>{t('role', 'Role')}</th>
+                                <th>{t('actions', 'Actions')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -120,7 +121,7 @@ const Users = () => {
                                                     letterSpacing: '0.5px',
                                                     minWidth: 60,
                                                     textAlign: 'center',
-                                                }}>{user.active ? 'Active' : 'Inactive'}</span>
+                                                }}>{user.active ? t('active', 'Active') : t('inactive', 'Inactive')}</span>
                                             )}
                                         </td>
                                         <td>
@@ -130,7 +131,7 @@ const Users = () => {
                                                     value={editData.country_code || ""}
                                                     onChange={handleChange}
                                                 >
-                                                    <option value="" disabled>Select country</option>
+                                                    <option value="" disabled>{t('selectCountry', 'Select country')}</option>
                                                     {ALL_COUNTRIES.map(opt => (
                                                         <option key={opt.value} value={opt.value}>
                                                             {opt.label}
@@ -152,7 +153,7 @@ const Users = () => {
                                         ) : user.phone_number}</td>
                                         <td>{editIndex === idx ? (
                                             <select name="role_id" value={editData.role_id || ''} onChange={handleChange}>
-                                                <option value="" disabled>Select role</option>
+                                                <option value="" disabled>{t('selectRole', 'Select role')}</option>
                                                 {roles.map((role) => (
                                                     <option key={role.id} value={role.id}>{role.name}</option>
                                                 ))}
@@ -169,7 +170,7 @@ const Users = () => {
                                                     <button 
                                                         className="applicants-action-btn" 
                                                         onClick={handleSave}
-                                                        title="Save"
+                                                        title={t('save', 'Save')}
                                                         style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
                                                     >
                                                         <i className="fas fa-save"></i>
@@ -177,7 +178,7 @@ const Users = () => {
                                                     <button 
                                                         className="applicants-action-btn" 
                                                         onClick={() => setEditIndex(null)}
-                                                        title="Cancel"
+                                                        title={t('cancel', 'Cancel')}
                                                         style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
                                                     >
                                                         <i className="fas fa-times"></i>
@@ -188,7 +189,7 @@ const Users = () => {
                                                     <button 
                                                         className="applicants-action-btn" 
                                                         onClick={() => handleEdit(idx)}
-                                                        title="Edit"
+                                                        title={t('edit', 'Edit')}
                                                         style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
                                                     >
                                                         <i className="fas fa-edit"></i>
@@ -196,7 +197,7 @@ const Users = () => {
                                                     <button 
                                                         className="applicants-action-btn" 
                                                         onClick={() => requestDeleteUser(user.id)}
-                                                        title="Delete"
+                                                        title={t('delete', 'Delete')}
                                                         style={{ padding: '4px 8px', fontSize: '12px', color: '#fff', background: '#e53935' }}
                                                     >
                                                         <i className="fas fa-trash"></i>
@@ -219,10 +220,10 @@ const Users = () => {
                                         }}>
                                             <i className="fas fa-user-cog" style={{ fontSize: "48px", color: "#ddd" }}></i>
                                             <div style={{ fontSize: "18px", fontWeight: "500", color: "#666" }}>
-                                                No users found
+                                                {t('noUsersFound', 'No users found')}
                                             </div>
                                             <div style={{ fontSize: "14px", color: "#999" }}>
-                                                No users available in the system.
+                                                {t('noUsersAvailable', 'No users available in the system.')}
                                             </div>
                                         </div>
                                     </td>
@@ -235,13 +236,13 @@ const Users = () => {
         {/* Delete confirmation modal */}
         <Modal
             isOpen={showDeleteModal}
-            title="Delete User"
-            message="Are you sure you want to delete this user? This action cannot be undone."
+            title={t('deleteUser', 'Delete User')}
+            message={t('deleteUserConfirm', 'Are you sure you want to delete this user? This action cannot be undone.')}
             type="confirm"
             onClose={cancelDeleteUser}
             onConfirm={confirmDeleteUser}
-            confirmText="Delete"
-            cancelText="Cancel"
+            confirmText={t('delete', 'Delete')}
+            cancelText={t('cancel', 'Cancel')}
             showCancel={true}
         />
         </>

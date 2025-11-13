@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Banner from "./Banner";
 import HamburgerMenu from "./HamburgerMenu";
 import Modal from "./Modal";
@@ -17,6 +18,7 @@ import "./Applicants.css";
 import { permissions } from "./utils/permissions";
 
 const Applicants = () => {
+  const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
   const [data, setData] = useState(null);
   const [allRegisteredUsers, setAllRegisteredUsers] = useState([]);
@@ -135,8 +137,8 @@ const Applicants = () => {
         if (runningCount >= concurrentLimit) {
           setModal({
             isOpen: true,
-            title: 'Limit Reached',
-            message: `You have reached your concurrent applicants limit (${concurrentLimit}).\nTo start a new applicant, please end one of your currently running applicants first.`,
+            title: t('limitReached', 'Limit Reached'),
+            message: t('concurrentLimitMessage', `You have reached your concurrent applicants limit ({limit}).\nTo start a new applicant, please end one of your currently running applicants first.`).replace('{limit}', concurrentLimit),
             type: 'warning',
             showCancel: false
           });
@@ -146,8 +148,8 @@ const Applicants = () => {
         await StartApplicantContainer(id);
         setModal({
           isOpen: true,
-          title: 'Success',
-          message: 'Search started successfully.',
+          title: t('success', 'Success'),
+          message: t('searchStartedSuccess', 'Search started successfully.'),
           type: 'success',
           showCancel: false
         });
@@ -156,8 +158,8 @@ const Applicants = () => {
         await StopApplicantContainer(id);
         setModal({
           isOpen: true,
-          title: 'Success',
-          message: 'Search stopped successfully.',
+          title: t('success', 'Success'),
+          message: t('searchStoppedSuccess', 'Search stopped successfully.'),
           type: 'success',
           showCancel: false
         });
@@ -166,8 +168,8 @@ const Applicants = () => {
     } catch (error) {
       setModal({
         isOpen: true,
-        title: 'Error',
-        message: 'Error performing action.',
+        title: t('error', 'Error'),
+        message: t('errorPerformingAction', 'Error performing action.'),
         type: 'error',
         showCancel: false
       });
@@ -182,8 +184,8 @@ const Applicants = () => {
       await navigator.clipboard.writeText(password);
       setModal({
         isOpen: true,
-        title: 'Copied',
-        message: 'Password copied to clipboard',
+        title: t('copied', 'Copied'),
+        message: t('passwordCopied', 'Password copied to clipboard'),
         type: 'success',
         showCancel: false
       });
@@ -199,8 +201,8 @@ const Applicants = () => {
       await navigator.clipboard.writeText(email);
       setModal({
         isOpen: true,
-        title: 'Copied',
-        message: 'Email copied to clipboard',
+        title: t('copied', 'Copied'),
+        message: t('emailCopied', 'Email copied to clipboard'),
         type: 'success',
         showCancel: false
       });
@@ -219,8 +221,8 @@ const Applicants = () => {
       if (response) {
         setModal({
           isOpen: true,
-          title: 'Success',
-          message: 'Status cleared successfully.',
+          title: t('success', 'Success'),
+          message: t('statusClearedSuccess', 'Status cleared successfully.'),
           type: 'success',
           showCancel: false
         });
@@ -228,8 +230,8 @@ const Applicants = () => {
       } else {
         setModal({
           isOpen: true,
-          title: 'Error',
-          message: 'Failed to clear status.',
+          title: t('error', 'Error'),
+          message: t('failedToClearStatus', 'Failed to clear status.'),
           type: 'error',
           showCancel: false
         });
@@ -238,8 +240,8 @@ const Applicants = () => {
       console.error("Error clearing status:", error);
       setModal({
         isOpen: true,
-        title: 'Error',
-        message: 'Error clearing status.',
+        title: t('error', 'Error'),
+        message: t('errorClearingStatus', 'Error clearing status.'),
         type: 'error',
         showCancel: false
       });
@@ -259,7 +261,7 @@ const Applicants = () => {
       letterSpacing: '0.5px',
       minWidth: 60,
       textAlign: 'center',
-    }}>{value ? "Active" : "Inactive"}</span>
+    }}>{value ? t('active', 'Active') : t('inactive', 'Inactive')}</span>
   );
 
   const renderSearchStatusBadge = (status) => {
@@ -308,7 +310,7 @@ const Applicants = () => {
     <td key={`toggle-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title={isActive === "Inactive" ? "Start Search" : "Stop Search"}
+        title={isActive === "Inactive" ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
         onClick={() => handleAction(id, isActive)}
       >
         <i className={isActive === "Inactive" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
@@ -320,7 +322,7 @@ const Applicants = () => {
     <td key={`edit-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title="View Details"
+        title={t('viewDetails', 'View Details')}
         onClick={() => handleView(id)}
       >
         <i className="fas fa-eye"></i>
@@ -332,7 +334,7 @@ const Applicants = () => {
     <td key={`password-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title="Copy Password"
+        title={t('copyPassword', 'Copy Password')}
         onClick={() => handleCopyPassword(id)}
       >
         <i className="fas fa-key"></i>
@@ -344,7 +346,7 @@ const Applicants = () => {
     <td key={`email-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title="Copy Email"
+        title={t('copyEmail', 'Copy Email')}
         onClick={() => handleCopyEmail(id)}
       >
         <i className="fas fa-envelope"></i>
@@ -356,7 +358,7 @@ const Applicants = () => {
     <td key={`reset-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title="Clear Status"
+        title={t('clearStatus', 'Clear Status')}
         onClick={() => handleResetStatus(id)}
       >
         <i className="fas fa-eraser"></i>
@@ -368,29 +370,29 @@ const Applicants = () => {
     <>
       <HamburgerMenu />
       <div className="applicants-main-container">
-        <h2 className="applicants-title">Applicants</h2>
+        <h2 className="applicants-title">{t('applicants', 'Applicants')}</h2>
         <div className="applicants-filters-bar">
         <div className="applicants-filters">
-          <div className="toggle-switch" title="Filter only active" onClick={() => setFilterActive(!filterActive)}>
+          <div className="toggle-switch" title={t('onlyActive', 'Filter only active')} onClick={() => setFilterActive(!filterActive)}>
             <div className={`switch-track${filterActive ? " active" : ""}`}></div>
             <div className={`switch-thumb${filterActive ? " active" : ""}`}></div>
           </div>
-          <label>Only Active</label>
-          <div className="toggle-switch" title="Filter only Running" onClick={() => setFilterRunning(!filterRunning)}>
+          <label>{t('onlyActive', 'Only Active')}</label>
+          <div className="toggle-switch" title={t('onlyRunning', 'Filter only Running')} onClick={() => setFilterRunning(!filterRunning)}>
             <div className={`switch-track${filterRunning ? " active" : ""}`}></div>
             <div className={`switch-thumb${filterRunning ? " active" : ""}`}></div>
           </div>
-          <label>Only Running</label>
+          <label>{t('onlyRunning', 'Only Running')}</label>
           {canViewAllApplicants && allRegisteredUsers.length > 0 && (
             <>
-              <label htmlFor="registeredByFilter" style={{ marginLeft: '48px' }}>Registered by:</label>
+              <label htmlFor="registeredByFilter" style={{ marginLeft: '48px' }}>{t('registeredBy', 'Registered by')}:</label>
               <select
                 id="registeredByFilter"
                 value={registeredByFilter}
                 onChange={(e) => setRegisteredByFilter(e.target.value)}
                 style={{ minWidth: 120, padding: '4px 8px', borderRadius: 5, border: '1px solid #e3eaf3' }}
               >
-                <option value="">All</option>
+                <option value="">{t('all', 'All')}</option>
                 {allRegisteredUsers.map((username) => (
                   <option key={username} value={username}>
                     {username}
@@ -402,7 +404,7 @@ const Applicants = () => {
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button className="applicants-register-btn" onClick={handleRegisterApplicant}>
-            <i className="fas fa-user-plus" style={{marginRight: 8}}></i>Register Applicant
+            <i className="fas fa-user-plus" style={{marginRight: 8}}></i>{t('registerApplicant', 'Register Applicant')}
           </button>
         </div>
       </div>
@@ -410,13 +412,13 @@ const Applicants = () => {
         <table className="applicants-table">
           <thead>
             <tr>
-              <th>AIS ID</th>
-              <th>AIS Username</th>
-              <th>Name</th>
-              <th>Applicant Status</th>
-              <th>Search Status</th>
-              <th>Target End Date</th>
-              {canViewAllApplicants && <th>Registered By</th>}
+              <th>{t('aisId', 'AIS ID')}</th>
+              <th>{t('aisUsername', 'AIS Username')}</th>
+              <th>{t('name', 'Name')}</th>
+              <th>{t('applicantStatus', 'Applicant Status')}</th>
+              <th>{t('searchStatus', 'Search Status')}</th>
+              <th>{t('targetEndDate', 'Target End Date')}</th>
+              {canViewAllApplicants && <th>{t('registeredBy', 'Registered By')}</th>}
             </tr>
           </thead>
           <tbody>
@@ -434,7 +436,7 @@ const Applicants = () => {
                             <div style={{ display: 'flex', gap: '4px' }}>
                               <button
                                 className="applicants-action-btn"
-                                title={item.search_status === "Inactive" ? "Start Search" : "Stop Search"}
+                                title={item.search_status === "Inactive" ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
                                 onClick={() => handleAction(item.id, item.search_status)}
                                 style={{ padding: '4px 8px', fontSize: '12px' }}
                               >
@@ -443,7 +445,7 @@ const Applicants = () => {
                               {canClearStatus && (
                                 <button
                                   className="applicants-action-btn"
-                                  title="Clear Status"
+                                  title={t('clearStatus', 'Clear Status')}
                                   onClick={() => handleResetStatus(item.id)}
                                   style={{ padding: '4px 8px', fontSize: '12px' }}
                                 >
@@ -469,7 +471,7 @@ const Applicants = () => {
                             </a>
                             <button
                               className="applicants-action-btn"
-                              title="Edit"
+                              title={t('edit', 'Edit')}
                               onClick={() => handleEditApplicant(item.id)}
                               style={{ padding: '6px 10px', fontSize: '14px' }}
                             >
@@ -484,7 +486,7 @@ const Applicants = () => {
                             <div style={{ display: 'flex', gap: '4px' }}>
                               <button
                                 className="applicants-action-btn"
-                                title="Copy Email"
+                                title={t('copyEmail', 'Copy Email')}
                                 onClick={() => handleCopyEmail(item.id)}
                                 style={{ padding: '4px 8px', fontSize: '12px' }}
                               >
@@ -492,7 +494,7 @@ const Applicants = () => {
                               </button>
                               <button
                                 className="applicants-action-btn"
-                                title="Copy Password"
+                                title={t('copyPassword', 'Copy Password')}
                                 onClick={() => handleCopyPassword(item.id)}
                                 style={{ padding: '4px 8px', fontSize: '12px' }}
                               >
@@ -524,12 +526,12 @@ const Applicants = () => {
                   }}>
                     <i className="fas fa-users" style={{ fontSize: "48px", color: "#ddd" }}></i>
                     <div style={{ fontSize: "18px", fontWeight: "500", color: "#666" }}>
-                      No applicants found
+                      {t('noApplicantsFound', 'No applicants found')}
                     </div>
                     <div style={{ fontSize: "14px", color: "#999" }}>
                       {filterActive || filterRunning || registeredByFilter
-                        ? "Try adjusting your filters or register a new applicant to get started."
-                        : "Click 'Register Applicant' to add your first applicant."}
+                        ? t('adjustFilters', 'Try adjusting your filters or register a new applicant to get started.')
+                        : t('clickToAddFirst', "Click 'Register Applicant' to add your first applicant.")}
                     </div>
                   </div>
                 </td>

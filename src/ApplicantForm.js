@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
 import { permissions } from './utils/permissions';
@@ -10,6 +11,7 @@ import './ApplicantForm.css';
 import './index.css';
 
 const ApplicantForm = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isAuthenticated } = useAuth();
@@ -112,7 +114,7 @@ const ApplicantForm = () => {
         })
         .catch(error => {
           console.error('Error loading applicant:', error);
-          setSubmitError('Failed to load applicant data');
+          setSubmitError(t('failedToLoadApplicant', 'Failed to load applicant data'));
         })
         .finally(() => setLoading(false));
     }
@@ -153,12 +155,12 @@ const ApplicantForm = () => {
     // Validate email and password first
     const newErrors = {};
     if (!formData.aisEmail.trim()) {
-      newErrors.aisEmail = 'Visa Appointment System Email is required';
+      newErrors.aisEmail = t('visaEmailRequired', 'Visa Appointment System Email is required');
     } else if (!/\S+@\S+\.\S+/.test(formData.aisEmail)) {
-      newErrors.aisEmail = 'Please enter a valid email';
+      newErrors.aisEmail = t('pleaseEnterValidEmail', 'Please enter a valid email');
     }
     if (!formData.aisPassword.trim()) {
-      newErrors.aisPassword = 'Visa Appointment System Password is required';
+      newErrors.aisPassword = t('visaPasswordRequired', 'Visa Appointment System Password is required');
     }
     
     if (Object.keys(newErrors).length > 0) {
@@ -179,7 +181,7 @@ const ApplicantForm = () => {
       if (!aisUserInfo || !aisUserInfo.schedule_id) {
         setErrors({ 
           ...errors, 
-          aisEmail: 'Failed to authenticate Visa Appointment System credentials. Please check your email and password.',
+          aisEmail: t('failedToAuthVisa', 'Failed to authenticate Visa Appointment System credentials. Please check your email and password.'),
         });
         setFormData(prev => ({
           ...prev,
@@ -205,7 +207,7 @@ const ApplicantForm = () => {
       console.error('AIS authentication error:', error);
       setErrors({ 
         ...errors, 
-        aisEmail: 'An error occurred while authenticating. Please try again.',
+        aisEmail: t('authErrorOccurred', 'An error occurred while authenticating. Please try again.'),
       });
       setFormData(prev => ({
         ...prev,
@@ -222,32 +224,32 @@ const ApplicantForm = () => {
     const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = t('nameRequired', 'Name is required');
     }
 
     if (!formData.aisEmail.trim()) {
-      newErrors.aisEmail = 'Visa Appointment System Email is required';
+      newErrors.aisEmail = t('visaEmailRequired', 'Visa Appointment System Email is required');
     } else if (!/\S+@\S+\.\S+/.test(formData.aisEmail)) {
-      newErrors.aisEmail = 'Please enter a valid email';
+      newErrors.aisEmail = t('pleaseEnterValidEmail', 'Please enter a valid email');
     }
 
     // Schedule ID and number of applicants will be auto-filled from Visa
     // No need to validate manually entered values anymore
 
     if (formData.targetStartMode === 'days' && !formData.targetStartDays) {
-      newErrors.targetStartDays = 'Required when using days mode';
+      newErrors.targetStartDays = t('startDaysRequired', 'Required when using days mode');
     }
 
     if (formData.targetStartMode === 'date' && !formData.targetStartDate) {
-      newErrors.targetStartDate = 'Required when using date mode';
+      newErrors.targetStartDate = t('startDateRequired', 'Required when using date mode');
     }
 
     if (!formData.targetEndDate) {
-      newErrors.targetEndDate = 'Target end date is required';
+      newErrors.targetEndDate = t('endDateRequired', 'Target end date is required');
     }
 
     if (cities.length > 1 && formData.selectedCities.length === 0) {
-      newErrors.selectedCities = 'Please select at least one city';
+      newErrors.selectedCities = t('cityRequired', 'Please select at least one city');
     }
 
     setErrors(newErrors);
@@ -297,7 +299,7 @@ const ApplicantForm = () => {
       } else {
         // Create new applicant - password is required
         if (!formData.aisPassword.trim()) {
-          setSubmitError('Password is required for new applicants');
+          setSubmitError(t('passwordRequiredForNewApplicants', 'Password is required for new applicants'));
           setLoading(false);
           return;
         }
@@ -325,7 +327,7 @@ const ApplicantForm = () => {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to create applicant');
+          throw new Error(t('failedToCreateApplicant', 'Failed to create applicant'));
         }
 
         const newApplicant = await response.json();
@@ -338,7 +340,7 @@ const ApplicantForm = () => {
       }
     } catch (error) {
       console.error('Submit error:', error);
-      setSubmitError(isEditMode ? 'Failed to update applicant' : 'Failed to create applicant');
+      setSubmitError(isEditMode ? t('failedToUpdateApplicant', 'Failed to update applicant') : t('failedToCreateApplicant', 'Failed to create applicant'));
     } finally {
       setLoading(false);
     }
@@ -351,7 +353,7 @@ const ApplicantForm = () => {
         <div className="applicant-form-container">
           <div className="applicant-form-loading">
             <i className="fas fa-spinner fa-spin"></i>
-            <p>Loading applicant data...</p>
+            <p>{t('loadingApplicant', 'Loading applicant data...')}</p>
           </div>
         </div>
       </>
@@ -368,21 +370,21 @@ const ApplicantForm = () => {
               {isEditMode ? (
                 <>
                   <i className={permissions.canManageApplicants() ? "fas fa-edit" : "fas fa-calendar-check"}></i>
-                  {permissions.canManageApplicants() ? 'Edit Applicant' : 'My Appointment'}
+                  {permissions.canManageApplicants() ? t('editApplicant', 'Edit Applicant') : t('myAppointment', 'My Appointment')}
                 </>
               ) : (
                 <>
                   <i className="fas fa-user-plus"></i>
-                  New Applicant
+                  {t('newApplicant', 'New Applicant')}
                 </>
               )}
             </h1>
             <p className="applicant-form-subtitle">
               {isEditMode 
                 ? (permissions.canManageApplicants() 
-                    ? 'Update the information for this applicant' 
-                    : 'Update your appointment search settings')
-                : 'Fill in the details to register a new applicant'}
+                    ? t('updateApplicantInfo', 'Update the information for this applicant')
+                    : t('updateAppointmentSettings', 'Update your appointment search settings'))
+                : t('fillDetailsToRegister', 'Fill in the details to register a new applicant')}
             </p>
           </div>
           
@@ -403,7 +405,7 @@ const ApplicantForm = () => {
               disabled={loading}
             >
               <i className="fas fa-times"></i>
-              Cancel
+              {t('cancel', 'Cancel')}
             </button>
             <button
               type="submit"
@@ -414,12 +416,12 @@ const ApplicantForm = () => {
               {loading ? (
                 <>
                   <i className="fas fa-spinner fa-spin"></i>
-                  {isEditMode ? 'Updating...' : 'Creating...'}
+                  {isEditMode ? t('updating', 'Updating...') : t('creating', 'Creating...')}
                 </>
               ) : (
                 <>
                   <i className={isEditMode ? 'fas fa-save' : 'fas fa-check'}></i>
-                  {isEditMode ? 'Update Applicant' : 'Create Applicant'}
+                  {isEditMode ? t('updateApplicant', 'Update Applicant') : t('createApplicant', 'Create Applicant')}
                 </>
               )}
             </button>
@@ -438,13 +440,13 @@ const ApplicantForm = () => {
           <div className="applicant-form-section">
             <h2 className="applicant-form-section-title">
               <i className="fas fa-user"></i>
-              Basic Information
+              {t('basicInfo', 'Basic Information')}
             </h2>
             
             <div className="applicant-form-row">
               <div className="applicant-form-field">
                 <label htmlFor="name" className="applicant-form-label">
-                  Full Name <span className="required">*</span>
+                  {t('fullName', 'Full Name')} <span className="required">*</span>
                 </label>
                 <input
                   type="text"
@@ -453,7 +455,7 @@ const ApplicantForm = () => {
                   value={formData.name}
                   onChange={handleInputChange}
                   className={`applicant-form-input applicant-form-input-medium ${errors.name ? 'error' : ''}`}
-                  placeholder="Enter full name"
+                  placeholder={t('enterFullName', 'Enter full name')}
                 />
                 {errors.name && <span className="applicant-form-error">{errors.name}</span>}
               </div>
@@ -469,7 +471,7 @@ const ApplicantForm = () => {
                     onChange={handleInputChange}
                     className="applicant-form-checkbox"
                   />
-                  <span>Applicant is active</span>
+                  <span>{t('applicantIsActive', 'Applicant is active')}</span>
                 </label>
               </div>
             )}
@@ -479,13 +481,13 @@ const ApplicantForm = () => {
           <div className="applicant-form-section">
             <h2 className="applicant-form-section-title">
               <i className="fas fa-key"></i>
-              Visa Appointment System Credentials
+              {t('aisCredentials', 'Visa Appointment System Credentials')}
             </h2>
             
             <div className="applicant-form-row">
               <div className="applicant-form-field">
                 <label htmlFor="aisEmail" className="applicant-form-label">
-                  Visa Appointment System Email <span className="required">*</span>
+                  {t('visaAppointmentSystemEmail', 'Visa Appointment System Email')} <span className="required">*</span>
                 </label>
                 <input
                   type="email"
@@ -504,7 +506,7 @@ const ApplicantForm = () => {
 
               <div className="applicant-form-field">
                 <label htmlFor="aisPassword" className="applicant-form-label">
-                  Visa Appointment System Password {!isEditMode && <span className="required">*</span>}
+                  {t('visaAppointmentSystemPassword', 'Visa Appointment System Password')} {!isEditMode && <span className="required">*</span>}
                 </label>
                 <input
                   type="password"
@@ -516,7 +518,7 @@ const ApplicantForm = () => {
                     setAisAuthSuccess(false);
                   }}
                   className={`applicant-form-input applicant-form-input-medium ${errors.aisPassword ? 'error' : ''}`}
-                  placeholder={isEditMode ? "Leave empty to keep current password" : "Enter Visa Appointment System password"}
+                  placeholder={isEditMode ? t('leaveEmptyToKeepPassword', 'Leave empty to keep current password') : t('enterVisaPassword', 'Enter Visa Appointment System password')}
                 />
                 {errors.aisPassword && <span className="applicant-form-error">{errors.aisPassword}</span>}
               </div>
@@ -547,22 +549,22 @@ const ApplicantForm = () => {
                 {isAuthenticating ? (
                   <>
                     <i className="fas fa-spinner fa-spin"></i>
-                    Authenticating...
+                    {t('authenticating', 'Authenticating...')}
                   </>
                 ) : aisAuthSuccess ? (
                   <>
                     <i className="fas fa-check-circle"></i>
-                    Authentication Successful
+                    {t('authenticationSuccessful', 'Authentication Successful')}
                   </>
                 ) : (
                   <>
                     <i className="fas fa-key"></i>
-                    Authenticate
+                    {t('authenticate', 'Authenticate')}
                   </>
                 )}
               </button>
               <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '8px', display: 'block' }}>
-                Click to verify your Visa Appointment System credentials and automatically retrieve your Schedule ID
+                {t('clickToVerifyCredentials', 'Click to verify your Visa Appointment System credentials and automatically retrieve your Schedule ID')}
               </small>
             </div>
 
@@ -570,7 +572,7 @@ const ApplicantForm = () => {
             <div className="applicant-form-row">
               <div className="applicant-form-field">
                 <label htmlFor="aisScheduleId" className="applicant-form-label">
-                  Schedule ID <span className="required">*</span>
+                  {t('aisScheduleId', 'Schedule ID')} <span className="required">*</span>
                 </label>
                 <input
                   type="text"
@@ -584,16 +586,16 @@ const ApplicantForm = () => {
                     cursor: 'not-allowed',
                     color: '#4b5563'
                   }}
-                  placeholder="Auto-filled after authentication"
+                  placeholder={t('autoFilledAfterAuth', 'Auto-filled after authentication')}
                 />
                 <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
-                  This field is automatically filled after authenticating with Visa Appointment System
+                  {t('autoFilledAfterAuth', 'This field is automatically filled after authenticating with Visa Appointment System')}
                 </small>
               </div>
 
               <div className="applicant-form-field">
                 <label htmlFor="numberOfApplicants" className="applicant-form-label">
-                  Number of Applicants <span className="required">*</span>
+                  {t('numberOfApplicants', 'Number of Applicants')} <span className="required">*</span>
                 </label>
                 <input
                   type="number"
@@ -610,7 +612,7 @@ const ApplicantForm = () => {
             
             {isEditMode && (
               <small style={{ color: '#666', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
-                Leave empty to keep the current password unchanged
+                {t('leaveEmptyToKeepPassword', 'Leave empty to keep the current password unchanged')}
               </small>
             )}
           </div>
@@ -619,7 +621,7 @@ const ApplicantForm = () => {
           <div className="applicant-form-section">
             <h2 className="applicant-form-section-title">
               <i className="fas fa-calendar-alt"></i>
-              Target Dates
+              {t('targetDates', 'Target Dates')}
             </h2>
 
             {!permissions.canManageApplicants() && formData.targetStartMode === 'days' && formData.targetStartDays === '180' && (
@@ -636,10 +638,10 @@ const ApplicantForm = () => {
                 <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
                 <div style={{ flex: 1 }}>
                   <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                    <strong>Basic User Search Settings:</strong> Your appointment search will start 6 months from today.
+                    <strong>{t('basicUserSearchSettings', 'Basic User Search Settings:')}</strong> {t('searchWillStartIn', 'Your appointment search will start 6 months from today.')}
                   </p>
                   <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
-                    💎 <strong>Premium users</strong> can search for appointments starting from tomorrow.
+                    💎 <strong>{t('premiumUpgradeNote', 'Premium users')}</strong> {t('premiumUsersCanSearchTomorrow', 'can search for appointments starting from tomorrow.')}
                   </p>
                 </div>
               </div>
@@ -648,7 +650,7 @@ const ApplicantForm = () => {
             {permissions.canManageApplicants() && (
               <div className="applicant-form-field">
                 <label htmlFor="targetStartMode" className="applicant-form-label">
-                  Start Mode <span className="required">*</span>
+                  {t('startMode', 'Start Mode')} <span className="required">*</span>
                 </label>
                 <div className="applicant-form-radio-group">
                   <label className="applicant-form-radio-label">
@@ -660,7 +662,7 @@ const ApplicantForm = () => {
                       onChange={handleInputChange}
                       className="applicant-form-radio"
                     />
-                    <span>Days from Now</span>
+                    <span>{t('daysFromNow', 'Days from Now')}</span>
                   </label>
                   <label className="applicant-form-radio-label">
                     <input
@@ -671,7 +673,7 @@ const ApplicantForm = () => {
                       onChange={handleInputChange}
                       className="applicant-form-radio"
                     />
-                    <span>Specific Date</span>
+                    <span>{t('specificDate', 'Specific Date')}</span>
                   </label>
                 </div>
               </div>
@@ -683,7 +685,7 @@ const ApplicantForm = () => {
                   {permissions.canManageApplicants() ? (
                     <>
                       <label htmlFor="targetStartDays" className="applicant-form-label">
-                        Start After (Days) <span className="required">*</span>
+                        {t('startAfterDays', 'Start After (Days)')} <span className="required">*</span>
                       </label>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
                         <input
@@ -708,7 +710,7 @@ const ApplicantForm = () => {
                             whiteSpace: 'nowrap'
                           }}>
                             <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
-                            Start date: {formatDate(getSearchStartDate())}
+                            {t('startDate', 'Start date')}: {formatDate(getSearchStartDate())}
                           </div>
                         )}
                       </div>
@@ -717,7 +719,7 @@ const ApplicantForm = () => {
                   ) : (
                     <>
                       <label className="applicant-form-label">
-                        Search Starts In
+                        {t('searchStartsIn', 'Search Starts In')}
                       </label>
                       <div style={{
                         padding: '12px 16px',
@@ -730,7 +732,7 @@ const ApplicantForm = () => {
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
                           <i className="fas fa-clock" style={{ marginRight: '8px', color: '#6b7280' }}></i>
-                          6 months from today (180 days)
+                          {t('sixMonthsFromToday', '6 months from today (180 days)')}
                         </div>
                         <div style={{
                           marginTop: '8px',
@@ -741,7 +743,7 @@ const ApplicantForm = () => {
                           fontWeight: '600'
                         }}>
                           <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
-                          Start date: {formatDate(getSearchStartDate())}
+                          {t('startDate', 'Start date')}: {formatDate(getSearchStartDate())}
                         </div>
                       </div>
                     </>
@@ -752,7 +754,7 @@ const ApplicantForm = () => {
               {formData.targetStartMode === 'date' && (
                 <div className="applicant-form-field">
                   <label htmlFor="targetStartDate" className="applicant-form-label">
-                    Target Start Date <span className="required">*</span>
+                    {t('targetStartDate', 'Target Start Date')} <span className="required">*</span>
                   </label>
                   <input
                     type="date"
@@ -768,7 +770,7 @@ const ApplicantForm = () => {
 
               <div className="applicant-form-field">
                 <label htmlFor="targetEndDate" className="applicant-form-label">
-                  Target End Date <span className="required">*</span>
+                  {t('targetEndDate', 'Target End Date')} <span className="required">*</span>
                 </label>
                 <input
                   type="date"
@@ -789,7 +791,7 @@ const ApplicantForm = () => {
                     lineHeight: '1.4'
                   }}>
                     <i className="fas fa-info-circle" style={{ marginRight: '4px', color: '#9ca3af' }}></i>
-                    This is the latest date you would accept for an appointment. The search will look for appointments between 6 months from now and this date. Minimum: 290 days from today.
+                    {t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 6 months from now and this date. Minimum: 290 days from today.')}
                   </small>
                 )}
               </div>
@@ -800,7 +802,7 @@ const ApplicantForm = () => {
           <div className="applicant-form-section">
             <h2 className="applicant-form-section-title">
               <i className="fas fa-map-marker-alt"></i>
-              Target Cities {cities.length > 1 && <span className="required">*</span>}
+              {t('targetCities', 'Target Cities')} {cities.length > 1 && <span className="required">*</span>}
             </h2>
             
             {cities.length === 0 ? (
@@ -816,11 +818,11 @@ const ApplicantForm = () => {
                 <i className="fas fa-globe" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
                 <div style={{ flex: 1 }}>
                   <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                    <strong>Search in all cities:</strong> The search will be performed in all available cities for this country.
+                    <strong>{t('searchAllCities', 'Search in all cities:')}</strong> {t('searchInAllCities', 'The search will be performed in all available cities for this country.')}
                   </p>
                   {!permissions.canManageApplicants() && (
                     <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
-                      💎 <strong>Premium users</strong> can select specific cities for their search.
+                      💎 <strong>{t('premiumUpgradeNote', 'Premium users')}</strong> {t('premiumUsersCanSelectCities', 'can select specific cities for their search.')}
                     </p>
                   )}
                 </div>
@@ -869,7 +871,7 @@ const ApplicantForm = () => {
               disabled={loading}
             >
               <i className="fas fa-times"></i>
-              Cancel
+              {t('cancel', 'Cancel')}
             </button>
             <button
               type="submit"
@@ -879,12 +881,12 @@ const ApplicantForm = () => {
               {loading ? (
                 <>
                   <i className="fas fa-spinner fa-spin"></i>
-                  {isEditMode ? 'Updating...' : 'Creating...'}
+                  {isEditMode ? t('updating', 'Updating...') : t('creating', 'Creating...')}
                 </>
               ) : (
                 <>
                   <i className={isEditMode ? 'fas fa-save' : 'fas fa-check'}></i>
-                  {isEditMode ? 'Update Applicant' : 'Create Applicant'}
+                  {isEditMode ? t('updateApplicant', 'Update Applicant') : t('createApplicant', 'Create Applicant')}
                 </>
               )}
             </button>

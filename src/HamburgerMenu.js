@@ -1,5 +1,6 @@
 // HamburgerMenu.js
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
 import { UserDetails, getRoles } from './APIFunctions';
@@ -8,6 +9,7 @@ import './HamburgerMenu.css';
 import { permissions } from './utils/permissions';
 
 const HamburgerMenu = () => {
+  const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -49,10 +51,10 @@ const HamburgerMenu = () => {
 
   const mapRoleName = (roleName) => {
     const roleMap = {
-      'basic_user': 'Basic user',
-      'visa_agent': 'Visa agent',
-      'administrator': 'Administrator',
-      'premium_user': 'Premium user'
+      'basic_user': t('basicUser', 'Basic user'),
+      'visa_agent': t('visaAgent', 'Visa agent'),
+      'administrator': t('administrator', 'Administrator'),
+      'premium_user': t('premiumUser', 'Premium user')
     };
     return roleMap[roleName] || roleName;
   };
@@ -107,29 +109,29 @@ const HamburgerMenu = () => {
             <div className="menu-item premium-section">
               <Link to="/premium-upgrade" className="premium-link shiny-btn">
                 <i className="fas fa-crown"></i>
-                <span className="menu-text">Upgrade to Premium</span>
+                <span className="menu-text">{t('upgradeToPremium', 'Upgrade to Premium')}</span>
               </Link>
             </div>
           )}
           <div className="regular-menu-items">
             {permissions.canManageApplicants() ? (
-              <Link to="/applicants" className={showUpgrade ? "first-after-premium" : ""} title="Applicants">
+              <Link to="/applicants" className={showUpgrade ? "first-after-premium" : ""} title={t('applicants', 'Applicants')}>
                 <i className="fas fa-users"></i>
               </Link>
             ) : (
               sessionStorage.getItem('applicant_userid') && (
-                <Link to={`/view-applicant/${sessionStorage.getItem('applicant_userid')}`} className={showUpgrade ? "first-after-premium" : ""} title="My Appointment">
+                <Link to={`/view-applicant/${sessionStorage.getItem('applicant_userid')}`} className={showUpgrade ? "first-after-premium" : ""} title={t('myAppointment', 'My Appointment')}>
                   <i className="fas fa-calendar-check"></i>
                 </Link>
               )
             )}
             {permissions.canManageUsers() && (
-              <Link to="/users" title="Users">
+              <Link to="/users" title={t('users', 'Users')}>
                 <i className="fas fa-user-cog"></i>
               </Link>
             )}
             <div className="user-menu-container" ref={userMenuRef}>
-              <div className="user-initial" onClick={toggleUserMenu} title="User Menu">
+              <div className="user-initial" onClick={toggleUserMenu} title={t('userMenu', 'User Menu')}>
                 {getUserInitial()}
               </div>
               {showUserMenu && (
@@ -148,7 +150,7 @@ const HamburgerMenu = () => {
                     </div>
                     <div className="user-role">{mapRoleName(userRole)}</div>
                   </div>
-                  <Link to="/logout" className="logout-link" title="Log Out">
+                  <Link to="/logout" className="logout-link" title={t('logout', 'Log Out')}>
                     <i className="fas fa-sign-out-alt"></i>
                   </Link>
                 </div>
