@@ -414,16 +414,16 @@ const ApplicantView = () => {
             </div>
           </div>
 
-          {/* AIS Credentials Section */}
+          {/* Visa Appointment System Credentials Section */}
           <div className="applicant-view-section">
             <h2 className="applicant-view-section-title">
               <i className="fas fa-key"></i>
-              AIS Credentials
+              Visa Appointment System Credentials
             </h2>
             
             <div className="applicant-view-grid">
               <div className="applicant-view-field">
-                <label>AIS Email</label>
+                <label>Visa Appointment System Email</label>
                 <div className="applicant-view-value applicant-view-value-code" style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
                   <span>{data.ais_username || 'N/A'}</span>
                   <div style={{ display: 'flex', gap: '8px' }}>
@@ -438,7 +438,7 @@ const ApplicantView = () => {
               </div>
 
               <div className="applicant-view-field">
-                <label>AIS Schedule ID</label>
+                <label>Schedule ID</label>
                 <div className="applicant-view-value applicant-view-value-code">
                   {data.ais_schedule_id || 'N/A'}
                 </div>
@@ -551,12 +551,12 @@ const ApplicantView = () => {
             </div>
           </div>
 
-          {/* AIS Reserved Appointments Section */}
+          {/* Reserved Appointments Section */}
           {(data.consul_appointment_date || data.asc_appointment_date) && (
             <div className="applicant-view-section">
               <h2 className="applicant-view-section-title">
                 <i className="fas fa-calendar-check"></i>
-                AIS Reserved Appointments
+                Reserved Appointments
               </h2>
               
               <div className="applicant-view-grid">

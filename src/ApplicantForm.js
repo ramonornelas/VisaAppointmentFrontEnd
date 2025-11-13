@@ -419,7 +419,7 @@ const ApplicantForm = () => {
               ) : (
                 <>
                   <i className={isEditMode ? 'fas fa-save' : 'fas fa-check'}></i>
-                  {isEditMode ? 'Update' : 'Create'}
+                  {isEditMode ? 'Update Applicant' : 'Create Applicant'}
                 </>
               )}
             </button>
@@ -570,7 +570,7 @@ const ApplicantForm = () => {
             <div className="applicant-form-row">
               <div className="applicant-form-field">
                 <label htmlFor="aisScheduleId" className="applicant-form-label">
-                  Visa Appointment System Schedule ID <span className="required">*</span>
+                  Schedule ID <span className="required">*</span>
                 </label>
                 <input
                   type="text"
@@ -677,7 +677,7 @@ const ApplicantForm = () => {
               </div>
             )}
 
-            <div className="applicant-form-row">
+            <div className="applicant-form-row" style={{ marginTop: '1.5rem' }}>
               {formData.targetStartMode === 'days' && (
                 <div className="applicant-form-field">
                   {permissions.canManageApplicants() ? (

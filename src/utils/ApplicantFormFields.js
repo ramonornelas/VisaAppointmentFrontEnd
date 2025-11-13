@@ -59,7 +59,7 @@ export function PasswordField({ value, onChange, error }) {
 export function ScheduleIdField({ value, onChange, error, disabled, style }) {
   return (
     <div className="form-field">
-      <label htmlFor="scheduleId">Visa Appointment System Schedule ID: <span style={{ color: 'red' }}>*</span></label>
+      <label htmlFor="scheduleId">Schedule ID: <span style={{ color: 'red' }}>*</span></label>
       <input
         type="text"
         id="scheduleId"
