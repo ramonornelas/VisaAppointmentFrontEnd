@@ -9,7 +9,6 @@ import About from './About';
 import RegisterUser from './RegisterUser';
 import QuickStartApplicant from './QuickStartApplicant';
 import Applicants from './Applicants';
-import RegisterApplicant from './RegisterApplicant';
 import ApplicantForm from './ApplicantForm';
 import ApplicantView from './ApplicantView';
 import DeleteApplicant from './DeleteApplicant';
@@ -32,7 +31,6 @@ ReactDOM.render(
         <Route path="/registeruser" element={<RegisterUser />} />
         <Route path="/quickstart" element={<QuickStartApplicant />} />
         <Route path="/applicants" element={<Applicants />} />
-        <Route path="/registerapplicant" element={<RegisterApplicant />} />
         <Route path="/applicant-form" element={<ApplicantForm />} />
         <Route path="/viewapplicant" element={<ApplicantView />} />
         <Route path="/view-applicant/:id" element={<ApplicantView />} />

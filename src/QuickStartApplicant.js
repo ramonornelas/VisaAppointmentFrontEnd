@@ -20,20 +20,20 @@ const QuickStartApplicant = () => {
   // Get translated countries list
   const countries = getTranslatedCountries(t);
 
-  // Calculate minimum end date (290 days from today)
+  // Calculate minimum end date (210 days from today) - Updated Nov 2025
   const getMinEndDate = () => {
     const today = new Date();
     const minDate = new Date(today);
-    minDate.setDate(today.getDate() + 290);
+    minDate.setDate(today.getDate() + 210);
     return minDate.toISOString().split('T')[0];
   };
   const minEndDate = getMinEndDate();
 
-  // Calculate search start date (180 days from today)
+  // Calculate search start date (120 days from today) - Updated Nov 2025
   const getSearchStartDate = () => {
     const today = new Date();
     const startDate = new Date(today);
-    startDate.setDate(today.getDate() + 180);
+    startDate.setDate(today.getDate() + 120);
     return startDate;
   };
   const searchStartDate = getSearchStartDate();
@@ -77,9 +77,9 @@ const QuickStartApplicant = () => {
     aisScheduleId: '',
     numberOfApplicants: '1',
     targetStartMode: 'days',
-    targetStartDays: '180', // 6 months = ~180 days
+    targetStartDays: '120', // 4 months = ~120 days
     targetStartDate: '',
-    targetEndDate: getMinEndDate(), // Set default to minimum date (290 days from today)
+    targetEndDate: getMinEndDate(), // Set default to minimum date (210 days from today)
     selectedCities: [],
   });
 
@@ -200,7 +200,7 @@ const QuickStartApplicant = () => {
       const minEndDateStr = minEndDate; // minEndDate ya es YYYY-MM-DD
       const selectedEndDateStr = formData.targetEndDate;
       if (selectedEndDateStr < minEndDateStr) {
-        newErrors.targetEndDate = t('endDateMinimum', 'Target end date must be at least 290 days from today');
+        newErrors.targetEndDate = t('endDateMinimum', 'Target end date must be at least 210 days from today');
       }
     }
 
@@ -599,7 +599,7 @@ const QuickStartApplicant = () => {
                 <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
                 <div style={{ flex: 1 }}>
                   <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                    <strong>{t('basicUserSearchInfo', 'Basic User Search Settings:')}</strong> {t('basicUserSearchDesc', 'Your appointment search will start 6 months from today.')}
+                    <strong>{t('basicUserSearchInfo', 'Basic User Search Settings:')}</strong> {t('basicUserSearchDesc', 'Your appointment search will start 4 months from today.')}
                   </p>
                   <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
                     💎 <strong>{t('premiumUpgradeNote', 'Premium users')}</strong> {t('premiumCanSearchTomorrow', 'can search for appointments starting from tomorrow.')}
@@ -623,7 +623,7 @@ const QuickStartApplicant = () => {
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
                       <i className="fas fa-clock" style={{ marginRight: '8px', color: '#6b7280' }}></i>
-                      {t('sixMonthsFromToday', '6 months from today (180 days)')}
+                      {t('fourMonthsFromToday', '4 months from today (120 days)')}
                     </div>
                     <div style={{
                       marginTop: '8px',
@@ -661,7 +661,7 @@ const QuickStartApplicant = () => {
                     lineHeight: '1.4'
                   }}>
                     <i className="fas fa-info-circle" style={{ marginRight: '4px', color: '#9ca3af' }}></i>
-                    {t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 6 months from now and this date.')}
+                    {t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date.')}
                   </small>
                 </div>
               </div>

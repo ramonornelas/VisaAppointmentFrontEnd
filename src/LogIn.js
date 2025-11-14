@@ -72,7 +72,61 @@ const LogIn = () => {
             console.error('Error fetching permissions:', permError);
           }
 
-          window.location.href = '/applicants';
+          // Fetch user details to determine role and redirect accordingly
+          try {
+            const userDetailsResponse = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users/${searchuserid}`);
+            const rolesResponse = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/roles');
+            
+            if (userDetailsResponse.status === 200 && rolesResponse.status === 200) {
+              const userData = await userDetailsResponse.json();
+              const rolesData = await rolesResponse.json();
+              
+              const currentRole = rolesData.find(role => role.id === userData.role_id);
+              const roleName = currentRole ? currentRole.name : 'unknown';
+              
+              console.log('[LogIn] User role:', roleName);
+              
+              // For basic users, check if they have an applicant
+              if (roleName === 'basic_user') {
+                // Fetch applicants for this user
+                const applicantsResponse = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/user/${searchuserid}`);
+                
+                if (applicantsResponse.status === 200) {
+                  const applicants = await applicantsResponse.json();
+                  
+                  if (applicants && applicants.length > 0) {
+                    // Basic user has applicant(s), redirect to first applicant details
+                    const firstApplicantId = applicants[0].id;
+                    sessionStorage.setItem('applicant_userid', firstApplicantId);
+                    console.log('[LogIn] Basic user has applicant, redirecting to:', firstApplicantId);
+                    window.location.href = `/view-applicant/${firstApplicantId}`;
+                  } else {
+                    // Basic user has no applicants, redirect to create applicant
+                    sessionStorage.removeItem('applicant_userid');
+                    console.log('[LogIn] Basic user has no applicants, redirecting to create');
+                    window.location.href = '/applicant-form';
+                  }
+                } else {
+                  // Error fetching applicants, default to create
+                  console.log('[LogIn] Error fetching applicants, redirecting to create');
+                  window.location.href = '/applicant-form';
+                }
+              } else {
+                // Premium or other users go to applicants list
+                sessionStorage.removeItem('applicant_userid');
+                console.log('[LogIn] Non-basic user, redirecting to applicants list');
+                window.location.href = '/applicants';
+              }
+            } else {
+              // Error fetching user details, default to applicants
+              console.log('[LogIn] Error fetching user details, defaulting to applicants');
+              window.location.href = '/applicants';
+            }
+          } catch (roleError) {
+            console.error('Error determining user role:', roleError);
+            // Default to applicants on error
+            window.location.href = '/applicants';
+          }
         } else {
           throw new Error('Failed to fetch user data');
         }

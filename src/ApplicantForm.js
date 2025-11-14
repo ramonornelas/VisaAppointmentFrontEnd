@@ -24,6 +24,9 @@ const ApplicantForm = () => {
   const fastVisaUsername = sessionStorage.getItem('fastVisa_username');
   const countryCode = sessionStorage.getItem('country_code');
 
+  // Determine initial targetStartDays based on user permissions
+  const initialTargetStartDays = permissions.canManageApplicants() ? '1' : '120';
+
   // Form state
   const [formData, setFormData] = useState({
     name: '',
@@ -33,7 +36,7 @@ const ApplicantForm = () => {
     numberOfApplicants: '1',
     applicantActive: true,
     targetStartMode: 'days',
-    targetStartDays: '1',
+    targetStartDays: initialTargetStartDays, // Basic users: 120 days, Admins: 1 day
     targetStartDate: '',
     targetEndDate: '',
     selectedCities: [],
@@ -52,20 +55,21 @@ const ApplicantForm = () => {
     return date.toLocaleDateString(undefined, options);
   };
 
-  // Calculate minimum end date (290 days from today) for basic users
+  // Calculate minimum end date (210 days from today) for basic users
   const getMinEndDate = () => {
     const today = new Date();
     const minDate = new Date(today);
-    minDate.setDate(today.getDate() + 290);
+    minDate.setDate(today.getDate() + 210);
     return minDate.toISOString().split('T')[0];
   };
 
   // Calculate search start date based on days
   const getSearchStartDate = () => {
     const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to midnight to avoid timezone issues
     const startDate = new Date(today);
     const daysToAdd = parseInt(formData.targetStartDays) || 3;
-    startDate.setDate(today.getDate() + daysToAdd);
+    startDate.setDate(startDate.getDate() + daysToAdd);
     return startDate;
   };
 
@@ -97,6 +101,12 @@ const ApplicantForm = () => {
       ApplicantDetails(applicantId)
         .then(data => {
           if (data) {
+            // For basic users (non-admins), force targetStartDays to 120 if in days mode
+            const startDays = data.target_start_days || '3';
+            const finalStartDays = !permissions.canManageApplicants() && data.target_start_mode === 'days' 
+              ? '120' 
+              : startDays;
+            
             setFormData({
               name: data.name || '',
               aisEmail: data.ais_username || '',
@@ -105,7 +115,7 @@ const ApplicantForm = () => {
               numberOfApplicants: data.number_of_applicants || '1',
               applicantActive: data.applicant_active ?? true,
               targetStartMode: data.target_start_mode || 'date',
-              targetStartDays: data.target_start_days || '3',
+              targetStartDays: finalStartDays,
               targetStartDate: data.target_start_date || '',
               targetEndDate: data.target_end_date || '',
               selectedCities: data.target_city_codes ? data.target_city_codes.split(',') : [],
@@ -624,7 +634,7 @@ const ApplicantForm = () => {
               {t('targetDates', 'Target Dates')}
             </h2>
 
-            {!permissions.canManageApplicants() && formData.targetStartMode === 'days' && formData.targetStartDays === '180' && (
+            {!permissions.canManageApplicants() && formData.targetStartMode === 'days' && formData.targetStartDays === '120' && (
               <div style={{
                 backgroundColor: '#f0f9ff',
                 border: '1px solid #bae6fd',
@@ -638,7 +648,7 @@ const ApplicantForm = () => {
                 <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
                 <div style={{ flex: 1 }}>
                   <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                    <strong>{t('basicUserSearchSettings', 'Basic User Search Settings:')}</strong> {t('searchWillStartIn', 'Your appointment search will start 6 months from today.')}
+                    <strong>{t('basicUserSearchSettings', 'Basic User Search Settings:')}</strong> {t('searchWillStartIn', 'Your appointment search will start 4 months from today.')}
                   </p>
                   <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
                     💎 <strong>{t('premiumUpgradeNote', 'Premium users')}</strong> {t('premiumUsersCanSearchTomorrow', 'can search for appointments starting from tomorrow.')}
@@ -732,7 +742,7 @@ const ApplicantForm = () => {
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
                           <i className="fas fa-clock" style={{ marginRight: '8px', color: '#6b7280' }}></i>
-                          {t('sixMonthsFromToday', '6 months from today (180 days)')}
+                          {t('fourMonthsFromToday', '4 months from today (120 days)')}
                         </div>
                         <div style={{
                           marginTop: '8px',
@@ -791,7 +801,7 @@ const ApplicantForm = () => {
                     lineHeight: '1.4'
                   }}>
                     <i className="fas fa-info-circle" style={{ marginRight: '4px', color: '#9ca3af' }}></i>
-                    {t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 6 months from now and this date. Minimum: 290 days from today.')}
+                    {t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date. Minimum: 210 days from today.')}
                   </small>
                 )}
               </div>
