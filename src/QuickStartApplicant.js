@@ -579,7 +579,7 @@ const QuickStartApplicant = () => {
             </div>
 
             {/* Target Dates Section */}
-            <div className="applicant-form-section">
+            <div className="applicant-form-section" style={cities.length === 0 ? { borderBottom: 'none', marginBottom: '36px', paddingBottom: 0 } : {}}>
               <h2 className="applicant-form-section-title">
                 <i className="fas fa-calendar-alt"></i>
                 {t('targetDates', 'Target Dates')}
@@ -668,34 +668,14 @@ const QuickStartApplicant = () => {
             </div>
 
             {/* Target Cities Section */}
-            {formData.country_code && (
+            {formData.country_code && cities.length > 0 && (
               <div className="applicant-form-section" style={{ borderBottom: 'none', marginBottom: '36px', paddingBottom: 0 }}>
                 <h2 className="applicant-form-section-title">
                   <i className="fas fa-map-marker-alt"></i>
                   {t('targetCities', 'Target Cities')} {cities.length > 1 && <span className="required">*</span>}
                 </h2>
                 
-                {cities.length === 0 ? (
-                  <div style={{
-                    backgroundColor: '#f0f9ff',
-                    border: '1px solid #bae6fd',
-                    borderRadius: '8px',
-                    padding: '1rem',
-                    display: 'flex',
-                    gap: '0.75rem',
-                    alignItems: 'flex-start'
-                  }}>
-                    <i className="fas fa-globe" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                        <strong>{t('searchAllCities', 'Search in all cities:')}</strong> {t('searchAllCitiesDesc', 'The search will be performed in all available cities for this country.')}
-                      </p>
-                      <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
-                        💎 <strong>{t('premiumCitySelection', 'Premium users')}</strong> {t('premiumCanSelectCities', 'can select specific cities for their search.')}
-                      </p>
-                    </div>
-                  </div>
-                ) : cities.length === 1 ? (
+                {cities.length === 1 ? (
                   <div className="applicant-form-city-single">
                     <i className="fas fa-check-circle"></i>
                     <span>{cities[0].city_name}</span>
