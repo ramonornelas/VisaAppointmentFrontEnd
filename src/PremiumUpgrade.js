@@ -197,15 +197,12 @@ const PremiumUpgrade = () => {
               <h2>{t('upgradeSuccessful', 'Upgrade Successful!')}</h2>
               <p>{t('welcomeToPremium', 'Welcome to FastVisa Premium!')}</p>
               <p>{t('accountUpgradedSuccessfully', 'Your account has been successfully upgraded.')}</p>
-              <p style={{ fontSize: '0.9rem', opacity: '0.9' }}>
-                {t('menuUpdatedPremium', 'Your menu has been updated to reflect your new premium status!')}
-              </p>
               <div className="success-actions">
                 <button 
                   onClick={() => navigate('/applicants')} 
                   className="btn btn-primary"
                 >
-                  {t('startUsingPremiumFeatures', 'Start Using Premium Features')}
+                  {t('startUsingPremiumFeatures', 'Start using Premium Features')}
                 </button>
               </div>
             </div>
