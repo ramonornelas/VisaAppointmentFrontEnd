@@ -1,5 +1,8 @@
 {
   "welcome": "Welcome to Visa Appointment!",
+  "welcomeUser": "Welcome, {{name}}!",
+  "registeredSuccessfully": "You have been registered successfully",
+  "loginToGetAppointment": "Log in to get your visa appointment sooner!",
   "login": "Log In",
   "logout": "Log Out",
   "register": "Register",

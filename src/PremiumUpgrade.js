@@ -327,24 +327,16 @@ const PremiumUpgrade = () => {
               </div>
 
               <div className="upgrade-benefits">
-                <h3>{t('whyUpgradePremium', 'Why Upgrade to Premium?')}</h3>
                 <div className="benefits-grid">
-                  <div className="benefit">
-                    <div className="benefit-icon">🚀</div>
-                    <h4>{t('nextDaySearch', 'Next-Day Search')}</h4>
-                    <p>{t('nextDaySearchDesc', 'Start searching for appointments as early as tomorrow, vs 6 months ahead with Basic')}</p>
-                  </div>
-                  <div className="benefit">
-                    <div className="benefit-icon">⭐</div>
-                    <h4>{t('priorityQueue', 'Priority Search Queue')}</h4>
-                    <p>{t('priorityQueueDesc', 'Your searches get priority over Basic users for faster results')}</p>
+                  <div className="benefit" style={{ 
+                    background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
+                    color: 'white'
+                  }}>
+                    <div className="benefit-icon">🛡️</div>
+                    <h4 style={{ color: 'white' }}>{t('moneyBackGuarantee30Days', '30-Day Money Back Guarantee')}</h4>
+                    <p style={{ color: 'white', opacity: 0.95 }}>{t('moneyBackGuaranteeDesc', 'Not satisfied? Get a full refund within 30 days, no questions asked.')}</p>
                   </div>
                 </div>
-              </div>
-
-              <div className="upgrade-guarantee">
-                <h4>{t('moneyBackGuarantee30Days', '30-Day Money Back Guarantee')}</h4>
-                <p>{t('moneyBackGuaranteeDesc', 'Not satisfied? Get a full refund within 30 days, no questions asked.')}</p>
               </div>
             </div>
           )}

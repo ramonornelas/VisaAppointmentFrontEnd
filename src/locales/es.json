@@ -1,5 +1,8 @@
 {
   "welcome": "¡Bienvenido a la Cita de Visa!",
+  "welcomeUser": "¡Bienvenido, {{name}}!",
+  "registeredSuccessfully": "Te has registrado exitosamente",
+  "loginToGetAppointment": "¡Inicia sesión para conseguir tu cita de visa más pronto!",
   "login": "Iniciar sesión",
   "logout": "Cerrar sesión",
   "register": "Regístrate",

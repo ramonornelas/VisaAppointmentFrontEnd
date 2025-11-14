@@ -11,7 +11,7 @@ import './ApplicantForm.css';
 import './index.css';
 
 const ApplicantForm = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isAuthenticated } = useAuth();
@@ -52,7 +52,7 @@ const ApplicantForm = () => {
   // Format date for display
   const formatDate = (date) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString(undefined, options);
+    return date.toLocaleDateString(i18n.language, options);
   };
 
   // Calculate minimum end date (210 days from today) for basic users
@@ -645,7 +645,23 @@ const ApplicantForm = () => {
                     <strong>{t('basicUserSearchSettings', 'Basic User Search Settings:')}</strong> {t('searchWillStartIn', 'Your appointment search will start 4 months from today.')}
                   </p>
                   <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
-                    💎 <strong>{t('premiumUpgradeNote', 'Premium users')}</strong> {t('premiumUsersCanSearchTomorrow', 'can search for appointments starting from tomorrow.')}
+                    💎 <strong>{t('premiumUpgradeNote', 'Premium users')}</strong> {t('premiumUsersCanSearchTomorrow', 'can search for appointments starting from tomorrow.')}{' '}
+                    <a 
+                      href="/premium-upgrade" 
+                      style={{ 
+                        color: '#0284c7', 
+                        textDecoration: 'underline',
+                        fontWeight: '600',
+                        cursor: 'pointer'
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate('/premium-upgrade');
+                        window.scrollTo(0, 0);
+                      }}
+                    >
+                      {t('upgradeToPremium', 'Upgrade to Premium')}
+                    </a>
                   </p>
                 </div>
               </div>

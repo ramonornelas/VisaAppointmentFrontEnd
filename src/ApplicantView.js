@@ -18,7 +18,7 @@ import './ApplicantView.css';
 import './index.css';
 
 const ApplicantView = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { id } = useParams(); // Get ID from URL parameter
@@ -40,6 +40,30 @@ const ApplicantView = () => {
     onConfirm: null,
     showCancel: false
   });
+
+  // Format date for display
+  const formatDate = (date) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString(i18n.language, options);
+  };
+
+  // Calculate search start date based on days
+  const getSearchStartDate = (days) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to midnight to avoid timezone issues
+    const startDate = new Date(today);
+    const daysToAdd = parseInt(days) || 3;
+    startDate.setDate(startDate.getDate() + daysToAdd);
+    return startDate;
+  };
+
+  // Format end date for display
+  const formatEndDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const [year, month, day] = dateString.split('-');
+    const date = new Date(year, month - 1, day);
+    return formatDate(date);
+  };
 
   // Authentication check
   useEffect(() => {
@@ -461,7 +485,7 @@ const ApplicantView = () => {
               {t('targetDates', 'Target Dates')}
             </h2>
             
-            {!permissions.canManageApplicants() && data.target_start_mode === 'days' && data.target_start_days === '180' && (
+            {!permissions.canManageApplicants() && data.target_start_mode === 'days' && data.target_start_days === '120' && (
               <div style={{
                 backgroundColor: '#f0f9ff',
                 border: '1px solid #bae6fd',
@@ -475,25 +499,32 @@ const ApplicantView = () => {
                 <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
                 <div style={{ flex: 1 }}>
                   <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                    <strong>{t('basicUserSearchSettings', 'Basic User Search Settings:')}</strong> {t('appointmentSearchStartsSixMonths', 'Your appointment search will start 6 months from today.')}
+                    <strong>{t('basicUserSearchSettings', 'Basic User Search Settings:')}</strong> {t('searchWillStartIn', 'Your appointment search will start 4 months from today.')}
                   </p>
                   <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
-                    💎 <strong>{t('premiumUsers', 'Premium users')}</strong> {t('searchStartingTomorrow', 'can search for appointments starting from tomorrow.')}
+                    💎 <strong>{t('premiumUpgradeNote', 'Premium users')}</strong> {t('premiumUsersCanSearchTomorrow', 'can search for appointments starting from tomorrow.')}{' '}
+                    <a 
+                      href="/premium-upgrade" 
+                      style={{ 
+                        color: '#0284c7', 
+                        textDecoration: 'underline',
+                        fontWeight: '600',
+                        cursor: 'pointer'
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate('/premium-upgrade');
+                        window.scrollTo(0, 0);
+                      }}
+                    >
+                      {t('upgradeToPremium', 'Upgrade to Premium')}
+                    </a>
                   </p>
                 </div>
               </div>
             )}
             
             <div className="applicant-view-grid">
-              <div className="applicant-view-field">
-                <label>{t('startMode', 'Start Mode')}</label>
-                <div className="applicant-view-value">
-                  <span className="applicant-view-badge" style={{ background: '#eaf4fb', color: '#2C6BA0' }}>
-                    {data.target_start_mode === 'date' ? t('specificDate', 'Specific Date') : t('daysFromNow', 'Days from Now')}
-                  </span>
-                </div>
-              </div>
-
               {data.target_start_mode === 'date' && (
                 <div className="applicant-view-field">
                   <label>{t('targetStartDate', 'Target Start Date')}</label>
@@ -503,61 +534,143 @@ const ApplicantView = () => {
 
               {data.target_start_mode === 'days' && (
                 <div className="applicant-view-field">
-                  <label>{t('targetStartDays', 'Target Start Days')}</label>
-                  <div className="applicant-view-value">{data.target_start_days || 'N/A'}</div>
+                  {permissions.canManageApplicants() || data.target_start_days !== '120' ? (
+                    <>
+                      <label>{t('targetStartDays', 'Target Start Days')}</label>
+                      <div className="applicant-view-value" style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                        <span>{data.target_start_days || 'N/A'} {t('days', 'days')}</span>
+                        {data.target_start_days && (
+                          <div style={{
+                            padding: '8px 16px',
+                            backgroundColor: '#f0f9ff',
+                            border: '1px solid #bae6fd',
+                            borderRadius: '6px',
+                            fontSize: '0.875rem',
+                            color: '#059669',
+                            fontWeight: '600',
+                            whiteSpace: 'nowrap'
+                          }}>
+                            <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
+                            {t('startDate', 'Start date')}: {formatDate(getSearchStartDate(data.target_start_days))}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <label>{t('searchStartsIn', 'Search Starts In')}</label>
+                      <div style={{
+                        padding: '12px 16px',
+                        backgroundColor: '#f3f4f6',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        color: '#4b5563',
+                        fontSize: '1rem',
+                        fontWeight: '500'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+                          <i className="fas fa-clock" style={{ marginRight: '8px', color: '#6b7280' }}></i>
+                          {t('fourMonthsFromToday', '4 months from today (120 days)')}
+                        </div>
+                        <div style={{
+                          marginTop: '8px',
+                          paddingTop: '8px',
+                          borderTop: '1px solid #d1d5db',
+                          fontSize: '0.95rem',
+                          color: '#059669',
+                          fontWeight: '600'
+                        }}>
+                          <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
+                          {t('startDate', 'Start date')}: {formatDate(getSearchStartDate(data.target_start_days))}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 
               <div className="applicant-view-field">
                 <label>{t('targetEndDate', 'Target End Date')}</label>
-                <div className="applicant-view-value">{data.target_end_date || 'N/A'}</div>
+                {!permissions.canManageApplicants() && data.target_end_date ? (
+                  <>
+                    <div style={{
+                      padding: '12px 16px',
+                      backgroundColor: '#f3f4f6',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      color: '#4b5563',
+                      fontSize: '1rem',
+                      fontWeight: '500'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+                        <i className="fas fa-calendar-check" style={{ marginRight: '8px', color: '#6b7280' }}></i>
+                        {formatEndDate(data.target_end_date)}
+                      </div>
+                      <div style={{
+                        marginTop: '8px',
+                        paddingTop: '8px',
+                        borderTop: '1px solid #d1d5db',
+                        fontSize: '0.875rem',
+                        color: '#6b7280',
+                        lineHeight: '1.5'
+                      }}>
+                        <i className="fas fa-info-circle" style={{ marginRight: '6px' }}></i>
+                        {t('targetEndDateExplanationView', 'Esta es la fecha máxima en que aceptarías una cita. La búsqueda buscará citas disponibles entre 4 meses desde ahora y esta fecha.')}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="applicant-view-value">{data.target_end_date || 'N/A'}</div>
+                )}
               </div>
             </div>
           </div>
 
           {/* Target Cities Section */}
-          <div className="applicant-view-section">
-            <h2 className="applicant-view-section-title">
-              <i className="fas fa-map-marker-alt"></i>
-              {t('targetCities', 'Target Cities')}
-            </h2>
-            
-            <div className="applicant-view-cities">
-              {data.target_city_codes && data.target_city_codes.split(',').filter(Boolean).length > 0 ? (
-                data.target_city_codes.split(',').filter(Boolean).map(code => {
-                  const city = cities.find(c => c.city_code === code);
-                  return (
-                    <div key={code} className="applicant-view-city-tag">
-                      <span className="city-name">{city ? city.city_name : code}</span>
-                      <span className="city-code">{code}</span>
-                    </div>
-                  );
-                })
-              ) : (
-                <div style={{
-                  backgroundColor: '#f0f9ff',
-                  border: '1px solid #bae6fd',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  display: 'flex',
-                  gap: '0.75rem',
-                  alignItems: 'flex-start'
-                }}>
-                  <i className="fas fa-globe" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                      <strong>{t('searchAllCities', 'Search in all cities:')}</strong> {t('searchPerformedAllCities', 'The search will be performed in all available cities for this country.')}
-                    </p>
-                    {!permissions.canManageApplicants() && (
-                      <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
-                        💎 <strong>{t('premiumUsers', 'Premium users')}</strong> {t('canSelectSpecificCities', 'can select specific cities for their search.')}
+          {cities.length > 0 && (
+            <div className="applicant-view-section">
+              <h2 className="applicant-view-section-title">
+                <i className="fas fa-map-marker-alt"></i>
+                {t('targetCities', 'Target Cities')}
+              </h2>
+              
+              <div className="applicant-view-cities">
+                {data.target_city_codes && data.target_city_codes.split(',').filter(Boolean).length > 0 ? (
+                  data.target_city_codes.split(',').filter(Boolean).map(code => {
+                    const city = cities.find(c => c.city_code === code);
+                    return (
+                      <div key={code} className="applicant-view-city-tag">
+                        <span className="city-name">{city ? city.city_name : code}</span>
+                        <span className="city-code">{code}</span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div style={{
+                    backgroundColor: '#f0f9ff',
+                    border: '1px solid #bae6fd',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    display: 'flex',
+                    gap: '0.75rem',
+                    alignItems: 'flex-start'
+                  }}>
+                    <i className="fas fa-globe" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                        <strong>{t('searchAllCities', 'Search in all cities:')}</strong> {t('searchPerformedAllCities', 'The search will be performed in all available cities for this country.')}
                       </p>
-                    )}
+                      {!permissions.canManageApplicants() && (
+                        <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
+                          💎 <strong>{t('premiumUsers', 'Premium users')}</strong> {t('canSelectSpecificCities', 'can select specific cities for their search.')}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Reserved Appointments Section */}
           {(data.consul_appointment_date || data.asc_appointment_date) && (

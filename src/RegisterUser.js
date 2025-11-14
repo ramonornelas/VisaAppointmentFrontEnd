@@ -193,7 +193,7 @@ const UserRegistrationForm = () => {
           )}
           {registrationSuccess ? (
             <>
-              <Welcome username={formData.username} />
+              <Welcome name={formData.name} />
               <button
                 className="registration-button"
                 style={{ width: 240, maxWidth: '95vw', margin: '1.5rem auto 0 auto', display: 'block' }}
