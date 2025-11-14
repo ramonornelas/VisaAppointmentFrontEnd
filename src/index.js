@@ -12,8 +12,6 @@ import Applicants from './Applicants';
 import ApplicantForm from './ApplicantForm';
 import ApplicantView from './ApplicantView';
 import DeleteApplicant from './DeleteApplicant';
-import StartContainer from './StartContainer';
-import StopContainer from './StopContainer';
 import LogOut from './LogOut';
 import PremiumUpgrade from './PremiumUpgrade';
 
@@ -35,8 +33,6 @@ ReactDOM.render(
         <Route path="/viewapplicant" element={<ApplicantView />} />
         <Route path="/view-applicant/:id" element={<ApplicantView />} />
         <Route path="/deleteapplicant" element={<DeleteApplicant />} />
-        <Route path="/startcontainer" element={<StartContainer />} />
-        <Route path="/stopcontainer" element={<StopContainer />} />
         <Route path="/logout" element={<LogOut />} />
         <Route path="/premium-upgrade" element={<PremiumUpgrade />} />
   <Route path="/users" element={<Users />} />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PayPalPayment from './PayPalPayment';
 import HamburgerMenu from './HamburgerMenu';
 import Banner from './Banner';
@@ -9,6 +10,7 @@ import './PremiumUpgrade.css';
 
 
 const PremiumUpgrade = () => {
+  const { t, i18n } = useTranslation();
   const [userDetails, setUserDetails] = useState(null);
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,11 +23,8 @@ const PremiumUpgrade = () => {
   const [priceMXN, setPriceMXN] = useState(null);
   const navigate = useNavigate();
 
-  // Language detection (from i18n.js or browser)
-  let selectedLanguage = 'en';
-  if (window && window.localStorage) {
-    selectedLanguage = window.localStorage.getItem('i18nextLng') || 'en';
-  }
+  // Get current language from i18n
+  const selectedLanguage = i18n.language;
 
   const fastVisa_userid = sessionStorage.getItem('fastVisa_userid');
 
@@ -82,15 +81,15 @@ const PremiumUpgrade = () => {
   }, [priceUSD]);
 
   const getCurrentRoleName = () => {
-    if (!userDetails || !roles.length) return 'Unknown';
+    if (!userDetails || !roles.length) return t('unknown', 'Unknown');
     const currentRole = roles.find(role => role.id === userDetails.role_id);
     const roleName = currentRole ? currentRole.name : 'Unknown';
     
     // Display user-friendly names
-    if (roleName === 'basic_user') return 'Basic';
-    if (roleName === 'premium_user') return 'Premium';
-    if (roleName === 'visa_agent') return 'Visa Agent';
-    if (roleName === 'admin') return 'Administrator';
+    if (roleName === 'basic_user') return t('basic', 'Basic');
+    if (roleName === 'premium_user') return t('premium', 'Premium');
+    if (roleName === 'visa_agent') return t('visaAgent', 'Visa Agent');
+    if (roleName === 'admin') return t('admin', 'Administrator');
     
     return roleName;
   };
@@ -138,7 +137,7 @@ const PremiumUpgrade = () => {
       }
     } catch (error) {
       console.error('Error upgrading user:', error);
-      setError('Payment was successful but failed to upgrade account. Please contact support.');
+      setError(t('paymentSuccessUpgradeFailed', 'Payment was successful but failed to upgrade account. Please contact support.'));
     } finally {
       setUpgrading(false);
     }
@@ -146,7 +145,7 @@ const PremiumUpgrade = () => {
 
   const handlePaymentError = (error) => {
     console.error('Payment error:', error);
-    setError('Payment failed. Please try again.');
+    setError(t('paymentFailed', 'Payment failed. Please try again.'));
     setUpgrading(false);
   };
 
@@ -168,7 +167,7 @@ const PremiumUpgrade = () => {
       <div className="page-container">
         <MainContainer>
           <div className="premium-upgrade-container">
-            <div className="loading">Loading...</div>
+            <div className="loading">{t('loading', 'Loading...')}</div>
           </div>
         </MainContainer>
         <Footer />
@@ -181,7 +180,7 @@ const PremiumUpgrade = () => {
       <div className="page-container">
         <MainContainer>
           <div className="premium-upgrade-container">
-            <div className="error">Failed to load user information</div>
+            <div className="error">{t('failedToLoadUserInfo', 'Failed to load user information')}</div>
           </div>
         </MainContainer>
         <Footer />
@@ -195,18 +194,18 @@ const PremiumUpgrade = () => {
         <MainContainer>
           <div className="premium-upgrade-container">
             <div className="success-message">
-              <h2>Upgrade Successful!</h2>
-              <p>Welcome to FastVisa Premium!</p>
-              <p>Your account has been successfully upgraded.</p>
+              <h2>{t('upgradeSuccessful', 'Upgrade Successful!')}</h2>
+              <p>{t('welcomeToPremium', 'Welcome to FastVisa Premium!')}</p>
+              <p>{t('accountUpgradedSuccessfully', 'Your account has been successfully upgraded.')}</p>
               <p style={{ fontSize: '0.9rem', opacity: '0.9' }}>
-                Your menu has been updated to reflect your new premium status!
+                {t('menuUpdatedPremium', 'Your menu has been updated to reflect your new premium status!')}
               </p>
               <div className="success-actions">
                 <button 
                   onClick={() => navigate('/applicants')} 
                   className="btn btn-primary"
                 >
-                  Start Using Premium Features
+                  {t('startUsingPremiumFeatures', 'Start Using Premium Features')}
                 </button>
               </div>
             </div>
@@ -222,9 +221,9 @@ const PremiumUpgrade = () => {
       <MainContainer>
         <div className="premium-upgrade-container">
           <div className="upgrade-header">
-            <h1>Upgrade to Premium</h1>
+            <h1>{t('upgradeToPremiumTitle', 'Upgrade to Premium')}</h1>
             <p className="current-plan">
-              Current Plan: <span className="plan-name">{getCurrentRoleName()}</span>
+              {t('currentPlan', 'Current Plan')}: <span className="plan-name">{getCurrentRoleName()}</span>
             </p>
           </div>
 
@@ -238,13 +237,13 @@ const PremiumUpgrade = () => {
           {isPremiumUser() ? (
             <div className="already-premium">
               <div className="premium-badge">
-                <h2>✨ You're Already Premium!</h2>
-                <p>You have access to all premium features.</p>
+                <h2>✨ {t('alreadyPremium', "You're Already Premium!")}</h2>
+                <p>{t('accessAllPremiumFeatures', 'You have access to all premium features.')}</p>
                 <button 
                   onClick={() => navigate('/applicants')} 
                   className="btn btn-primary"
                 >
-                  Access Premium Features
+                  {t('accessPremiumFeatures', 'Access Premium Features')}
                 </button>
               </div>
             </div>
@@ -252,33 +251,32 @@ const PremiumUpgrade = () => {
             <div className="upgrade-content">
               <div className="plans-comparison">
                 <div className="plan current-plan-card">
-                  <h3>Basic Plan</h3>
-                  <div className="plan-price">$0/month</div>
+                  <h3>{t('basicPlan', 'Basic Plan')}</h3>
+                  <div className="plan-price">$0{t('perMonth', '/month')}</div>
                   <ul className="plan-features">
-                    <li>✅ Search starts from 6 months ahead</li>
-                    <li>✅ Basic notifications every 2 hours</li>
-                    <li>✅ Standard search queue</li>
-                    <li>❌ Custom notification settings</li>
-                    <li>❌ Priority support</li>
+                    <li>✅ {t('searchStartsSixMonthsAhead', 'Search starts from 6 months ahead')}</li>
+                    <li>✅ {t('basicNotificationsEvery2Hours', 'Basic notifications every 2 hours')}</li>
+                    <li>✅ {t('standardSearchQueue', 'Standard search queue')}</li>
+                    <li>❌ {t('prioritySupport', 'Priority support')}</li>
                   </ul>
-                  <div className="plan-status">Your Current Plan</div>
+                  <div className="plan-status">{t('yourCurrentPlan', 'Your Current Plan')}</div>
                 </div>
 
                 <div className="plan premium-plan-card">
-                  <div className="popular-badge">Most Popular</div>
-                  <h3>Premium Plan</h3>
+                  <div className="popular-badge">{t('mostPopular', 'Most Popular')}</div>
+                  <h3>{t('premiumPlan', 'Premium Plan')}</h3>
                   <div className="plan-price">
                     {selectedLanguage === 'es' ? (
                       <>
                         <span className="currency">$</span>
                         {priceMXN === null
-                          ? <span className="loading-rate">Cargando...</span>
+                          ? <span className="loading-rate">{t('loadingRate', 'Cargando...')}</span>
                           : priceMXN}
                         <span className="currency-code"> MXN</span>
-                        <span className="period">/mes</span>
+                        <span className="period">{t('perMonth', '/mes')}</span>
                         {exchangeRate === null && (
                           <div className="exchange-error" style={{fontSize: '0.8rem', color: '#c00'}}>
-                            No se pudo obtener el tipo de cambio. El precio puede variar.
+                            {t('exchangeRateError', 'No se pudo obtener el tipo de cambio. El precio puede variar.')}
                           </div>
                         )}
                       </>
@@ -286,16 +284,15 @@ const PremiumUpgrade = () => {
                       <>
                         <span className="currency">$</span>{priceUSD}
                         <span className="currency-code"> USD</span>
-                        <span className="period">/month</span>
+                        <span className="period">{t('perMonth', '/month')}</span>
                       </>
                     )}
                   </div>
                   <ul className="plan-features">
-                    <li>✅ All basic features</li>
-                    <li>🚀 Search can start as early as tomorrow</li>
-                    <li>🔔 Customizable notifications (when & how you want)</li>
-                    <li>⭐ Priority search queue</li>
-                    <li>🛡️ Priority customer support</li>
+                    <li>✅ {t('allBasicFeatures', 'All basic features')}</li>
+                    <li>🚀 {t('searchCanStartTomorrow', 'Search can start as early as tomorrow')}</li>
+                    <li>⭐ {t('prioritySearchQueue', 'Priority search queue')}</li>
+                    <li>🛡️ {t('prioritySupport', 'Priority customer support')}</li>
                   </ul>
                   {!showPayment ? (
                     <button 
@@ -303,17 +300,17 @@ const PremiumUpgrade = () => {
                       className="btn btn-upgrade"
                       disabled={upgrading}
                     >
-                      {upgrading ? (selectedLanguage === 'es' ? 'Procesando...' : 'Processing...') : (selectedLanguage === 'es' ? 'Actualizar ahora' : 'Upgrade Now')}
+                      {upgrading ? t('processing', 'Processing...') : t('upgradeNow', 'Upgrade Now')}
                     </button>
                   ) : (
                     <div className="payment-section">
-                      <h4>{selectedLanguage === 'es' ? 'Completa tu actualización' : 'Complete Your Upgrade'}</h4>
-                      <p>{selectedLanguage === 'es' ? 'Pago seguro con PayPal' : 'Secure payment powered by PayPal'}</p>
+                      <h4>{t('completeYourUpgrade', 'Complete Your Upgrade')}</h4>
+                      <p>{t('securePaymentPayPal', 'Secure payment powered by PayPal')}</p>
                       <PayPalPayment
                         amount={priceUSD}
                         amountMXN={priceMXN}
                         defaultCurrency={selectedLanguage === 'es' ? 'MXN' : 'USD'}
-                        description={selectedLanguage === 'es' ? 'Actualización a FastVisa Premium' : 'FastVisa Premium Upgrade'}
+                        description={t('premiumUpgradeDescription', 'FastVisa Premium Upgrade')}
                         onSuccess={handlePaymentSuccess}
                         onError={handlePaymentError}
                         onCancel={handlePaymentCancel}
@@ -322,7 +319,7 @@ const PremiumUpgrade = () => {
                         onClick={() => setShowPayment(false)}
                         className="btn btn-cancel"
                       >
-                        {selectedLanguage === 'es' ? 'Cancelar' : 'Cancel'}
+                        {t('cancel', 'Cancel')}
                       </button>
                     </div>
                   )}
@@ -330,29 +327,24 @@ const PremiumUpgrade = () => {
               </div>
 
               <div className="upgrade-benefits">
-                <h3>Why Upgrade to Premium?</h3>
+                <h3>{t('whyUpgradePremium', 'Why Upgrade to Premium?')}</h3>
                 <div className="benefits-grid">
                   <div className="benefit">
                     <div className="benefit-icon">🚀</div>
-                    <h4>Next-Day Search</h4>
-                    <p>Start searching for appointments as early as tomorrow, vs 6 months ahead with Basic</p>
-                  </div>
-                  <div className="benefit">
-                    <div className="benefit-icon">🔔</div>
-                    <h4>Custom Notifications</h4>
-                    <p>Choose when and how you get notified vs basic alerts every 2 hours</p>
+                    <h4>{t('nextDaySearch', 'Next-Day Search')}</h4>
+                    <p>{t('nextDaySearchDesc', 'Start searching for appointments as early as tomorrow, vs 6 months ahead with Basic')}</p>
                   </div>
                   <div className="benefit">
                     <div className="benefit-icon">⭐</div>
-                    <h4>Priority Search Queue</h4>
-                    <p>Your searches get priority over Basic users for faster results</p>
+                    <h4>{t('priorityQueue', 'Priority Search Queue')}</h4>
+                    <p>{t('priorityQueueDesc', 'Your searches get priority over Basic users for faster results')}</p>
                   </div>
                 </div>
               </div>
 
               <div className="upgrade-guarantee">
-                <h4>30-Day Money Back Guarantee</h4>
-                <p>Not satisfied? Get a full refund within 30 days, no questions asked.</p>
+                <h4>{t('moneyBackGuarantee30Days', '30-Day Money Back Guarantee')}</h4>
+                <p>{t('moneyBackGuaranteeDesc', 'Not satisfied? Get a full refund within 30 days, no questions asked.')}</p>
               </div>
             </div>
           )}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { useTranslation } from 'react-i18next';
 import { getPayPalConfig } from "./APIFunctions";
 
 const PayPalPayment = ({ 
@@ -11,6 +12,7 @@ const PayPalPayment = ({
   onError, 
   onCancel 
 }) => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [paypalConfig, setPaypalConfig] = useState(null);
@@ -140,7 +142,7 @@ const PayPalPayment = ({
           fontSize: '1.1rem',
           fontWeight: '600'
         }}>
-          Select Payment Currency
+          {t('selectPaymentCurrency', 'Select Payment Currency')}
         </h3>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <button
@@ -176,7 +178,7 @@ const PayPalPayment = ({
             }}
           >
             <span style={{ fontSize: '1.4rem' }}>🇺🇸</span>
-            <span>USD (Dollars)</span>
+            <span>{t('usdDollars', 'USD (Dollars)')}</span>
             <span style={{ fontSize: '0.9rem', fontWeight: '700' }}>${amount}</span>
           </button>
           <button
@@ -212,7 +214,7 @@ const PayPalPayment = ({
             }}
           >
             <span style={{ fontSize: '1.4rem' }}>🇲🇽</span>
-            <span>MXN (Pesos)</span>
+            <span>{t('mxnPesos', 'MXN (Pesos)')}</span>
             <span style={{ fontSize: '0.9rem', fontWeight: '700' }}>${amountMXN}</span>
           </button>
         </div>
@@ -225,12 +227,12 @@ const PayPalPayment = ({
         borderRadius: '8px',
         border: '1px solid #e3eaf3'
       }}>
-        <h3 style={{ margin: '0 0 10px 0', fontSize: '1rem', color: '#333' }}>Payment Details</h3>
+        <h3 style={{ margin: '0 0 10px 0', fontSize: '1rem', color: '#333' }}>{t('paymentDetails', 'Payment Details')}</h3>
         <p style={{ margin: '5px 0', color: '#555' }}>
-          <strong>Amount:</strong> {selectedCurrency === 'USD' ? '$' : '$'}{currentAmount} {selectedCurrency}
+          <strong>{t('amount', 'Amount')}:</strong> {selectedCurrency === 'USD' ? '$' : '$'}{currentAmount} {selectedCurrency}
         </p>
         <p style={{ margin: '5px 0', color: '#555' }}>
-          <strong>Description:</strong> {description}
+          <strong>{t('description', 'Description')}:</strong> {description}
         </p>
       </div>
 
@@ -256,7 +258,7 @@ const PayPalPayment = ({
           fontWeight: '600'
         }}>
           <i className="fas fa-spinner fa-spin" style={{ marginRight: '8px' }}></i>
-          Processing payment...
+          {t('processingPayment', 'Processing payment...')}
         </div>
       )}
 

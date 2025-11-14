@@ -172,7 +172,7 @@ const Applicants = () => {
 
   const handleAction = async (id, isActive) => {
     try {
-      if (isActive === "Inactive") {
+      if (isActive === "Stopped") {
         // Check concurrent limit
         const concurrentLimit = parseInt(
           sessionStorage.getItem("concurrent_applicants")
@@ -261,7 +261,7 @@ const Applicants = () => {
   const handleResetStatus = async (id) => {
     try {
       const response = await ApplicantUpdate(id, {
-        search_status: "Inactive",
+        search_status: "Stopped",
         container_id: null,
         container_start_datetime: null,
       });
@@ -434,14 +434,17 @@ const Applicants = () => {
   );
 
   const renderSearchStatusBadge = (status) => {
+    const statusTranslations = {
+      'Running': t('running', 'Running'),
+      'Stopped': t('stopped', 'Stopped'),
+      'Error': t('error', 'Error'),
+      'Completed': t('completed', 'Completed'),
+    };
+
     const statusStyles = {
       'Running': {
         background: '#2196f3',
         color: '#fff',
-      },
-      'Inactive': {
-        background: '#e0e0e0',
-        color: '#888',
       },
       'Stopped': {
         background: '#ff9800',
@@ -471,7 +474,7 @@ const Applicants = () => {
         letterSpacing: '0.5px',
         minWidth: 60,
         textAlign: 'center',
-      }}>{status}</span>
+      }}>{statusTranslations[status] || status}</span>
     );
   };
 
@@ -479,10 +482,10 @@ const Applicants = () => {
     <td key={`toggle-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title={isActive === "Inactive" ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
+        title={isActive === "Stopped" ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
         onClick={() => handleAction(id, isActive)}
       >
-        <i className={isActive === "Inactive" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
+        <i className={isActive === "Stopped" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
       </button>
     </td>
   );
@@ -605,11 +608,11 @@ const Applicants = () => {
                             <div style={{ display: 'flex', gap: '4px' }}>
                               <button
                                 className="applicants-action-btn"
-                                title={item.search_status === "Inactive" ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
+                                title={item.search_status === "Stopped" ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
                                 onClick={() => handleAction(item.id, item.search_status)}
                                 style={{ padding: '4px 8px', fontSize: '12px' }}
                               >
-                                <i className={item.search_status === "Inactive" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
+                                <i className={item.search_status === "Stopped" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
                               </button>
                               {canClearStatus && (
                                 <button
@@ -634,7 +637,7 @@ const Applicants = () => {
                                 handleView(item.id);
                               }}
                               className="applicants-id-link"
-                              title="Click to view details"
+                              title={t('clickToViewDetails', 'Click to view details')}
                             >
                               {item[field]}
                             </a>

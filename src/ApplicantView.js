@@ -190,7 +190,7 @@ const ApplicantView = () => {
 
   const handleToggleSearch = async () => {
     try {
-      if (data.search_status === 'Inactive') {
+      if (data.search_status === 'Stopped') {
         const concurrentLimit = parseInt(sessionStorage.getItem('concurrent_applicants'));
         const applicantsResponse = await ApplicantSearch(fastVisaUserId);
         const runningCount = applicantsResponse.filter(a => a.search_status === 'Running').length;
@@ -281,7 +281,6 @@ const ApplicantView = () => {
   const renderStatusBadge = (status) => {
     const statusTranslations = {
       'Running': t('running', 'Running'),
-      'Inactive': t('inactive', 'Inactive'),
       'Stopped': t('stopped', 'Stopped'),
       'Error': t('error', 'Error'),
       'Completed': t('completed', 'Completed'),
@@ -289,7 +288,6 @@ const ApplicantView = () => {
 
     const statusStyles = {
       'Running': { background: '#2196f3', color: '#fff' },
-      'Inactive': { background: '#e0e0e0', color: '#888' },
       'Stopped': { background: '#ff9800', color: '#fff' },
       'Error': { background: '#f44336', color: '#fff' },
       'Completed': { background: '#4caf50', color: '#fff' },
@@ -413,11 +411,11 @@ const ApplicantView = () => {
                   {renderStatusBadge(data.search_status)}
                   <button 
                     onClick={handleToggleSearch} 
-                    className={`applicant-view-action-btn ${data.search_status === 'Inactive' ? 'start' : 'stop'}`}
+                    className={`applicant-view-action-btn ${data.search_status === 'Stopped' ? 'start' : 'stop'}`}
                     style={{ margin: 0, minWidth: '140px' }}
                   >
-                    <i className={data.search_status === 'Inactive' ? 'fas fa-play-circle' : 'fas fa-stop-circle'}></i>
-                    {data.search_status === 'Inactive' ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
+                    <i className={data.search_status === 'Stopped' ? 'fas fa-play-circle' : 'fas fa-stop-circle'}></i>
+                    {data.search_status === 'Stopped' ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
                   </button>
                 </div>
               </div>

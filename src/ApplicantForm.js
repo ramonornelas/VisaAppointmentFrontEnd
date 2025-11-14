@@ -619,12 +619,6 @@ const ApplicantForm = () => {
                 {errors.numberOfApplicants && <span className="applicant-form-error">{errors.numberOfApplicants}</span>}
               </div>
             </div>
-            
-            {isEditMode && (
-              <small style={{ color: '#666', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
-                {t('leaveEmptyToKeepPassword', 'Leave empty to keep the current password unchanged')}
-              </small>
-            )}
           </div>
 
           {/* Target Dates Section */}
