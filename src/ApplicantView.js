@@ -417,17 +417,14 @@ const ApplicantView = () => {
                 <div className="applicant-view-value">{data.name || 'N/A'}</div>
               </div>
 
-              <div className="applicant-view-field">
-                <label>{t('numberOfApplicants', 'Number of Applicants')}</label>
-                <div className="applicant-view-value">{data.number_of_applicants || 'N/A'}</div>
-              </div>
-
-              <div className="applicant-view-field">
-                <label>{t('applicantStatus', 'Applicant Status')}</label>
-                <div className="applicant-view-value">
-                  {renderBooleanBadge(data.applicant_active)}
+              {permissions.canManageApplicants() && (
+                <div className="applicant-view-field">
+                  <label>{t('applicantStatus', 'Applicant Status')}</label>
+                  <div className="applicant-view-value">
+                    {renderBooleanBadge(data.applicant_active)}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="applicant-view-field">
                 <label>{t('searchStatus', 'Search Status')}</label>

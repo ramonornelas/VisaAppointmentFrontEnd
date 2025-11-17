@@ -204,9 +204,9 @@ const ApplicantForm = () => {
       // Successfully authenticated - update fields
       setFormData(prev => ({
         ...prev,
+        name: aisUserInfo.applicant_name || prev.name, // Auto-fill name from AIS
         aisScheduleId: aisUserInfo.schedule_id,
         numberOfApplicants: '1', // Default to 1 until API provides this info
-        // Name field is manual - don't auto-fill
       }));
       setAisAuthSuccess(true);
       
@@ -400,6 +400,39 @@ const ApplicantForm = () => {
           
           {/* Top Action Buttons */}
           <div className="applicant-form-header-actions">
+            {isEditMode && permissions.canManageApplicants() && (
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                marginRight: '1rem',
+                padding: '8px 12px',
+                backgroundColor: '#f9fafb',
+                borderRadius: '6px',
+                border: '1px solid #e5e7eb'
+              }}>
+                <div 
+                  className="toggle-switch" 
+                  data-title={formData.applicantActive ? t('clickToDeactivate', 'Click to deactivate') : t('clickToActivate', 'Click to activate')}
+                  onClick={() => handleInputChange({ target: { name: 'applicantActive', type: 'checkbox', checked: !formData.applicantActive } })}
+                >
+                  <div className={`switch-track${formData.applicantActive ? " active" : ""}`}></div>
+                  <div className={`switch-thumb${formData.applicantActive ? " active" : ""}`}></div>
+                </div>
+                <label style={{ 
+                  fontSize: '0.9rem', 
+                  fontWeight: '500',
+                  color: formData.applicantActive ? '#059669' : '#6b7280',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                  margin: 0
+                }}
+                onClick={() => handleInputChange({ target: { name: 'applicantActive', type: 'checkbox', checked: !formData.applicantActive } })}
+                >
+                  {formData.applicantActive ? t('active', 'Active') : t('inactive', 'Inactive')}
+                </label>
+              </div>
+            )}
             <button
               type="button"
               onClick={() => {
@@ -445,47 +478,6 @@ const ApplicantForm = () => {
               {submitError}
             </div>
           )}
-
-          {/* Basic Information Section */}
-          <div className="applicant-form-section">
-            <h2 className="applicant-form-section-title">
-              <i className="fas fa-user"></i>
-              {t('basicInfo', 'Basic Information')}
-            </h2>
-            
-            <div className="applicant-form-row">
-              <div className="applicant-form-field">
-                <label htmlFor="name" className="applicant-form-label">
-                  {t('fullName', 'Full Name')} <span className="required">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className={`applicant-form-input applicant-form-input-medium ${errors.name ? 'error' : ''}`}
-                  placeholder={t('enterFullName', 'Enter full name')}
-                />
-                {errors.name && <span className="applicant-form-error">{errors.name}</span>}
-              </div>
-            </div>
-
-            {isEditMode && (
-              <div className="applicant-form-field">
-                <label className="applicant-form-checkbox-label">
-                  <input
-                    type="checkbox"
-                    name="applicantActive"
-                    checked={formData.applicantActive}
-                    onChange={handleInputChange}
-                    className="applicant-form-checkbox"
-                  />
-                  <span>{t('applicantIsActive', 'Applicant is active')}</span>
-                </label>
-              </div>
-            )}
-          </div>
 
           {/* Visa Credentials Section */}
           <div className="applicant-form-section">
@@ -599,24 +591,27 @@ const ApplicantForm = () => {
                   placeholder={t('autoFilledAfterAuth', 'Auto-filled after authentication')}
                 />
                 <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
-                  {t('autoFilledAfterAuth', 'This field is automatically filled after authenticating with Visa Appointment System')}
+                  {t('scheduleIdAutoFilledInfo', 'This field is automatically filled after authenticating with Visa Appointment System')}
                 </small>
               </div>
 
               <div className="applicant-form-field">
-                <label htmlFor="numberOfApplicants" className="applicant-form-label">
-                  {t('numberOfApplicants', 'Number of Applicants')} <span className="required">*</span>
+                <label htmlFor="name" className="applicant-form-label">
+                  {t('fullName', 'Full Name')} <span className="required">*</span>
                 </label>
                 <input
-                  type="number"
-                  id="numberOfApplicants"
-                  name="numberOfApplicants"
-                  value={formData.numberOfApplicants}
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
                   onChange={handleInputChange}
-                  min="1"
-                  className={`applicant-form-input applicant-form-input-small ${errors.numberOfApplicants ? 'error' : ''}`}
+                  className={`applicant-form-input applicant-form-input-medium ${errors.name ? 'error' : ''}`}
+                  placeholder={t('autoFilledAfterAuth', 'Auto-filled after authentication')}
                 />
-                {errors.numberOfApplicants && <span className="applicant-form-error">{errors.numberOfApplicants}</span>}
+                {errors.name && <span className="applicant-form-error">{errors.name}</span>}
+                <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
+                  {t('nameAutoFilledInfo', 'This field is automatically filled after authenticating with Visa Appointment System')}
+                </small>
               </div>
             </div>
           </div>
