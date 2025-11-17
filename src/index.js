@@ -14,6 +14,7 @@ import ApplicantView from './ApplicantView';
 import DeleteApplicant from './DeleteApplicant';
 import LogOut from './LogOut';
 import PremiumUpgrade from './PremiumUpgrade';
+import ChangePassword from './ChangePassword';
 
 import Users from './Users';
 
@@ -35,6 +36,7 @@ ReactDOM.render(
         <Route path="/deleteapplicant" element={<DeleteApplicant />} />
         <Route path="/logout" element={<LogOut />} />
         <Route path="/premium-upgrade" element={<PremiumUpgrade />} />
+        <Route path="/change-password" element={<ChangePassword />} />
   <Route path="/users" element={<Users />} />
       </Routes>
     </Router>

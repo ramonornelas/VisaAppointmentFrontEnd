@@ -387,11 +387,11 @@ body {
   align-items: center;
   justify-content: flex-start;
   gap: 0;
-  padding-bottom: 4px;
+  padding-bottom: 1px;
 }
 
 .user-info {
-  padding: 8px 10px;
+  padding: 8px 10px 4px 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   background: #f8f9fa;
   width: 100%;
@@ -409,9 +409,42 @@ body {
   color: #666;
   font-size: 12px;
   text-transform: capitalize;
+  margin-bottom: 0;
+  line-height: 1.4;
 }
 
+.user-info .change-password-text-link {
+  color: #2C6BA0 !important;
+  font-size: 12px !important;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline !important;
+  cursor: pointer;
+  text-transform: capitalize;
+  margin: 0 !important;
+  text-align: left !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  font-weight: normal !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  position: static !important;
+  line-height: inherit !important;
+  vertical-align: baseline !important;
+}
 
+.user-info .change-password-text-link:hover {
+  color: #1d4d73 !important;
+  text-decoration: underline;
+  transform: none !important;
+}
+
+.user-info .change-password-text-link::before,
+.user-info .change-password-text-link::after {
+  display: none !important;
+  content: none !important;
+}
 
 .logout-link {
   display: flex;
@@ -426,7 +459,7 @@ body {
   font-weight: 500;
   transition: all 0.3s ease;
   border-radius: 5px;
-  margin: 8px 0 0 0;
+  margin: 2px 0 0 0;
   position: relative;
   box-shadow: none;
   border: 1px solid #e9ecef;
@@ -436,7 +469,6 @@ body {
   flex: 0 0 auto;
   align-self: center;
 }
-
 
 .logout-link:hover {
   background: #f8f9fa !important;
@@ -476,11 +508,13 @@ body {
   pointer-events: none;
   z-index: 1000;
 }
+
 .logout-link:hover::after {
   opacity: 1;
   visibility: visible;
   bottom: -30px;
 }
+
 .logout-link::before {
   content: '';
   position: absolute;
@@ -498,6 +532,7 @@ body {
   pointer-events: none;
   z-index: 1000;
 }
+
 .logout-link:hover::before {
   opacity: 1;
   visibility: visible;

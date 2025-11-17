@@ -355,6 +355,39 @@ const notifyAdminAISFailure = async ({ username, ais_username, country_code }) =
   }
 };
 
+// Change user password
+const changePassword = async ({ userId, username, currentPassword, newPassword }) => {
+  try {
+    const response = await fetch(`${BASE_URL}/auth/change-password`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        username,
+        currentPassword,
+        newPassword,
+      }),
+    });
+
+    if (response.status === 200) {
+      const data = await response.json();
+      return { success: true, message: data.message };
+    } else if (response.status === 401) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.message || "Current password is incorrect" };
+    } else {
+      const errorData = await response.json();
+      return { success: false, message: errorData.message || "Failed to change password" };
+    }
+  } catch (error) {
+    console.error("Error changing password:", error);
+    return { success: false, message: "An error occurred while changing password" };
+  }
+};
+
 export {
   UserDetails,
   ApplicantSearch,
@@ -372,4 +405,5 @@ export {
   getUSDMXNExchangeRate,
   authenticateAIS,
   notifyAdminAISFailure,
+  changePassword,
 };

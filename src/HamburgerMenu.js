@@ -148,7 +148,11 @@ const HamburgerMenu = () => {
                         fastVisa_username || 'User'
                       )}
                     </div>
-                    <div className="user-role">{mapRoleName(userRole)}</div>
+                    <div className="user-role">
+                      {mapRoleName(userRole)}<br /><a href="/change-password" className="change-password-text-link">
+                        {t('changePassword', 'Change Password')}
+                      </a>
+                    </div>
                   </div>
                   <Link to="/logout" className="logout-link" title={t('logout', 'Log Out')}>
                     <i className="fas fa-sign-out-alt"></i>
