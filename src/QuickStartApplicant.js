@@ -259,7 +259,7 @@ const QuickStartApplicant = () => {
           aisScheduleId = '-';
           numberOfApplicants = '1';
         } else {
-          userName = aisUserInfo.username;
+          userName = aisUserInfo.applicant_name;
           aisScheduleId = aisUserInfo.schedule_id;
           numberOfApplicants = '1'; // Default to 1, update if API returns more
         }
@@ -274,7 +274,7 @@ const QuickStartApplicant = () => {
       // Step 1: Create User
       setCurrentStep(2);
       const userPayload = {
-        name: userName, // TODO: From AIS API
+        name: userName, // From AIS API (applicant_name field)
         username: username, // Using AIS email as username
         email: username, // Email is the same as username
         password: generatedPassword,
@@ -400,10 +400,6 @@ const QuickStartApplicant = () => {
         },
         body: JSON.stringify(startPayload),
       });
-
-      // TODO: Send generated password to user's email
-      // API call to send email with password and instructions to change it
-      // await sendPasswordEmail(username, generatedPassword);
 
       // Redirect to applicant details page
       window.location.href = `/view-applicant/${applicantId}`;
