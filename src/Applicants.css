@@ -114,8 +114,8 @@
   background: #e3eaf3;
 }
 
-.applicants-action-btn[title]:hover::after {
-  content: attr(title);
+.applicants-action-btn[data-title]:hover::after {
+  content: attr(data-title);
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
@@ -144,8 +144,8 @@
   color: #1a4d7a;
 }
 
-.applicants-id-link[title]:hover::after {
-  content: attr(title);
+.applicants-id-link[data-title]:hover::after {
+  content: attr(data-title);
   position: absolute;
   left: 0;
   bottom: -28px;

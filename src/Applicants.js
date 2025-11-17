@@ -482,7 +482,7 @@ const Applicants = () => {
     <td key={`toggle-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title={isActive === "Stopped" ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
+        data-title={isActive === "Stopped" ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
         onClick={() => handleAction(id, isActive)}
       >
         <i className={isActive === "Stopped" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
@@ -494,7 +494,7 @@ const Applicants = () => {
     <td key={`edit-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title={t('viewDetails', 'View Details')}
+        data-title={t('viewDetails', 'View Details')}
         onClick={() => handleView(id)}
       >
         <i className="fas fa-eye"></i>
@@ -506,7 +506,7 @@ const Applicants = () => {
     <td key={`password-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title={t('copyPassword', 'Copy Password')}
+        data-title={t('copyPassword', 'Copy Password')}
         onClick={() => handleCopyPassword(id)}
       >
         <i className="fas fa-key"></i>
@@ -518,7 +518,7 @@ const Applicants = () => {
     <td key={`email-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title={t('copyEmail', 'Copy Email')}
+        data-title={t('copyEmail', 'Copy Email')}
         onClick={() => handleCopyEmail(id)}
       >
         <i className="fas fa-envelope"></i>
@@ -530,7 +530,7 @@ const Applicants = () => {
     <td key={`reset-${id}`} style={{ textAlign: "center" }}>
       <button
         className="applicants-action-btn"
-        title={t('clearStatus', 'Clear Status')}
+        data-title={t('clearStatus', 'Clear Status')}
         onClick={() => handleResetStatus(id)}
       >
         <i className="fas fa-eraser"></i>
@@ -545,12 +545,12 @@ const Applicants = () => {
         <h2 className="applicants-title">{t('applicants', 'Applicants')}</h2>
         <div className="applicants-filters-bar">
         <div className="applicants-filters">
-          <div className="toggle-switch" title={t('onlyActive', 'Filter only active')} onClick={() => setFilterActive(!filterActive)}>
+          <div className="toggle-switch" data-title={t('onlyActive', 'Filter only active')} onClick={() => setFilterActive(!filterActive)}>
             <div className={`switch-track${filterActive ? " active" : ""}`}></div>
             <div className={`switch-thumb${filterActive ? " active" : ""}`}></div>
           </div>
           <label>{t('onlyActive', 'Only Active')}</label>
-          <div className="toggle-switch" title={t('onlyRunning', 'Filter only Running')} onClick={() => setFilterRunning(!filterRunning)}>
+          <div className="toggle-switch" data-title={t('onlyRunning', 'Filter only Running')} onClick={() => setFilterRunning(!filterRunning)}>
             <div className={`switch-track${filterRunning ? " active" : ""}`}></div>
             <div className={`switch-thumb${filterRunning ? " active" : ""}`}></div>
           </div>
@@ -608,7 +608,7 @@ const Applicants = () => {
                             <div style={{ display: 'flex', gap: '4px' }}>
                               <button
                                 className="applicants-action-btn"
-                                title={item.search_status === "Stopped" ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
+                                data-title={item.search_status === "Stopped" ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
                                 onClick={() => handleAction(item.id, item.search_status)}
                                 style={{ padding: '4px 8px', fontSize: '12px' }}
                               >
@@ -617,7 +617,7 @@ const Applicants = () => {
                               {canClearStatus && (
                                 <button
                                   className="applicants-action-btn"
-                                  title={t('clearStatus', 'Clear Status')}
+                                  data-title={t('clearStatus', 'Clear Status')}
                                   onClick={() => handleResetStatus(item.id)}
                                   style={{ padding: '4px 8px', fontSize: '12px' }}
                                 >
@@ -637,14 +637,14 @@ const Applicants = () => {
                                 handleView(item.id);
                               }}
                               className="applicants-id-link"
-                              title={t('clickToViewDetails', 'Click to view details')}
+                              data-title={t('clickToViewDetails', 'Click to view details')}
                             >
                               {item[field]}
                             </a>
                             <div style={{ display: 'flex', gap: '4px' }}>
                               <button
                                 className="applicants-action-btn"
-                                title={t('edit', 'Edit')}
+                                data-title={t('edit', 'Edit')}
                                 onClick={() => handleEditApplicant(item.id)}
                                 style={{ padding: '6px 10px', fontSize: '14px' }}
                               >
@@ -652,7 +652,7 @@ const Applicants = () => {
                               </button>
                               <button
                                 className="applicants-action-btn"
-                                title={t('deleteApplicant', 'Delete Applicant')}
+                                data-title={t('deleteApplicant', 'Delete Applicant')}
                                 onClick={() => handleDeleteApplicant(item.id)}
                                 style={{ padding: '6px 10px', fontSize: '14px', color: '#f44336' }}
                               >
@@ -668,7 +668,7 @@ const Applicants = () => {
                             <div style={{ display: 'flex', gap: '4px' }}>
                               <button
                                 className="applicants-action-btn"
-                                title={t('copyEmail', 'Copy Email')}
+                                data-title={t('copyEmail', 'Copy Email')}
                                 onClick={() => handleCopyEmail(item.id)}
                                 style={{ padding: '4px 8px', fontSize: '12px' }}
                               >
@@ -676,7 +676,7 @@ const Applicants = () => {
                               </button>
                               <button
                                 className="applicants-action-btn"
-                                title={t('copyPassword', 'Copy Password')}
+                                data-title={t('copyPassword', 'Copy Password')}
                                 onClick={() => handleCopyPassword(item.id)}
                                 style={{ padding: '4px 8px', fontSize: '12px' }}
                               >

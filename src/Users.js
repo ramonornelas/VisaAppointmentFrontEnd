@@ -170,7 +170,7 @@ const Users = () => {
                                                     <button 
                                                         className="applicants-action-btn" 
                                                         onClick={handleSave}
-                                                        title={t('save', 'Save')}
+                                                        data-title={t('save', 'Save')}
                                                         style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
                                                     >
                                                         <i className="fas fa-save"></i>
@@ -178,7 +178,7 @@ const Users = () => {
                                                     <button 
                                                         className="applicants-action-btn" 
                                                         onClick={() => setEditIndex(null)}
-                                                        title={t('cancel', 'Cancel')}
+                                                        data-title={t('cancel', 'Cancel')}
                                                         style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
                                                     >
                                                         <i className="fas fa-times"></i>
@@ -189,7 +189,7 @@ const Users = () => {
                                                     <button 
                                                         className="applicants-action-btn" 
                                                         onClick={() => handleEdit(idx)}
-                                                        title={t('edit', 'Edit')}
+                                                        data-title={t('edit', 'Edit')}
                                                         style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
                                                     >
                                                         <i className="fas fa-edit"></i>
@@ -197,7 +197,7 @@ const Users = () => {
                                                     <button 
                                                         className="applicants-action-btn" 
                                                         onClick={() => requestDeleteUser(user.id)}
-                                                        title={t('delete', 'Delete')}
+                                                        data-title={t('delete', 'Delete')}
                                                         style={{ padding: '4px 8px', fontSize: '12px', color: '#fff', background: '#e53935' }}
                                                     >
                                                         <i className="fas fa-trash"></i>
