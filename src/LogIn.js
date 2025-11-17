@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Banner from './Banner';
 import Footer from './Footer';
 import './LogIn.css';
 import LanguageSelector from './LanguageSelector';
 import { permissions } from './utils/permissions';
+import FastVisaMetrics from './utils/FastVisaMetrics';
 import {
   loginUser,
   searchUserByUsername,
@@ -22,6 +23,20 @@ const LogIn = () => {
   const { t } = useTranslation();
   const permissionsErrorMsg = t('permissionsErrorMsg', 'Please contact the administrator to grant you access to the system.');
 
+  // Initialize metrics tracker
+  const metrics = new FastVisaMetrics();
+
+  // Track page view when component mounts
+  useEffect(() => {
+    metrics.trackPageView();
+    
+    // Track custom event for login page visit
+    metrics.trackCustomEvent('login_page_visit', {
+      page: 'login',
+      timestamp: new Date().toISOString()
+    });
+  }, []);
+
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
@@ -32,6 +47,13 @@ const LogIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Track login attempt
+    await metrics.trackCustomEvent('login_attempt', {
+      username: username,
+      timestamp: new Date().toISOString()
+    });
+    
     try {
       const loginResponse = await loginUser(username, password);
 
@@ -52,6 +74,9 @@ const LogIn = () => {
             sessionStorage.setItem("fastVisa_name", searchname);
           }
 
+          // Set user ID in metrics tracker for subsequent events
+          metrics.setUserId(searchuserid);
+
           // Fetch and store user permissions
           try {
             const permissionsData = await getUserPermissions(searchuserid);
@@ -59,6 +84,13 @@ const LogIn = () => {
               sessionStorage.setItem("fastVisa_permissions", JSON.stringify(permissionsData));
             } else {
               setError(permissionsErrorMsg);
+              
+              // Track login failure due to permissions
+              await metrics.trackCustomEvent('login_failure', {
+                username: username,
+                reason: 'no_permissions',
+                timestamp: new Date().toISOString()
+              });
               return;
             }
           } catch (permError) {
@@ -75,6 +107,15 @@ const LogIn = () => {
               const roleName = currentRole ? currentRole.name : 'unknown';
               
               console.log('[LogIn] User role:', roleName);
+              
+              // Track successful login with role information
+              await metrics.trackCustomEvent('login_success', {
+                userId: searchuserid,
+                username: username,
+                role: roleName,
+                countryCode: countryCode,
+                timestamp: new Date().toISOString()
+              });
               
               // For users who cannot manage applicants, check if they have an applicant
               if (!permissions.canManageApplicants()) {
@@ -102,10 +143,28 @@ const LogIn = () => {
             } else {
               // Error fetching user details, default to applicants
               console.log('[LogIn] Error fetching user details, defaulting to applicants');
+              
+              // Track login success with unknown role
+              await metrics.trackCustomEvent('login_success', {
+                userId: searchuserid,
+                username: username,
+                role: 'unknown',
+                timestamp: new Date().toISOString()
+              });
+              
               window.location.href = '/applicants';
             }
           } catch (roleError) {
             console.error('Error determining user role:', roleError);
+            
+            // Track login failure due to role error
+            await metrics.trackCustomEvent('login_failure', {
+              username: username,
+              reason: 'role_error',
+              error: roleError.message,
+              timestamp: new Date().toISOString()
+            });
+            
             // Default to applicants on error
             window.location.href = '/applicants';
           }
@@ -117,7 +176,15 @@ const LogIn = () => {
       }
     } catch (error) {
       console.error('Error:', error);
-      setError(error.message)
+      setError(error.message);
+      
+      // Track login failure
+      await metrics.trackCustomEvent('login_failure', {
+        username: username,
+        reason: 'authentication_error',
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
     }
   };
 
