@@ -98,6 +98,7 @@ const Users = () => {
                                 <th>{t('concurrentApplicants', 'Concurrent Applicants')}</th>
                                 <th>{t('phoneNumber', 'Phone Number')}</th>
                                 <th>{t('role', 'Role')}</th>
+                                <th>{t('actions', 'Actions')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -105,50 +106,7 @@ const Users = () => {
                                 users.map((user, idx) => (
                                     <tr key={user.username}>
                                         <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                <span>{user.username}</span>
-                                                <div style={{ display: 'flex', gap: '4px' }}>
-                                                    {editIndex === idx ? (
-                                                        <>
-                                                            <button 
-                                                                className="applicants-action-btn" 
-                                                                onClick={handleSave}
-                                                                data-title={t('save', 'Save')}
-                                                                style={{ padding: '4px 8px', fontSize: '12px' }}
-                                                            >
-                                                                <i className="fas fa-check"></i>
-                                                            </button>
-                                                            <button 
-                                                                className="applicants-action-btn" 
-                                                                onClick={() => setEditIndex(null)}
-                                                                data-title={t('cancel', 'Cancel')}
-                                                                style={{ padding: '4px 8px', fontSize: '12px' }}
-                                                            >
-                                                                <i className="fas fa-times"></i>
-                                                            </button>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <button 
-                                                                className="applicants-action-btn" 
-                                                                onClick={() => handleEdit(idx)}
-                                                                data-title={t('edit', 'Edit')}
-                                                                style={{ padding: '6px 10px', fontSize: '14px' }}
-                                                            >
-                                                                <i className="fas fa-edit"></i>
-                                                            </button>
-                                                            <button 
-                                                                className="applicants-action-btn" 
-                                                                onClick={() => requestDeleteUser(user.id)}
-                                                                data-title={t('delete', 'Delete')}
-                                                                style={{ padding: '6px 10px', fontSize: '14px', color: '#f44336' }}
-                                                            >
-                                                                <i className="fas fa-trash"></i>
-                                                            </button>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
+                                            <span>{user.username}</span>
                                         </td>
                                         <td>
                                             {editIndex === idx ? (
@@ -208,11 +166,54 @@ const Users = () => {
                                                 : user.role_id
                                         )}
                                         </td>
+                                        <td>
+                                            <div style={{ display: 'flex', gap: '4px' }}>
+                                                {editIndex === idx ? (
+                                                    <>
+                                                        <button 
+                                                            className="applicants-action-btn" 
+                                                            onClick={handleSave}
+                                                            data-title={t('save', 'Save')}
+                                                            style={{ padding: '4px 8px', fontSize: '12px' }}
+                                                        >
+                                                            <i className="fas fa-check"></i>
+                                                        </button>
+                                                        <button 
+                                                            className="applicants-action-btn" 
+                                                            onClick={() => setEditIndex(null)}
+                                                            data-title={t('cancel', 'Cancel')}
+                                                            style={{ padding: '4px 8px', fontSize: '12px' }}
+                                                        >
+                                                            <i className="fas fa-times"></i>
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button 
+                                                            className="applicants-action-btn" 
+                                                            onClick={() => handleEdit(idx)}
+                                                            data-title={t('edit', 'Edit')}
+                                                            style={{ padding: '6px 10px', fontSize: '14px' }}
+                                                        >
+                                                            <i className="fas fa-edit"></i>
+                                                        </button>
+                                                        <button 
+                                                            className="applicants-action-btn" 
+                                                            onClick={() => requestDeleteUser(user.id)}
+                                                            data-title={t('delete', 'Delete')}
+                                                            style={{ padding: '6px 10px', fontSize: '14px', color: '#f44336' }}
+                                                        >
+                                                            <i className="fas fa-trash"></i>
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={7} style={{ textAlign: "center", padding: "40px 20px" }}>
+                                    <td colSpan={8} style={{ textAlign: "center", padding: "40px 20px" }}>
                                         <div style={{ 
                                             display: "flex", 
                                             flexDirection: "column", 
