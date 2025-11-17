@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { UserDetails, getRoles } from './APIFunctions';
 import './PremiumBanner.css';
 
 const PremiumBanner = () => {
   const [shouldShowBanner, setShouldShowBanner] = useState(false);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
   const fastVisa_userid = sessionStorage.getItem('fastVisa_userid');
 
   useEffect(() => {
@@ -38,6 +39,12 @@ const PremiumBanner = () => {
     checkUserRole();
   }, [fastVisa_userid]);
 
+  // Hide banner if on premium-upgrade page
+  if (location.pathname === '/premium-upgrade') {
+    return null;
+  }
+
+  // Hide banner if loading or user is not basic
   if (loading || !shouldShowBanner) {
     return null;
   }

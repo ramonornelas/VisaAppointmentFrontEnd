@@ -1,7 +1,7 @@
 // HamburgerMenu.js
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
 import { UserDetails, getRoles } from './APIFunctions';
 import './HamburgerMenu.css';
@@ -11,6 +11,7 @@ import { permissions } from './utils/permissions';
 const HamburgerMenu = () => {
   const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
+  const location = useLocation();
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [userRole, setUserRole] = useState('');
@@ -105,7 +106,7 @@ const HamburgerMenu = () => {
     <div className="hamburger-menu-icon">
       <nav className="menu open">
         <div className="menu-items">
-          {showUpgrade && (
+          {showUpgrade && location.pathname !== '/premium-upgrade' && (
             <div className="menu-item premium-section">
               <Link to="/premium-upgrade" className="premium-link shiny-btn">
                 <i className="fas fa-crown"></i>
