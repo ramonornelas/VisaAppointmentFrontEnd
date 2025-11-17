@@ -6,8 +6,17 @@ import Footer from './Footer';
 import LanguageSelector from './LanguageSelector';
 import { getTranslatedCountries } from './utils/countries';
 import { ALL_CITIES } from './utils/cities';
-import { getRoles, authenticateAIS, notifyAdminAISFailure } from './APIFunctions';
-import { BASE_URL } from './config.js';
+import { 
+  getRoles, 
+  authenticateAIS, 
+  notifyAdminAISFailure,
+  createUser,
+  searchUserByUsername,
+  createApplicant,
+  loginUser,
+  getUserPermissions,
+  StartApplicantContainer
+} from './APIFunctions';
 import Select from 'react-select';
 import './ApplicantForm.css';
 import './RegisterUser.css';
@@ -15,7 +24,7 @@ import './LogIn.css';
 
 const QuickStartApplicant = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // Get translated countries list
   const countries = getTranslatedCountries(t);
@@ -233,6 +242,7 @@ const QuickStartApplicant = () => {
     try {
       // Generate automatic password
       const generatedPassword = generatePassword();
+      console.log('[QuickStart] Step 0: Password generated');
       
       // Use AIS email as username (or generate one if no cities)
       let username, userName, aisScheduleId, numberOfApplicants;
@@ -240,39 +250,66 @@ const QuickStartApplicant = () => {
       if (cities.length > 0) {
         // If country has cities, authenticate with AIS
         username = formData.aisEmail;
+        console.log('[QuickStart] Country has cities, will authenticate with AIS');
         
-        // Call API to get user information from AIS credentials
-        const aisUserInfo = await authenticateAIS({
-          username: formData.aisEmail,
-          password: formData.aisPassword,
-          country_code: formData.country_code,
-        });
-        if (!aisUserInfo || !aisUserInfo.schedule_id) {
-          // Notify admin about AIS authentication failure
+        // Initialize with fallback values
+        userName = username; // Use username as fallback name
+        aisScheduleId = '-';
+        numberOfApplicants = '1';
+        console.log('[QuickStart] Initialized fallback values:', { userName, aisScheduleId, numberOfApplicants });
+        
+        try {
+          console.log('[QuickStart] Calling authenticateAIS...');
+          // Call API to get user information from AIS credentials
+          const aisUserInfo = await authenticateAIS({
+            username: formData.aisEmail,
+            password: formData.aisPassword,
+            country_code: formData.country_code,
+          });
+          console.log('[QuickStart] AIS response:', aisUserInfo);
+          
+          if (aisUserInfo && aisUserInfo.schedule_id) {
+            // Successfully got AIS info - use it
+            userName = aisUserInfo.applicant_name || username; // Fallback to username if applicant_name is empty
+            aisScheduleId = aisUserInfo.schedule_id;
+            numberOfApplicants = '1'; // Default to 1, update if API returns more
+            console.log('[QuickStart] AIS authentication successful, using AIS data:', { userName, aisScheduleId });
+          } else {
+            console.warn('[QuickStart] AIS authentication returned no schedule_id, using fallback values');
+            // AIS authentication failed - notify admin but continue with defaults
+            await notifyAdminAISFailure({
+              username: formData.aisEmail,
+              ais_username: formData.aisEmail,
+              country_code: formData.country_code,
+            });
+          }
+        } catch (aisError) {
+          // AIS call failed - notify admin but continue with defaults
+          console.error('[QuickStart] AIS authentication error:', aisError);
           await notifyAdminAISFailure({
             username: formData.aisEmail,
             ais_username: formData.aisEmail,
             country_code: formData.country_code,
           });
-          // Use default values and continue
-          userName = 'Quick Start User';
-          aisScheduleId = '-';
-          numberOfApplicants = '1';
-        } else {
-          userName = aisUserInfo.applicant_name;
-          aisScheduleId = aisUserInfo.schedule_id;
-          numberOfApplicants = '1'; // Default to 1, update if API returns more
         }
       } else {
         // If country has no cities, use default values
         username = formData.aisEmail || `user_${Date.now()}@fastvisa.com`;
-        userName = 'Quick Start User';
+        userName = username; // Use username as name
         aisScheduleId = '-';
         numberOfApplicants = '1';
+        console.log('[QuickStart] Country has no cities, using default values:', { username, userName });
       }
       
       // Step 1: Create User
       setCurrentStep(2);
+      console.log('[QuickStart] Step 1: Creating user with payload:', { 
+        name: userName, 
+        username, 
+        country_code: formData.country_code,
+        role_id: basicRoleId 
+      });
+      
       const userPayload = {
         name: userName, // From AIS API (applicant_name field)
         username: username, // Using AIS email as username
@@ -285,41 +322,36 @@ const QuickStartApplicant = () => {
         role_id: basicRoleId,
         sendEmail: true,
         includePassword: true, // QuickStart always sends password in email
+        language: i18n.language || 'en', // Get current language from i18n
       };
 
-      const userResponse = await fetch(`${BASE_URL}/users`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userPayload),
-      });
-
-      if (!userResponse.ok) {
-        throw new Error(t('userCreationFailed', 'Failed to create user account'));
+      const userResult = await createUser(userPayload);
+      console.log('[QuickStart] User creation result:', userResult);
+      
+      if (!userResult.success) {
+        console.error('[QuickStart] User creation failed:', userResult.error);
+        throw new Error(userResult.error || t('userCreationFailed', 'Failed to create user account'));
       }
+      console.log('[QuickStart] User created successfully');
 
       // Get the created user's ID
-      const searchUserResponse = await fetch(`${BASE_URL}/users/search`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: username }),
-      });
-
-      if (!searchUserResponse.ok) {
+      console.log('[QuickStart] Searching for user:', username);
+      const userData = await searchUserByUsername(username);
+      console.log('[QuickStart] User search result:', userData);
+      
+      if (!userData || userData.length === 0) {
+        console.error('[QuickStart] User search failed - no user found');
         throw new Error(t('userSearchFailed', 'Failed to retrieve user data'));
       }
 
-      const userData = await searchUserResponse.json();
       const userId = userData[0].id;
       const retrievedUserName = userData[0].name;
+      console.log('[QuickStart] User found:', { userId, retrievedUserName });
 
       // Step 2: Create Applicant
       setCurrentStep(3);
+      console.log('[QuickStart] Step 2: Creating applicant');
+      
       const applicantPayload = {
         fastVisa_userid: userId,
         fastVisa_username: username,
@@ -342,70 +374,72 @@ const QuickStartApplicant = () => {
         container_stop_datetime: '',
         app_start_time: '',
       };
-
-      const applicantResponse = await fetch(`${BASE_URL}/applicants`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(applicantPayload),
-      });
-
-      if (!applicantResponse.ok) {
+      
+      console.log('[QuickStart] Applicant payload:', applicantPayload);
+      const applicantData = await createApplicant(applicantPayload);
+      console.log('[QuickStart] Applicant creation result:', applicantData);
+      
+      if (!applicantData || !applicantData.id) {
+        console.error('[QuickStart] Failed to create applicant - no ID returned');
+        // If we can't get the applicant ID, we can't continue to the view page
         throw new Error(t('applicantCreationFailed', 'Failed to create applicant'));
       }
 
-      const applicantData = await applicantResponse.json();
       const applicantId = applicantData.id;
+      console.log('[QuickStart] Applicant created successfully:', applicantId);
 
       // Step 3: Log in the user automatically
-      const loginResponse = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/auth/login', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          username: username, 
-          password: generatedPassword 
-        }),
-      });
-
-      if (!loginResponse.ok) {
-        throw new Error(t('loginFailed', 'Failed to log in'));
+      console.log('[QuickStart] Step 3: Logging in user');
+      const loginResult = await loginUser(username, generatedPassword);
+      console.log('[QuickStart] Login result:', loginResult);
+      
+      if (!loginResult || !loginResult.success) {
+        console.warn('[QuickStart] Auto-login failed, but user and applicant were created successfully');
+        // Continue anyway - user can log in manually
+      } else {
+        console.log('[QuickStart] Login successful');
       }
 
       // Store session data
+      console.log('[QuickStart] Storing session data');
       sessionStorage.setItem('fastVisa_userid', userId);
       sessionStorage.setItem('fastVisa_username', username);
       sessionStorage.setItem('country_code', formData.country_code);
       sessionStorage.setItem('concurrent_applicants', '1'); // Basic users get 1
       sessionStorage.setItem('fastVisa_name', retrievedUserName);
 
-      // Fetch and store user permissions
-      const permissionsResponse = await fetch(`${BASE_URL}/users/permissions/${userId}`);
-      if (permissionsResponse.ok) {
-        const permissionsData = await permissionsResponse.json();
-        sessionStorage.setItem('fastVisa_permissions', JSON.stringify(permissionsData));
+      // Fetch and store user permissions (optional - don't fail if this errors)
+      console.log('[QuickStart] Fetching user permissions');
+      try {
+        const permissionsData = await getUserPermissions(userId);
+        console.log('[QuickStart] Permissions data:', permissionsData);
+        if (permissionsData) {
+          sessionStorage.setItem('fastVisa_permissions', JSON.stringify(permissionsData));
+        }
+      } catch (permError) {
+        console.warn('[QuickStart] Failed to fetch permissions, but continuing:', permError);
       }
 
-      // Step 4: Start the container for the applicant
-      const startPayload = { applicant_id: applicantId };
-      await fetch(`${BASE_URL}/applicants/start`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(startPayload),
-      });
+      // Step 4: Start the container for the applicant (optional - don't fail if this errors)
+      console.log('[QuickStart] Step 4: Starting container');
+      try {
+        await StartApplicantContainer(applicantId);
+        console.log('[QuickStart] Container started successfully');
+      } catch (containerError) {
+        console.warn('[QuickStart] Failed to start container, but continuing:', containerError);
+      }
 
       // Redirect to applicant details page
+      console.log('[QuickStart] Redirecting to applicant view:', applicantId);
       window.location.href = `/view-applicant/${applicantId}`;
 
     } catch (error) {
-      console.error('Quick start error:', error);
+      console.error('[QuickStart] ❌ ERROR in quick start flow:', error);
+      console.error('[QuickStart] Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       setSubmitError(error.message || t('unexpectedError', 'An unexpected error occurred'));
       setCurrentStep(1);
       setLoading(false);

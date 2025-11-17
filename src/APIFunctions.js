@@ -388,6 +388,144 @@ const changePassword = async ({ userId, username, currentPassword, newPassword }
   }
 };
 
+// Create a new user
+const createUser = async (userData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+    
+    if (response.status === 201) {
+      return { success: true, status: 201 };
+    } else {
+      let errorMessage = 'Registration failed';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorData.error || 'Registration failed';
+      } catch {
+        errorMessage = response.statusText || 'Registration failed';
+      }
+      return { success: false, error: errorMessage };
+    }
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return { success: false, error: error.message || 'An unexpected error occurred' };
+  }
+};
+
+// Search for user by username
+const searchUserByUsername = async (username) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/search`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username }),
+    });
+    
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to search for user");
+    }
+  } catch (error) {
+    console.error("Error searching user:", error);
+    return null;
+  }
+};
+
+// Create a new applicant
+const createApplicant = async (applicantData) => {
+  try {
+    console.log('[APIFunctions] createApplicant - Sending request to:', `${BASE_URL}/applicants`);
+    console.log('[APIFunctions] createApplicant - Payload:', applicantData);
+    
+    const response = await fetch(`${BASE_URL}/applicants`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(applicantData),
+    });
+    
+    console.log('[APIFunctions] createApplicant - Response status:', response.status);
+    
+    // Accept both 200 and 201 as success
+    if (response.status === 200 || response.status === 201) {
+      const data = await response.json();
+      console.log('[APIFunctions] createApplicant - Success, data:', data);
+      return data;
+    } else {
+      // Try to get error details from response
+      let errorMessage = "Failed to create applicant";
+      try {
+        const errorData = await response.json();
+        console.error('[APIFunctions] createApplicant - Error response:', errorData);
+        errorMessage = errorData.message || errorData.error || errorMessage;
+      } catch {
+        console.error('[APIFunctions] createApplicant - Could not parse error response');
+      }
+      throw new Error(errorMessage);
+    }
+  } catch (error) {
+    console.error('[APIFunctions] createApplicant - Exception:', error);
+    return null;
+  }
+};
+
+// Login user
+const loginUser = async (username, password) => {
+  try {
+    const response = await fetch(`${BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
+    
+    if (response.status === 200) {
+      return { success: true };
+    } else {
+      throw new Error("Failed to log in");
+    }
+  } catch (error) {
+    console.error("Error logging in:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Get user permissions
+const getUserPermissions = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/permissions/${userId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to fetch user permissions");
+    }
+  } catch (error) {
+    console.error("Error fetching permissions:", error);
+    return null;
+  }
+};
+
 export {
   UserDetails,
   ApplicantSearch,
@@ -406,4 +544,9 @@ export {
   authenticateAIS,
   notifyAdminAISFailure,
   changePassword,
+  createUser,
+  searchUserByUsername,
+  createApplicant,
+  loginUser,
+  getUserPermissions,
 };

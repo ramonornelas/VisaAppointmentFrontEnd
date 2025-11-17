@@ -6,12 +6,12 @@ import LanguageSelector from "./LanguageSelector";
 import Banner from "./Banner";
 import Footer from "./Footer";
 import { getTranslatedCountries } from "./utils/countries";
-import { getRoles } from "./APIFunctions";
+import { getRoles, createUser } from "./APIFunctions";
 import Select from "react-select";
 import "./RegisterUser.css";
 
 const UserRegistrationForm = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   // Get translated countries list
   const countries = getTranslatedCountries(t);
@@ -140,33 +140,20 @@ const UserRegistrationForm = () => {
       email: formData.username, // Email is the same as username
       sendEmail: true,
       includePassword: false, // RegisterUser does NOT send password in email
+      language: i18n.language || 'en', // Get current language from i18n
     };
     delete submitData.confirmPassword;
-    fetch("https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(submitData),
-    })
-      .then(async (response) => {
-        if (response.status === 201) {
+    
+    createUser(submitData)
+      .then((result) => {
+        if (result.success) {
           // Store name in sessionStorage for use in menu
           if (formData.name) {
             sessionStorage.setItem("fastVisa_name", formData.name);
           }
           setRegistrationSuccess(true);
         } else {
-          let errorMessage = 'Registration failed';
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.message || errorData.error || 'Registration failed';
-          } catch {
-            // If not JSON, use status text or default
-            errorMessage = response.statusText || 'Registration failed';
-          }
-          setApiError(errorMessage);
+          setApiError(result.error || 'Registration failed');
         }
       })
       .catch((error) => {
