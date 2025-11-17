@@ -7,5 +7,6 @@ export const permissions = {
     canViewAllApplicants: () => hasPermission('view_all_applicants'),
     canManageApplicants: () => hasPermission('manage_applicants'),
     canManageUsers: () => hasPermission('manage_users'),
-    canClearStatus: () => hasPermission('clear_status')
+    canClearStatus: () => hasPermission('clear_status'),
+    canSearchUnlimited: () => hasPermission('can_search_unlimited')
 };

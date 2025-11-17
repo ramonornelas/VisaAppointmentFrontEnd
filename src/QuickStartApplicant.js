@@ -6,7 +6,7 @@ import Footer from './Footer';
 import LanguageSelector from './LanguageSelector';
 import { getTranslatedCountries } from './utils/countries';
 import { ALL_CITIES } from './utils/cities';
-import { getRoles, authenticateAIS } from './APIFunctions';
+import { getRoles, authenticateAIS, notifyAdminAISFailure } from './APIFunctions';
 import { BASE_URL } from './config.js';
 import Select from 'react-select';
 import './ApplicantForm.css';
@@ -248,11 +248,21 @@ const QuickStartApplicant = () => {
           country_code: formData.country_code,
         });
         if (!aisUserInfo || !aisUserInfo.schedule_id) {
-          throw new Error(t('aisAuthFailed', 'Failed to authenticate AIS credentials or retrieve schedule ID'));
+          // Notify admin about AIS authentication failure
+          await notifyAdminAISFailure({
+            username: formData.aisEmail,
+            ais_username: formData.aisEmail,
+            country_code: formData.country_code,
+          });
+          // Use default values and continue
+          userName = 'Quick Start User';
+          aisScheduleId = '-';
+          numberOfApplicants = '1';
+        } else {
+          userName = aisUserInfo.username;
+          aisScheduleId = aisUserInfo.schedule_id;
+          numberOfApplicants = '1'; // Default to 1, update if API returns more
         }
-        userName = aisUserInfo.username;
-        aisScheduleId = aisUserInfo.schedule_id;
-        numberOfApplicants = '1'; // Default to 1, update if API returns more
       } else {
         // If country has no cities, use default values
         username = formData.aisEmail || `user_${Date.now()}@fastvisa.com`;

@@ -5,6 +5,7 @@ import Banner from './Banner';
 import Footer from './Footer';
 import './LogIn.css';
 import LanguageSelector from './LanguageSelector';
+import { permissions } from './utils/permissions';
 
 const LogIn = () => {
   const [username, setUsername] = useState('');
@@ -86,8 +87,8 @@ const LogIn = () => {
               
               console.log('[LogIn] User role:', roleName);
               
-              // For basic users, check if they have an applicant
-              if (roleName === 'basic_user') {
+              // For users who cannot manage applicants, check if they have an applicant
+              if (!permissions.canManageApplicants()) {
                 // Fetch applicants for this user
                 const applicantsResponse = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/user/${searchuserid}`);
                 
@@ -95,15 +96,15 @@ const LogIn = () => {
                   const applicants = await applicantsResponse.json();
                   
                   if (applicants && applicants.length > 0) {
-                    // Basic user has applicant(s), redirect to first applicant details
+                    // User has applicant(s), redirect to first applicant details
                     const firstApplicantId = applicants[0].id;
                     sessionStorage.setItem('applicant_userid', firstApplicantId);
-                    console.log('[LogIn] Basic user has applicant, redirecting to:', firstApplicantId);
+                    console.log('[LogIn] User cannot manage applicants, redirecting to:', firstApplicantId);
                     window.location.href = `/view-applicant/${firstApplicantId}`;
                   } else {
-                    // Basic user has no applicants, redirect to create applicant
+                    // User has no applicants, redirect to create applicant
                     sessionStorage.removeItem('applicant_userid');
-                    console.log('[LogIn] Basic user has no applicants, redirecting to create');
+                    console.log('[LogIn] User cannot manage applicants, redirecting to create');
                     window.location.href = '/applicant-form';
                   }
                 } else {
@@ -112,9 +113,9 @@ const LogIn = () => {
                   window.location.href = '/applicant-form';
                 }
               } else {
-                // Premium or other users go to applicants list
+                // Users who can manage applicants go to applicants list
                 sessionStorage.removeItem('applicant_userid');
-                console.log('[LogIn] Non-basic user, redirecting to applicants list');
+                console.log('[LogIn] User can manage applicants, redirecting to applicants list');
                 window.location.href = '/applicants';
               }
             } else {

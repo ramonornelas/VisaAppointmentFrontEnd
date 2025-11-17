@@ -334,6 +334,27 @@ const authenticateAIS = async ({ username, password, country_code }) => {
   }
 };
 
+// Notify admin about AIS authentication failure
+const notifyAdminAISFailure = async ({ username, ais_username, country_code }) => {
+  try {
+    const response = await fetch(`${BASE_URL}/admin/notify-ais-failure`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, ais_username, country_code }),
+    });
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      console.error("Failed to notify admin about AIS failure");
+    }
+  } catch (error) {
+    console.error("Error notifying admin:", error);
+  }
+};
+
 export {
   UserDetails,
   ApplicantSearch,
@@ -350,4 +371,5 @@ export {
   deleteUser,
   getUSDMXNExchangeRate,
   authenticateAIS,
+  notifyAdminAISFailure,
 };

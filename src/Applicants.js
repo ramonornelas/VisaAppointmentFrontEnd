@@ -53,47 +53,35 @@ const Applicants = () => {
   const canViewAllApplicants = permissions.canViewAllApplicants();
   const canClearStatus = permissions.canClearStatus();
 
-  // Check if user is basic_user and redirect accordingly
+  // Check if user can manage applicants and redirect accordingly
   useEffect(() => {
-    const checkUserRole = async () => {
+    const checkUserPermissions = async () => {
       if (!fastVisaUserId) return;
       
       try {
-        const [userData, rolesData] = await Promise.all([
-          UserDetails(fastVisaUserId),
-          getRoles()
-        ]);
-
-        if (userData && rolesData) {
-          const currentRole = rolesData.find(role => role.id === userData.role_id);
-          const roleName = currentRole ? currentRole.name : 'unknown';
+        // Users who cannot manage applicants should not access the applicants list
+        if (!permissions.canManageApplicants()) {
+          // Fetch applicants for this user
+          const applicants = await ApplicantSearch(fastVisaUserId);
           
-          console.log('[Applicants] User role:', roleName);
-          
-          // Basic users should not access the applicants list
-          if (roleName === 'basic_user') {
-            // Fetch applicants for this user
-            const applicants = await ApplicantSearch(fastVisaUserId);
-            
-            if (applicants && applicants.length > 0) {
-              // Redirect to first applicant details
-              const firstApplicantId = applicants[0].id;
-              console.log('[Applicants] Basic user redirecting to applicant:', firstApplicantId);
-              navigate(`/view-applicant/${firstApplicantId}`);
-            } else {
-              // Redirect to create applicant
-              console.log('[Applicants] Basic user redirecting to create applicant');
-              navigate('/applicant-form');
-            }
+          if (applicants && applicants.length > 0) {
+            // Redirect to first applicant details
+            const firstApplicantId = applicants[0].id;
+            console.log('[Applicants] User cannot manage applicants, redirecting to applicant:', firstApplicantId);
+            navigate(`/view-applicant/${firstApplicantId}`);
+          } else {
+            // Redirect to create applicant
+            console.log('[Applicants] User cannot manage applicants, redirecting to create applicant');
+            navigate('/applicant-form');
           }
         }
       } catch (error) {
-        console.error('[Applicants] Error checking user role:', error);
+        console.error('[Applicants] Error checking user permissions:', error);
       }
     };
 
     if (isAuthenticated && fastVisaUserId) {
-      checkUserRole();
+      checkUserPermissions();
     }
   }, [isAuthenticated, fastVisaUserId, navigate]);
 

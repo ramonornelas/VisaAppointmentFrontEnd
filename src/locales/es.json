@@ -347,4 +347,6 @@
   ,"amount": "Monto"
   ,"description": "Descripción"
   ,"processingPayment": "Procesando pago..."
+  ,"whyFullMonthSubscription": "¿Por qué una Suscripción de un Mes Completo?"
+  ,"whyFullMonthSubscriptionDesc": "La búsqueda de citas de visa puede durar un par de horas, días o incluso semanas ya que depende de la disponibilidad de citas que publique la embajada de Estados Unidos."
 }

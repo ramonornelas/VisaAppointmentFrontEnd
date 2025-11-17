@@ -103,7 +103,7 @@ const ApplicantForm = () => {
           if (data) {
             // For basic users (non-admins), force targetStartDays to 120 if in days mode
             const startDays = data.target_start_days || '3';
-            const finalStartDays = !permissions.canManageApplicants() && data.target_start_mode === 'days' 
+            const finalStartDays = !permissions.canSearchUnlimited() && data.target_start_mode === 'days' 
               ? '120' 
               : startDays;
             
@@ -628,7 +628,7 @@ const ApplicantForm = () => {
               {t('targetDates', 'Target Dates')}
             </h2>
 
-            {!permissions.canManageApplicants() && formData.targetStartMode === 'days' && formData.targetStartDays === '120' && (
+            {!permissions.canSearchUnlimited() && formData.targetStartMode === 'days' && formData.targetStartDays === '120' && (
               <div style={{
                 backgroundColor: '#f0f9ff',
                 border: '1px solid #bae6fd',
@@ -667,7 +667,7 @@ const ApplicantForm = () => {
               </div>
             )}
 
-            {permissions.canManageApplicants() && (
+            {permissions.canSearchUnlimited() && (
               <div className="applicant-form-field">
                 <label htmlFor="targetStartMode" className="applicant-form-label">
                   {t('startMode', 'Start Mode')} <span className="required">*</span>
@@ -702,7 +702,7 @@ const ApplicantForm = () => {
             <div className="applicant-form-row" style={{ marginTop: '1.5rem' }}>
               {formData.targetStartMode === 'days' && (
                 <div className="applicant-form-field">
-                  {permissions.canManageApplicants() ? (
+                  {permissions.canSearchUnlimited() ? (
                     <>
                       <label htmlFor="targetStartDays" className="applicant-form-label">
                         {t('startAfterDays', 'Start After (Days)')} <span className="required">*</span>
@@ -798,11 +798,11 @@ const ApplicantForm = () => {
                   name="targetEndDate"
                   value={formData.targetEndDate}
                   onChange={handleInputChange}
-                  min={!permissions.canManageApplicants() ? getMinEndDate() : undefined}
+                  min={!permissions.canSearchUnlimited() ? getMinEndDate() : undefined}
                   className={`applicant-form-input applicant-form-input-date ${errors.targetEndDate ? 'error' : ''}`}
                 />
                 {errors.targetEndDate && <span className="applicant-form-error">{errors.targetEndDate}</span>}
-                {!permissions.canManageApplicants() && (
+                {!permissions.canSearchUnlimited() && (
                   <small style={{ 
                     display: 'block', 
                     marginTop: '6px', 

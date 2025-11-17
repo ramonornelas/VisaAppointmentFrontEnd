@@ -347,4 +347,6 @@
   ,"amount": "Amount"
   ,"description": "Description"
   ,"processingPayment": "Processing payment..."
+  ,"whyFullMonthSubscription": "Why a Full Month Subscription?"
+  ,"whyFullMonthSubscriptionDesc": "The visa appointment search can take a few hours, days, or even weeks depending on the availability of appointments published by the U.S. Embassy."
 }
