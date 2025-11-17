@@ -6,6 +6,14 @@ import Footer from './Footer';
 import './LogIn.css';
 import LanguageSelector from './LanguageSelector';
 import { permissions } from './utils/permissions';
+import {
+  loginUser,
+  searchUserByUsername,
+  getUserPermissions,
+  UserDetails,
+  getRoles,
+  ApplicantSearch
+} from './APIFunctions';
 
 const LogIn = () => {
   const [username, setUsername] = useState('');
@@ -25,27 +33,12 @@ const LogIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/auth/login', {
-        method: 'POST',
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      const loginResponse = await loginUser(username, password);
 
-      if (response.status === 200) {
-        const searchuserresponse = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users/search', {
-          method: 'POST',
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ username }),
-        });
+      if (loginResponse.success) {
+        const searchuserdata = await searchUserByUsername(username);
 
-        if (searchuserresponse.status === 200) {
-          const searchuserdata = await searchuserresponse.json();
+        if (searchuserdata && searchuserdata.length > 0) {
           const searchuserid = searchuserdata[0].id;
           const searchusername = searchuserdata[0].username;
           const countryCode = searchuserdata[0].country_code;
@@ -61,9 +54,8 @@ const LogIn = () => {
 
           // Fetch and store user permissions
           try {
-            const permissionsResponse = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users/permissions/${searchuserid}`);
-            if (permissionsResponse.status === 200) {
-              const permissionsData = await permissionsResponse.json();
+            const permissionsData = await getUserPermissions(searchuserid);
+            if (permissionsData) {
               sessionStorage.setItem("fastVisa_permissions", JSON.stringify(permissionsData));
             } else {
               setError(permissionsErrorMsg);
@@ -75,13 +67,10 @@ const LogIn = () => {
 
           // Fetch user details to determine role and redirect accordingly
           try {
-            const userDetailsResponse = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/users/${searchuserid}`);
-            const rolesResponse = await fetch('https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/roles');
+            const userData = await UserDetails(searchuserid);
+            const rolesData = await getRoles();
             
-            if (userDetailsResponse.status === 200 && rolesResponse.status === 200) {
-              const userData = await userDetailsResponse.json();
-              const rolesData = await rolesResponse.json();
-              
+            if (userData && rolesData) {
               const currentRole = rolesData.find(role => role.id === userData.role_id);
               const roleName = currentRole ? currentRole.name : 'unknown';
               
@@ -90,26 +79,18 @@ const LogIn = () => {
               // For users who cannot manage applicants, check if they have an applicant
               if (!permissions.canManageApplicants()) {
                 // Fetch applicants for this user
-                const applicantsResponse = await fetch(`https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/applicants/user/${searchuserid}`);
+                const applicants = await ApplicantSearch(searchuserid);
                 
-                if (applicantsResponse.status === 200) {
-                  const applicants = await applicantsResponse.json();
-                  
-                  if (applicants && applicants.length > 0) {
-                    // User has applicant(s), redirect to first applicant details
-                    const firstApplicantId = applicants[0].id;
-                    sessionStorage.setItem('applicant_userid', firstApplicantId);
-                    console.log('[LogIn] User cannot manage applicants, redirecting to:', firstApplicantId);
-                    window.location.href = `/view-applicant/${firstApplicantId}`;
-                  } else {
-                    // User has no applicants, redirect to create applicant
-                    sessionStorage.removeItem('applicant_userid');
-                    console.log('[LogIn] User cannot manage applicants, redirecting to create');
-                    window.location.href = '/applicant-form';
-                  }
+                if (applicants && applicants.length > 0) {
+                  // User has applicant(s), redirect to first applicant details
+                  const firstApplicantId = applicants[0].id;
+                  sessionStorage.setItem('applicant_userid', firstApplicantId);
+                  console.log('[LogIn] User cannot manage applicants, redirecting to:', firstApplicantId);
+                  window.location.href = `/view-applicant/${firstApplicantId}`;
                 } else {
-                  // Error fetching applicants, default to create
-                  console.log('[LogIn] Error fetching applicants, redirecting to create');
+                  // User has no applicants, redirect to create applicant
+                  sessionStorage.removeItem('applicant_userid');
+                  console.log('[LogIn] User cannot manage applicants, redirecting to create');
                   window.location.href = '/applicant-form';
                 }
               } else {
@@ -132,8 +113,7 @@ const LogIn = () => {
           throw new Error('Failed to fetch user data');
         }
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to log in');
+        throw new Error(loginResponse.error || 'Failed to log in');
       }
     } catch (error) {
       console.error('Error:', error);

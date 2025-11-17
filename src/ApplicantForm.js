@@ -4,9 +4,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
 import { permissions } from './utils/permissions';
 import HamburgerMenu from './HamburgerMenu';
-import { ApplicantDetails, ApplicantUpdate, authenticateAIS } from './APIFunctions';
+import { ApplicantDetails, ApplicantUpdate, authenticateAIS, createApplicant } from './APIFunctions';
 import { ALL_CITIES } from './utils/cities';
-import { BASE_URL } from './config.js';
 import './ApplicantForm.css';
 import './index.css';
 
@@ -327,20 +326,12 @@ const ApplicantForm = () => {
           app_start_time: '',
         };
 
-        const response = await fetch(`${BASE_URL}/applicants`, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(createPayload)
-        });
-
-        if (!response.ok) {
+        const newApplicant = await createApplicant(createPayload);
+        
+        if (!newApplicant) {
           throw new Error(t('failedToCreateApplicant', 'Failed to create applicant'));
         }
 
-        const newApplicant = await response.json();
         // Redirect based on permissions
         if (permissions.canManageApplicants()) {
           navigate('/applicants');
