@@ -7,6 +7,7 @@ import { UserDetails } from './APIFunctions';
 import { useNavigate } from 'react-router-dom';   
 import { useAuth } from './utils/AuthContext';
 import { APP_TITLE } from './constants';
+import FastVisaMetrics from './utils/FastVisaMetrics';
 
 import LanguageSelector from './LanguageSelector';
 
@@ -17,11 +18,22 @@ const Home = () => {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
 
+    // Initialize metrics tracker
+    const metrics = new FastVisaMetrics();
+
     useEffect(() => {
         if (!isAuthenticated) {
             document.body.classList.remove('menu-open');
             navigate('/');
             return;
+        }
+        
+        // Track page view
+        metrics.trackPageView();
+        
+        // Set user ID if available
+        if (fastVisa_userid) {
+            metrics.setUserId(fastVisa_userid);
         }
         
         const fetchUserData = async () => {
@@ -30,6 +42,14 @@ const Home = () => {
                 setUserData(data);
             } catch (error) {
                 console.error('Error fetching user data:', error);
+                
+                // Track error
+                await metrics.trackCustomEvent('error_encountered', {
+                    page: 'home',
+                    error: 'fetch_user_data_failed',
+                    errorMessage: error.message,
+                    timestamp: new Date().toISOString()
+                });
             }
         };
 

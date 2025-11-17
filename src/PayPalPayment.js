@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useTranslation } from 'react-i18next';
 import { getPayPalConfig } from "./APIFunctions";
+import FastVisaMetrics from './utils/FastVisaMetrics';
 
 const PayPalPayment = ({ 
   amount = "1.00", 
@@ -19,6 +20,17 @@ const PayPalPayment = ({
   const [configLoading, setConfigLoading] = useState(true);
   const [selectedCurrency, setSelectedCurrency] = useState(defaultCurrency);
   const [currentAmount, setCurrentAmount] = useState(defaultCurrency === "USD" ? amount : amountMXN);
+
+  // Initialize metrics tracker
+  const metrics = new FastVisaMetrics();
+
+  // Set user ID if available
+  const fastVisa_userid = sessionStorage.getItem('fastVisa_userid');
+  useEffect(() => {
+    if (fastVisa_userid) {
+      metrics.setUserId(fastVisa_userid);
+    }
+  }, [fastVisa_userid]);
 
   // Load PayPal configuration on component mount
   useEffect(() => {
@@ -46,6 +58,14 @@ const PayPalPayment = ({
   } : null;
 
   const handleCurrencyChange = (currency) => {
+    // Track currency selection
+    metrics.trackCustomEvent('payment_currency_selected', {
+      selectedCurrency: currency,
+      previousCurrency: selectedCurrency,
+      amount: currency === "USD" ? amount : amountMXN,
+      timestamp: new Date().toISOString()
+    });
+    
     setSelectedCurrency(currency);
     setCurrentAmount(currency === "USD" ? amount : amountMXN);
   };
@@ -53,6 +73,14 @@ const PayPalPayment = ({
   const handleCreateOrder = (data, actions) => {
     setLoading(true);
     setError(null);
+    
+    // Track order creation
+    metrics.trackCustomEvent('paypal_order_created', {
+      currency: selectedCurrency,
+      amount: currentAmount,
+      description: description,
+      timestamp: new Date().toISOString()
+    });
     
     return actions.order.create({
       purchase_units: [
@@ -74,6 +102,16 @@ const PayPalPayment = ({
       
       console.log("Payment successful:", details);
       
+      // Track successful payment
+      metrics.trackCustomEvent('paypal_payment_approved', {
+        orderId: data.orderID,
+        payerId: data.payerID,
+        paymentDetails: details,
+        currency: selectedCurrency,
+        amount: currentAmount,
+        timestamp: new Date().toISOString()
+      });
+      
       // Call success callback
       if (onSuccess) {
         onSuccess(details);
@@ -84,6 +122,14 @@ const PayPalPayment = ({
       setLoading(false);
       setError("Payment capture failed");
       console.error("Payment capture error:", error);
+      
+      // Track payment capture error
+      metrics.trackCustomEvent('paypal_payment_capture_error', {
+        error: error.message,
+        currency: selectedCurrency,
+        amount: currentAmount,
+        timestamp: new Date().toISOString()
+      });
       
       if (onError) {
         onError(error);
@@ -96,6 +142,14 @@ const PayPalPayment = ({
     setError("Payment failed");
     console.error("PayPal error:", error);
     
+    // Track PayPal error
+    metrics.trackCustomEvent('paypal_error', {
+      error: error.message || 'Unknown PayPal error',
+      currency: selectedCurrency,
+      amount: currentAmount,
+      timestamp: new Date().toISOString()
+    });
+    
     if (onError) {
       onError(error);
     }
@@ -104,6 +158,14 @@ const PayPalPayment = ({
   const handleCancel = (data) => {
     setLoading(false);
     console.log("Payment cancelled:", data);
+    
+    // Track payment cancellation
+    metrics.trackCustomEvent('paypal_payment_cancelled', {
+      cancelData: data,
+      currency: selectedCurrency,
+      amount: currentAmount,
+      timestamp: new Date().toISOString()
+    });
     
     if (onCancel) {
       onCancel(data);

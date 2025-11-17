@@ -19,6 +19,7 @@ import { useAuth } from "./utils/AuthContext";
 import "./index.css";
 import "./Applicants.css";
 import { permissions } from "./utils/permissions";
+import FastVisaMetrics from "./utils/FastVisaMetrics";
 
 const Applicants = () => {
   const { t } = useTranslation();
@@ -39,6 +40,9 @@ const Applicants = () => {
     onConfirm: null,
     showCancel: false
   });
+
+  // Initialize metrics tracker
+  const metrics = new FastVisaMetrics();
 
   // Define the included fields
   const includeFields = [
@@ -92,6 +96,14 @@ const Applicants = () => {
       return;
     }
 
+    // Track page view
+    metrics.trackPageView();
+    
+    // Set user ID if available
+    if (fastVisaUserId) {
+      metrics.setUserId(fastVisaUserId);
+    }
+
     const fetchData = async () => {
       try {
         let response;
@@ -128,6 +140,14 @@ const Applicants = () => {
         setData(filteredData);
       } catch (error) {
         console.error("Error fetching data:", error);
+        
+        // Track error
+        await metrics.trackCustomEvent('error_encountered', {
+          page: 'applicants',
+          error: 'fetch_applicants_failed',
+          errorMessage: error.message,
+          timestamp: new Date().toISOString()
+        });
       }
     };
 
@@ -146,19 +166,32 @@ const Applicants = () => {
   ]);
 
   const handleRegisterApplicant = () => {
+    // Track button click
+    metrics.trackButtonClick('register-applicant-btn', 'Register Applicant');
+    
     navigate("/applicant-form");
   };
 
   const handleEditApplicant = (id) => {
+    // Track button click
+    metrics.trackButtonClick('edit-applicant-btn', 'Edit Applicant');
+    
     navigate(`/applicant-form?id=${id}`);
   };
 
   const handleView = (id) => {
+    // Track button click
+    metrics.trackButtonClick('view-applicant-btn', 'View Applicant Details');
+    
     sessionStorage.setItem("applicant_userid", id);
     navigate(`/ViewApplicant`);
   };
 
   const handleAction = async (id, isActive) => {
+    // Track button click
+    const action = isActive === "Stopped" ? 'start_search' : 'stop_search';
+    metrics.trackButtonClick(`${action}-btn`, action === 'start_search' ? 'Start Search' : 'Stop Search');
+    
     try {
       if (isActive === "Stopped") {
         // Check concurrent limit
@@ -177,6 +210,15 @@ const Applicants = () => {
             type: 'warning',
             showCancel: false
           });
+          
+          // Track concurrent limit reached
+          await metrics.trackCustomEvent('concurrent_limit_reached', {
+            applicantId: id,
+            concurrentLimit: concurrentLimit,
+            runningCount: runningCount,
+            timestamp: new Date().toISOString()
+          });
+          
           return;
         }
         // Start search using API function
@@ -188,6 +230,13 @@ const Applicants = () => {
           type: 'success',
           showCancel: false
         });
+        
+        // Track search started
+        await metrics.trackCustomEvent('search_started', {
+          applicantId: id,
+          timestamp: new Date().toISOString()
+        });
+        
       } else {
         // Stop search using API function
         await StopApplicantContainer(id);
@@ -197,6 +246,12 @@ const Applicants = () => {
           message: t('searchStoppedSuccess', 'Search stopped successfully.'),
           type: 'success',
           showCancel: false
+        });
+        
+        // Track search stopped
+        await metrics.trackCustomEvent('search_stopped', {
+          applicantId: id,
+          timestamp: new Date().toISOString()
         });
       }
       setRefreshFlag((flag) => !flag);
@@ -209,10 +264,23 @@ const Applicants = () => {
         showCancel: false
       });
       console.error(error);
+      
+      // Track error
+      await metrics.trackCustomEvent('error_encountered', {
+        page: 'applicants',
+        action: isActive === "Stopped" ? 'start_search' : 'stop_search',
+        applicantId: id,
+        error: 'action_failed',
+        errorMessage: error.message,
+        timestamp: new Date().toISOString()
+      });
     }
   };
 
   const handleCopyPassword = async (id) => {
+    // Track button click
+    metrics.trackButtonClick('copy-password-btn', 'Copy Password');
+    
     try {
       const response = await GetApplicantPassword(id);
       const password = response.password;
@@ -224,12 +292,32 @@ const Applicants = () => {
         type: 'success',
         showCancel: false
       });
+      
+      // Track password copied
+      await metrics.trackCustomEvent('password_copied', {
+        applicantId: id,
+        timestamp: new Date().toISOString()
+      });
+      
     } catch (error) {
       console.error("Error copying password:", error);
+      
+      // Track error
+      await metrics.trackCustomEvent('error_encountered', {
+        page: 'applicants',
+        action: 'copy_password',
+        applicantId: id,
+        error: 'copy_password_failed',
+        errorMessage: error.message,
+        timestamp: new Date().toISOString()
+      });
     }
   };
 
   const handleCopyEmail = async (id) => {
+    // Track button click
+    metrics.trackButtonClick('copy-email-btn', 'Copy Email');
+    
     try {
       const response = await ApplicantDetails(id);
       const email = response.ais_username;
@@ -241,12 +329,32 @@ const Applicants = () => {
         type: 'success',
         showCancel: false
       });
+      
+      // Track email copied
+      await metrics.trackCustomEvent('email_copied', {
+        applicantId: id,
+        timestamp: new Date().toISOString()
+      });
+      
     } catch (error) {
       console.error("Error copying email:", error);
+      
+      // Track error
+      await metrics.trackCustomEvent('error_encountered', {
+        page: 'applicants',
+        action: 'copy_email',
+        applicantId: id,
+        error: 'copy_email_failed',
+        errorMessage: error.message,
+        timestamp: new Date().toISOString()
+      });
     }
   };
 
   const handleResetStatus = async (id) => {
+    // Track button click
+    metrics.trackButtonClick('reset-status-btn', 'Clear Status');
+    
     try {
       const response = await ApplicantUpdate(id, {
         search_status: "Stopped",
@@ -262,6 +370,13 @@ const Applicants = () => {
           showCancel: false
         });
         setRefreshFlag((flag) => !flag);
+        
+        // Track status reset
+        await metrics.trackCustomEvent('status_reset', {
+          applicantId: id,
+          timestamp: new Date().toISOString()
+        });
+        
       } else {
         setModal({
           isOpen: true,
@@ -269,6 +384,15 @@ const Applicants = () => {
           message: t('failedToClearStatus', 'Failed to clear status.'),
           type: 'error',
           showCancel: false
+        });
+        
+        // Track error
+        await metrics.trackCustomEvent('error_encountered', {
+          page: 'applicants',
+          action: 'reset_status',
+          applicantId: id,
+          error: 'reset_status_failed',
+          timestamp: new Date().toISOString()
         });
       }
     } catch (error) {
@@ -280,10 +404,23 @@ const Applicants = () => {
         type: 'error',
         showCancel: false
       });
+      
+      // Track error
+      await metrics.trackCustomEvent('error_encountered', {
+        page: 'applicants',
+        action: 'reset_status',
+        applicantId: id,
+        error: 'reset_status_exception',
+        errorMessage: error.message,
+        timestamp: new Date().toISOString()
+      });
     }
   };
 
   const handleDeleteApplicant = async (id) => {
+    // Track button click
+    metrics.trackButtonClick('delete-applicant-btn', 'Delete Applicant');
+    
     setModal({
       isOpen: true,
       title: t('deleteApplicant', 'Delete Applicant'),
@@ -325,6 +462,14 @@ const Applicants = () => {
                             showCancel: false
                           });
                           setRefreshFlag((flag) => !flag);
+                          
+                          // Track applicant deleted
+                          await metrics.trackCustomEvent('applicant_deleted', {
+                            applicantId: id,
+                            searchWasRunning: true,
+                            timestamp: new Date().toISOString()
+                          });
+                          
                         } else {
                           setModal({
                             isOpen: true,
@@ -332,6 +477,15 @@ const Applicants = () => {
                             message: t('unexpectedResponseDeleting', 'Unexpected response when deleting applicant.'),
                             type: 'error',
                             showCancel: false
+                          });
+                          
+                          // Track error
+                          await metrics.trackCustomEvent('error_encountered', {
+                            page: 'applicants',
+                            action: 'delete_applicant',
+                            applicantId: id,
+                            error: 'delete_failed',
+                            timestamp: new Date().toISOString()
                           });
                         }
                       } catch (error) {
@@ -342,6 +496,16 @@ const Applicants = () => {
                           message: t('failedToDeleteApplicant', 'Failed to delete applicant. Please try again.'),
                           type: 'error',
                           showCancel: false
+                        });
+                        
+                        // Track error
+                        await metrics.trackCustomEvent('error_encountered', {
+                          page: 'applicants',
+                          action: 'delete_applicant',
+                          applicantId: id,
+                          error: 'delete_exception',
+                          errorMessage: error.message,
+                          timestamp: new Date().toISOString()
                         });
                       }
                     }
@@ -354,6 +518,16 @@ const Applicants = () => {
                     message: t('failedToStopSearchOrDelete', 'Failed to stop search or delete applicant. Please try again.'),
                     type: 'error',
                     showCancel: false
+                  });
+                  
+                  // Track error
+                  await metrics.trackCustomEvent('error_encountered', {
+                    page: 'applicants',
+                    action: 'stop_search_before_delete',
+                    applicantId: id,
+                    error: 'stop_search_failed',
+                    errorMessage: error.message,
+                    timestamp: new Date().toISOString()
                   });
                 }
               }
@@ -371,6 +545,14 @@ const Applicants = () => {
                   showCancel: false
                 });
                 setRefreshFlag((flag) => !flag);
+                
+                // Track applicant deleted
+                await metrics.trackCustomEvent('applicant_deleted', {
+                  applicantId: id,
+                  searchWasRunning: false,
+                  timestamp: new Date().toISOString()
+                });
+                
               } else {
                 setModal({
                   isOpen: true,
@@ -378,6 +560,15 @@ const Applicants = () => {
                   message: t('unexpectedResponseDeleting', 'Unexpected response when deleting applicant.'),
                   type: 'error',
                   showCancel: false
+                });
+                
+                // Track error
+                await metrics.trackCustomEvent('error_encountered', {
+                  page: 'applicants',
+                  action: 'delete_applicant',
+                  applicantId: id,
+                  error: 'delete_failed',
+                  timestamp: new Date().toISOString()
                 });
               }
             } catch (error) {
@@ -389,6 +580,16 @@ const Applicants = () => {
                 type: 'error',
                 showCancel: false
               });
+              
+              // Track error
+              await metrics.trackCustomEvent('error_encountered', {
+                page: 'applicants',
+                action: 'delete_applicant',
+                applicantId: id,
+                error: 'delete_exception',
+                errorMessage: error.message,
+                timestamp: new Date().toISOString()
+              });
             }
           }
         } catch (error) {
@@ -399,6 +600,16 @@ const Applicants = () => {
             message: t('errorDeletingApplicant', 'Error deleting applicant.'),
             type: 'error',
             showCancel: false
+          });
+          
+          // Track error
+          await metrics.trackCustomEvent('error_encountered', {
+            page: 'applicants',
+            action: 'check_applicant_status',
+            applicantId: id,
+            error: 'check_status_failed',
+            errorMessage: error.message,
+            timestamp: new Date().toISOString()
           });
         }
       }

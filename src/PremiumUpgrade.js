@@ -6,6 +6,7 @@ import HamburgerMenu from './HamburgerMenu';
 import Banner from './Banner';
 import Footer from './Footer';
 import { UserDetails, updateUser, getRoles, getUSDMXNExchangeRate } from './APIFunctions';
+import FastVisaMetrics from './utils/FastVisaMetrics';
 import './PremiumUpgrade.css';
 
 
@@ -23,6 +24,9 @@ const PremiumUpgrade = () => {
   const [priceMXN, setPriceMXN] = useState(null);
   const navigate = useNavigate();
 
+  // Initialize metrics tracker
+  const metrics = new FastVisaMetrics();
+
   // Get current language from i18n
   const selectedLanguage = i18n.language;
 
@@ -35,6 +39,18 @@ const PremiumUpgrade = () => {
           navigate('/');
           return;
         }
+
+        // Set user ID if available
+        metrics.setUserId(fastVisa_userid);
+
+        // Track page view
+        metrics.trackPageView();
+        
+        // Track custom event for premium upgrade page visit
+        metrics.trackCustomEvent('premium_upgrade_page_visit', {
+          page: 'premium_upgrade',
+          timestamp: new Date().toISOString()
+        });
 
         // Fetch user details and roles
         const [userData, rolesData] = await Promise.all([
@@ -50,6 +66,12 @@ const PremiumUpgrade = () => {
         const upgradeSuccess = sessionStorage.getItem('fastVisa_upgrade_success');
         if (upgradeSuccess === 'true') {
           setSuccess(true);
+          
+          // Track successful upgrade completion
+          metrics.trackCustomEvent('premium_upgrade_completed', {
+            timestamp: new Date().toISOString()
+          });
+          
           // Remove the flag so it doesn't show again
           sessionStorage.removeItem('fastVisa_upgrade_success');
         }
@@ -57,6 +79,14 @@ const PremiumUpgrade = () => {
         console.error('Error fetching user data:', error);
         setError('Failed to load user information');
         setLoading(false);
+        
+        // Track error
+        await metrics.trackCustomEvent('error_encountered', {
+          page: 'premium_upgrade',
+          error: 'fetch_user_data_failed',
+          errorMessage: error.message,
+          timestamp: new Date().toISOString()
+        });
       }
     };
 
@@ -100,6 +130,18 @@ const PremiumUpgrade = () => {
   };
 
   const handleUpgradeClick = () => {
+    // Track upgrade button click
+    metrics.trackButtonClick('upgrade-to-premium-btn', 'Upgrade to Premium');
+    
+    // Track custom event for upgrade initiation
+    metrics.trackCustomEvent('premium_upgrade_initiated', {
+      currentRole: getCurrentRoleName(),
+      priceUSD: priceUSD,
+      priceMXN: priceMXN,
+      currency: selectedLanguage === 'es' ? 'MXN' : 'USD',
+      timestamp: new Date().toISOString()
+    });
+    
     setShowPayment(true);
   };
 
@@ -127,6 +169,14 @@ const PremiumUpgrade = () => {
         console.log('Payment successful:', paymentDetails);
         console.log('User upgraded to premium:', updatedUser);
         
+        // Track successful payment and upgrade
+        metrics.trackCustomEvent('premium_payment_success', {
+          paymentDetails: paymentDetails,
+          amount: priceUSD,
+          currency: selectedLanguage === 'es' ? 'MXN' : 'USD',
+          timestamp: new Date().toISOString()
+        });
+        
         // Set success flag in sessionStorage to show after reload
         sessionStorage.setItem('fastVisa_upgrade_success', 'true');
         
@@ -138,6 +188,13 @@ const PremiumUpgrade = () => {
     } catch (error) {
       console.error('Error upgrading user:', error);
       setError(t('paymentSuccessUpgradeFailed', 'Payment was successful but failed to upgrade account. Please contact support.'));
+      
+      // Track upgrade failure after successful payment
+      await metrics.trackCustomEvent('premium_upgrade_failed_after_payment', {
+        error: error.message,
+        paymentDetails: paymentDetails,
+        timestamp: new Date().toISOString()
+      });
     } finally {
       setUpgrading(false);
     }
@@ -147,11 +204,22 @@ const PremiumUpgrade = () => {
     console.error('Payment error:', error);
     setError(t('paymentFailed', 'Payment failed. Please try again.'));
     setUpgrading(false);
+    
+    // Track payment error
+    metrics.trackCustomEvent('premium_payment_error', {
+      error: error.message || 'Unknown payment error',
+      timestamp: new Date().toISOString()
+    });
   };
 
   const handlePaymentCancel = () => {
     setShowPayment(false);
     setUpgrading(false);
+    
+    // Track payment cancellation
+    metrics.trackCustomEvent('premium_payment_cancelled', {
+      timestamp: new Date().toISOString()
+    });
   };
 
   const MainContainer = ({ children }) => (

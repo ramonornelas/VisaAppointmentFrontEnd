@@ -8,10 +8,14 @@ import Footer from "./Footer";
 import { getTranslatedCountries } from "./utils/countries";
 import { getRoles, createUser } from "./APIFunctions";
 import Select from "react-select";
+import FastVisaMetrics from "./utils/FastVisaMetrics";
 import "./RegisterUser.css";
 
 const UserRegistrationForm = () => {
   const { t, i18n } = useTranslation();
+  
+  // Initialize metrics tracker
+  const metrics = new FastVisaMetrics();
   
   // Get translated countries list
   const countries = getTranslatedCountries(t);
@@ -40,6 +44,17 @@ const UserRegistrationForm = () => {
   });
   const [rolesLoaded, setRolesLoaded] = useState(false);
   const [roleError, setRoleError] = useState("");
+  
+  // Track page view when component mounts
+  useEffect(() => {
+    metrics.trackPageView();
+    
+    // Track custom event for registration page visit
+    metrics.trackCustomEvent('registration_page_visit', {
+      page: 'register',
+      timestamp: new Date().toISOString()
+    });
+  }, []);
   // Fetch roles and set role_id to the id of 'basic_user'
   useEffect(() => {
     let isMounted = true;
@@ -125,12 +140,37 @@ const UserRegistrationForm = () => {
     e.preventDefault();
     setApiError(""); // Clear previous API error
 
+    // Track form submit attempt
+    metrics.trackFormSubmit('registration-form', false); // false initially, will update on success
+    
+    // Track custom event for registration attempt
+    metrics.trackCustomEvent('registration_attempt', {
+      country: formData.country_code,
+      hasPhone: !!formData.phone_number,
+      language: i18n.language || 'en',
+      timestamp: new Date().toISOString()
+    });
+
     if (!rolesLoaded || !formData.role_id) {
       setRoleError("Roles are still loading. Please wait.");
+      
+      // Track role loading error
+      metrics.trackCustomEvent('registration_error', {
+        error: 'roles_not_loaded',
+        timestamp: new Date().toISOString()
+      });
+      
       return;
     }
 
     if (!validateForm()) {
+      // Track validation error
+      metrics.trackCustomEvent('registration_error', {
+        error: 'validation_failed',
+        errors: Object.keys(errors),
+        timestamp: new Date().toISOString()
+      });
+      
       return;
     }
 
@@ -152,16 +192,45 @@ const UserRegistrationForm = () => {
             sessionStorage.setItem("fastVisa_name", formData.name);
           }
           setRegistrationSuccess(true);
+          
+          // Track successful registration
+          metrics.trackFormSubmit('registration-form', true);
+          metrics.trackCustomEvent('user_registered', {
+            userName: formData.name,
+            userEmail: formData.username,
+            country: formData.country_code,
+            hasPhone: !!formData.phone_number,
+            language: i18n.language || 'en',
+            timestamp: new Date().toISOString()
+          });
+          
         } else {
           setApiError(result.error || 'Registration failed');
+          
+          // Track registration failure
+          metrics.trackCustomEvent('registration_error', {
+            error: 'api_error',
+            errorMessage: result.error || 'Registration failed',
+            timestamp: new Date().toISOString()
+          });
         }
       })
       .catch((error) => {
         setApiError(error.message || 'An unexpected error occurred');
+        
+        // Track registration exception
+        metrics.trackCustomEvent('registration_error', {
+          error: 'api_exception',
+          errorMessage: error.message || 'An unexpected error occurred',
+          timestamp: new Date().toISOString()
+        });
       });
   };
 
   const handleCancel = () => {
+    // Track cancel button click
+    metrics.trackButtonClick('cancel-registration-btn', 'Cancel Registration');
+    
     navigate("/");
   };
 

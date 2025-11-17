@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Banner from './Banner';
 import Footer from './Footer';
 import HamburgerMenu from './HamburgerMenu';
 import { changePassword } from './APIFunctions';
+import FastVisaMetrics from './utils/FastVisaMetrics';
 import './ChangePassword.css';
 
 const ChangePassword = () => {
@@ -20,42 +21,111 @@ const ChangePassword = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // Initialize metrics tracker
+  const metrics = new FastVisaMetrics();
+
   const fastVisa_userid = sessionStorage.getItem('fastVisa_userid');
   const fastVisa_username = sessionStorage.getItem('fastVisa_username');
+
+  // Track page view when component mounts
+  useEffect(() => {
+    metrics.trackPageView();
+    
+    // Set user ID if available
+    if (fastVisa_userid) {
+      metrics.setUserId(fastVisa_userid);
+    }
+    
+    // Track custom event for change password page visit
+    metrics.trackCustomEvent('change_password_page_visit', {
+      page: 'change_password',
+      timestamp: new Date().toISOString()
+    });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
 
+    // Track form submit attempt
+    metrics.trackFormSubmit('change-password-form', false); // false initially, will update on success
+
+    // Track custom event for password change attempt
+    metrics.trackCustomEvent('password_change_attempt', {
+      timestamp: new Date().toISOString()
+    });
+
     // Validation
     if (!currentPassword) {
       setError(t('currentPasswordRequired', 'Current password is required'));
+      
+      // Track validation error
+      metrics.trackCustomEvent('password_change_validation_error', {
+        error: 'current_password_required',
+        timestamp: new Date().toISOString()
+      });
+      
       return;
     }
 
     if (!newPassword) {
       setError(t('newPasswordRequired', 'New password is required'));
+      
+      // Track validation error
+      metrics.trackCustomEvent('password_change_validation_error', {
+        error: 'new_password_required',
+        timestamp: new Date().toISOString()
+      });
+      
       return;
     }
 
     if (newPassword.length < 6) {
       setError(t('passwordTooShort', 'Password must be at least 6 characters long'));
+      
+      // Track validation error
+      metrics.trackCustomEvent('password_change_validation_error', {
+        error: 'password_too_short',
+        timestamp: new Date().toISOString()
+      });
+      
       return;
     }
 
     if (newPassword === currentPassword) {
       setError(t('newPasswordSameAsCurrent', 'New password must be different from current password'));
+      
+      // Track validation error
+      metrics.trackCustomEvent('password_change_validation_error', {
+        error: 'new_password_same_as_current',
+        timestamp: new Date().toISOString()
+      });
+      
       return;
     }
 
     if (!confirmPassword) {
       setError(t('confirmPasswordRequired', 'Please confirm your password'));
+      
+      // Track validation error
+      metrics.trackCustomEvent('password_change_validation_error', {
+        error: 'confirm_password_required',
+        timestamp: new Date().toISOString()
+      });
+      
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setError(t('passwordsNotMatch', 'Passwords do not match'));
+      
+      // Track validation error
+      metrics.trackCustomEvent('password_change_validation_error', {
+        error: 'passwords_not_match',
+        timestamp: new Date().toISOString()
+      });
+      
       return;
     }
 
@@ -71,6 +141,13 @@ const ChangePassword = () => {
 
       if (response && response.success) {
         setSuccess(t('passwordChangedSuccess', 'Password changed successfully'));
+        
+        // Track successful password change
+        metrics.trackFormSubmit('change-password-form', true);
+        metrics.trackCustomEvent('password_changed_success', {
+          timestamp: new Date().toISOString()
+        });
+        
         // Clear form
         setCurrentPassword('');
         setNewPassword('');
@@ -82,16 +159,31 @@ const ChangePassword = () => {
         }, 2000);
       } else {
         setError(response?.message || t('failedToChangePassword', 'Failed to change password'));
+        
+        // Track password change failure
+        metrics.trackCustomEvent('password_change_failed', {
+          error: response?.message || 'API error',
+          timestamp: new Date().toISOString()
+        });
       }
     } catch (err) {
       console.error('Error changing password:', err);
       setError(t('errorChangingPassword', 'An error occurred while changing password'));
+      
+      // Track password change exception
+      metrics.trackCustomEvent('password_change_error', {
+        error: err.message || 'Unknown error',
+        timestamp: new Date().toISOString()
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancel = () => {
+    // Track cancel button click
+    metrics.trackButtonClick('cancel-change-password-btn', 'Cancel Change Password');
+    
     navigate(-1); // Go back to previous page
   };
 

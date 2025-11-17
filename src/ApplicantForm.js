@@ -6,6 +6,7 @@ import { permissions } from './utils/permissions';
 import HamburgerMenu from './HamburgerMenu';
 import { ApplicantDetails, ApplicantUpdate, authenticateAIS, createApplicant } from './APIFunctions';
 import { ALL_CITIES } from './utils/cities';
+import FastVisaMetrics from './utils/FastVisaMetrics';
 import './ApplicantForm.css';
 import './index.css';
 
@@ -14,6 +15,9 @@ const ApplicantForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isAuthenticated } = useAuth();
+  
+  // Initialize metrics tracker
+  const metrics = new FastVisaMetrics();
   
   const applicantId = searchParams.get('id');
   const isEditMode = !!applicantId;
@@ -47,6 +51,24 @@ const ApplicantForm = () => {
   const [cities, setCities] = useState([]);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [aisAuthSuccess, setAisAuthSuccess] = useState(false);
+
+  // Track page view when component mounts
+  useEffect(() => {
+    metrics.trackPageView();
+    
+    // Set user ID if available
+    if (fastVisaUserId) {
+      metrics.setUserId(fastVisaUserId);
+    }
+    
+    // Track custom event for applicant form page visit
+    metrics.trackCustomEvent('applicant_form_page_visit', {
+      page: 'applicant_form',
+      mode: isEditMode ? 'edit' : 'create',
+      applicantId: applicantId || null,
+      timestamp: new Date().toISOString()
+    });
+  }, []);
 
   // Format date for display
   const formatDate = (date) => {
@@ -161,6 +183,14 @@ const ApplicantForm = () => {
 
   // Function to authenticate Visa credentials and get schedule info
   const handleAuthenticateAIS = async () => {
+    // Track button click
+    metrics.trackButtonClick('authenticate-ais-btn', 'Authenticate AIS');
+    
+    // Track custom event for AIS authentication attempt
+    metrics.trackCustomEvent('ais_authentication_attempt', {
+      timestamp: new Date().toISOString()
+    });
+    
     // Validate email and password first
     const newErrors = {};
     if (!formData.aisEmail.trim()) {
@@ -174,6 +204,13 @@ const ApplicantForm = () => {
     
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      
+      // Track validation error
+      metrics.trackCustomEvent('ais_authentication_validation_error', {
+        errors: Object.keys(newErrors),
+        timestamp: new Date().toISOString()
+      });
+      
       return;
     }
 
@@ -197,6 +234,13 @@ const ApplicantForm = () => {
           aisScheduleId: '',
           numberOfApplicants: '1',
         }));
+        
+        // Track authentication failure
+        metrics.trackCustomEvent('ais_authentication_failed', {
+          error: 'invalid_credentials',
+          timestamp: new Date().toISOString()
+        });
+        
         return;
       }
 
@@ -212,6 +256,13 @@ const ApplicantForm = () => {
       // Clear any existing errors
       setErrors({});
       
+      // Track successful authentication
+      metrics.trackCustomEvent('ais_authentication_success', {
+        scheduleId: aisUserInfo.schedule_id,
+        applicantName: aisUserInfo.applicant_name,
+        timestamp: new Date().toISOString()
+      });
+      
     } catch (error) {
       console.error('AIS authentication error:', error);
       setErrors({ 
@@ -223,6 +274,13 @@ const ApplicantForm = () => {
         aisScheduleId: '',
         numberOfApplicants: '1',
       }));
+      
+      // Track authentication error
+      metrics.trackCustomEvent('ais_authentication_error', {
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
+      
     } finally {
       setIsAuthenticating(false);
     }
@@ -270,7 +328,27 @@ const ApplicantForm = () => {
     e.preventDefault();
     setSubmitError('');
 
+    // Track form submit attempt
+    metrics.trackFormSubmit('applicant-form', false); // false initially, will update on success
+
+    // Track custom event for form submission attempt
+    metrics.trackCustomEvent('applicant_form_submit_attempt', {
+      mode: isEditMode ? 'edit' : 'create',
+      applicantId: applicantId || null,
+      targetStartMode: formData.targetStartMode,
+      targetStartDays: formData.targetStartDays,
+      selectedCitiesCount: formData.selectedCities.length,
+      timestamp: new Date().toISOString()
+    });
+
     if (!validateForm()) {
+      // Track validation error
+      metrics.trackCustomEvent('applicant_form_validation_error', {
+        mode: isEditMode ? 'edit' : 'create',
+        errors: Object.keys(errors),
+        timestamp: new Date().toISOString()
+      });
+      
       return;
     }
 
@@ -299,6 +377,17 @@ const ApplicantForm = () => {
       if (isEditMode) {
         // Update existing applicant
         await ApplicantUpdate(applicantId, payload);
+        
+        // Track successful update
+        metrics.trackFormSubmit('applicant-form', true);
+        metrics.trackCustomEvent('applicant_updated', {
+          applicantId: applicantId,
+          targetStartMode: formData.targetStartMode,
+          targetStartDays: formData.targetStartDays,
+          selectedCitiesCount: formData.selectedCities.length,
+          timestamp: new Date().toISOString()
+        });
+        
         // Redirect based on permissions
         if (permissions.canManageApplicants()) {
           navigate('/applicants');
@@ -310,6 +399,14 @@ const ApplicantForm = () => {
         if (!formData.aisPassword.trim()) {
           setSubmitError(t('passwordRequiredForNewApplicants', 'Password is required for new applicants'));
           setLoading(false);
+          
+          // Track validation error
+          metrics.trackCustomEvent('applicant_form_validation_error', {
+            mode: 'create',
+            error: 'password_required',
+            timestamp: new Date().toISOString()
+          });
+          
           return;
         }
 
@@ -331,6 +428,16 @@ const ApplicantForm = () => {
         if (!newApplicant) {
           throw new Error(t('failedToCreateApplicant', 'Failed to create applicant'));
         }
+        
+        // Track successful creation
+        metrics.trackFormSubmit('applicant-form', true);
+        metrics.trackCustomEvent('applicant_created', {
+          applicantId: newApplicant.id,
+          targetStartMode: formData.targetStartMode,
+          targetStartDays: formData.targetStartDays,
+          selectedCitiesCount: formData.selectedCities.length,
+          timestamp: new Date().toISOString()
+        });
 
         // Redirect based on permissions
         if (permissions.canManageApplicants()) {
@@ -342,6 +449,15 @@ const ApplicantForm = () => {
     } catch (error) {
       console.error('Submit error:', error);
       setSubmitError(isEditMode ? t('failedToUpdateApplicant', 'Failed to update applicant') : t('failedToCreateApplicant', 'Failed to create applicant'));
+      
+      // Track submission error
+      metrics.trackCustomEvent('applicant_form_submit_error', {
+        mode: isEditMode ? 'edit' : 'create',
+        applicantId: applicantId || null,
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
+      
     } finally {
       setLoading(false);
     }
@@ -427,6 +543,9 @@ const ApplicantForm = () => {
             <button
               type="button"
               onClick={() => {
+                // Track cancel button click
+                metrics.trackButtonClick('cancel-applicant-form-header-btn', 'Cancel Applicant Form (Header)');
+                
                 if (permissions.canManageApplicants()) {
                   navigate('/applicants');
                 } else if (isEditMode) {
@@ -845,6 +964,9 @@ const ApplicantForm = () => {
             <button
               type="button"
               onClick={() => {
+                // Track cancel button click
+                metrics.trackButtonClick('cancel-applicant-form-footer-btn', 'Cancel Applicant Form (Footer)');
+                
                 if (permissions.canManageApplicants()) {
                   navigate('/applicants');
                 } else if (isEditMode) {
