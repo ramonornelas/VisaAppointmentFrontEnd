@@ -325,29 +325,20 @@ const PremiumUpgrade = () => {
 
               <div className="upgrade-benefits">
                 <div className="benefits-grid">
-                  <div className="benefit" style={{ 
-                    background: 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)',
-                    color: 'white'
-                  }}>
+                  <div className="benefit benefit-green">
                     <div className="benefit-icon">🛡️</div>
-                    <h4 style={{ color: 'white' }}>{t('moneyBackGuarantee30Days', '30-Day Money Back Guarantee')}</h4>
-                    <p style={{ color: 'white', opacity: 0.95 }}>{t('moneyBackGuaranteeDesc', 'Not satisfied? Get a full refund within 30 days, no questions asked.')}</p>
+                    <h4>{t('moneyBackGuarantee30Days', '30-Day Money Back Guarantee')}</h4>
+                    <p>{t('moneyBackGuaranteeDesc', 'Not satisfied? Get a full refund within 30 days, no questions asked.')}</p>
                   </div>
-                  <div className="benefit" style={{ 
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white'
-                  }}>
+                  <div className="benefit benefit-blue">
                     <div className="benefit-icon">⏱️</div>
-                    <h4 style={{ color: 'white' }}>{t('whyFullMonthSubscription', 'Why a Full Month Subscription?')}</h4>
-                    <p style={{ color: 'white', opacity: 0.95 }}>{t('whyFullMonthSubscriptionDesc', 'The visa appointment search can take a few hours, days, or even weeks depending on the availability of appointments published by the U.S. Embassy. Another important factor is the search parameters you choose: if the date range is wide and you selected multiple cities (applies to countries with multiple locations), there will be more chances of finding a date sooner.')}</p>
+                    <h4>{t('whyFullMonthSubscription', 'Why a Full Month Subscription?')}</h4>
+                    <p>{t('whyFullMonthSubscriptionDesc', 'The visa appointment search can take a few hours, days, or even weeks depending on the availability of appointments published by the U.S. Embassy. Another important factor is the search parameters you choose: if the date range is wide and you selected multiple cities (applies to countries with multiple locations), there will be more chances of finding a date sooner.')}</p>
                   </div>
-                  <div className="benefit" style={{ 
-                    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                    color: 'white'
-                  }}>
+                  <div className="benefit benefit-orange">
                     <div className="benefit-icon">🚀</div>
-                    <h4 style={{ color: 'white' }}>{t('nextDaySearch', 'Next-Day Search')}</h4>
-                    <p style={{ color: 'white', opacity: 0.95 }}>{t('nextDaySearchDesc', 'Start searching for appointments as early as tomorrow, vs 4 months ahead with Basic')}</p>
+                    <h4>{t('nextDaySearch', 'Next-Day Search')}</h4>
+                    <p>{t('nextDaySearchDesc', 'Start searching for appointments as early as tomorrow, vs 4 months ahead with Basic')}</p>
                   </div>
                 </div>
               </div>
