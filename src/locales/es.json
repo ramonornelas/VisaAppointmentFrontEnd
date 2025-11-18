@@ -86,6 +86,7 @@
   ,"basicInfo": "Información Básica"
   ,"optional": "(Opcional)"
   ,"aisCredentialsInfo": "Ingresa tus credenciales de acceso al sistema de citas. Obtendremos automáticamente tu ID del Sistema de Citas de Visas y número de solicitantes del sistema."
+  ,"detectingLocation": "Detectando tu ubicación..."
   ,"countryArgentina": "Argentina"
   ,"countryBolivia": "Bolivia"
   ,"countryBrazil": "Brasil"

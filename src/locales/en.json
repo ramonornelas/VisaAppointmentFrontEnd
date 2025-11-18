@@ -86,6 +86,7 @@
   ,"basicInfo": "Basic Information"
   ,"optional": "(Optional)"
   ,"aisCredentialsInfo": "Enter your appointment system login credentials. We will automatically retrieve your schedule ID and number of applicants from the system."
+  ,"detectingLocation": "Detecting your location..."
   ,"countryArgentina": "Argentina"
   ,"countryBolivia": "Bolivia"
   ,"countryBrazil": "Brazil"
