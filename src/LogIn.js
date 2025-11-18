@@ -310,7 +310,7 @@ const LogIn = () => {
                 <div className="benefit-number">1</div>
                 <div className="benefit-content">
                   <h3>{t('step1Title', 'Continuous Monitoring')}</h3>
-                  <p>{t('step1Desc', 'Our system monitors 24/7 the availability of appointments at the consulates and date ranges you select.')}</p>
+                  <p>{t('step1Desc', 'Our system monitors 24/7 the availability of American visa appointments at the consulates and date ranges you select.')}</p>
                 </div>
               </div>
 
