@@ -1,6 +1,25 @@
+import { getUserPermissions } from '../APIFunctions';
+
 export const hasPermission = (permissionName) => {
     const permissionsData = JSON.parse(sessionStorage.getItem('fastVisa_permissions') || '[]');
     return permissionsData.some((p) => p.name === permissionName);
+};
+
+export const refreshPermissions = async () => {
+    try {
+        const fastVisaUserId = sessionStorage.getItem('fastVisa_userid');
+        if (fastVisaUserId) {
+            const permissionsData = await getUserPermissions(fastVisaUserId);
+            if (permissionsData) {
+                sessionStorage.setItem("fastVisa_permissions", JSON.stringify(permissionsData));
+                return true;
+            }
+        }
+        return false;
+    } catch (error) {
+        console.error('Error refreshing permissions:', error);
+        return false;
+    }
 };
 
 export const permissions = {

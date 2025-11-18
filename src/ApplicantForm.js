@@ -838,6 +838,34 @@ const ApplicantForm = () => {
                             {t('startDate', 'Start date')}: {formatDate(getSearchStartDate())}
                           </div>
                         )}
+                        {/* Explain start date when using days mode */}
+                        <div style={{
+                          backgroundColor: '#f0f9ff',
+                          border: '1px solid #bae6fd',
+                          borderRadius: '8px',
+                          padding: '1rem',
+                          marginTop: '1rem',
+                          display: 'flex',
+                          gap: '0.75rem',
+                          alignItems: 'flex-start'
+                        }}>
+                          <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
+                          <div style={{ flex: 1 }}>
+                            <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                                {t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')}
+                              </p>
+                              {(!permissions.canSearchUnlimited()) && (
+                                <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
+                                  💎 <strong>{t('premiumUpgradeNote', 'Premium users')}</strong> {t('premiumUsersCanSearchTomorrow', 'can search for appointments starting from tomorrow.')}{' '}
+                                  <a
+                                    href="/premium-upgrade"
+                                    style={{ color: '#0284c7', textDecoration: 'underline', fontWeight: '600' }}
+                                    onClick={(e) => { e.preventDefault(); navigate('/premium-upgrade'); window.scrollTo(0, 0); }}
+                                  >{t('upgradeToPremium', 'Upgrade to Premium')}</a>
+                                </p>
+                              )}
+                          </div>
+                        </div>
                       </div>
                       {errors.targetStartDays && <span className="applicant-form-error">{errors.targetStartDays}</span>}
                     </>
@@ -870,6 +898,23 @@ const ApplicantForm = () => {
                           <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
                           {t('startDate', 'Start date')}: {formatDate(getSearchStartDate())}
                         </div>
+                        <div style={{
+                          backgroundColor: '#f0f9ff',
+                          border: '1px solid #bae6fd',
+                          borderRadius: '8px',
+                          padding: '1rem',
+                          marginTop: '1rem',
+                          display: 'flex',
+                          gap: '0.75rem',
+                          alignItems: 'flex-start'
+                        }}>
+                          <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
+                          <div style={{ flex: 1 }}>
+                            <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                              {t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </>
                   )}
@@ -889,6 +934,12 @@ const ApplicantForm = () => {
                     onChange={handleInputChange}
                     className={`applicant-form-input applicant-form-input-date ${errors.targetStartDate ? 'error' : ''}`}
                   />
+                  <div className="date-info-box">
+                    <i className="fas fa-info-circle date-info-icon"></i>
+                    <div style={{ flex: 1 }}>
+                      <p className="date-info-text">{t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')}</p>
+                    </div>
+                  </div>
                   {errors.targetStartDate && <span className="applicant-form-error">{errors.targetStartDate}</span>}
                 </div>
               )}
@@ -907,18 +958,13 @@ const ApplicantForm = () => {
                   className={`applicant-form-input applicant-form-input-date ${errors.targetEndDate ? 'error' : ''}`}
                 />
                 {errors.targetEndDate && <span className="applicant-form-error">{errors.targetEndDate}</span>}
-                {!permissions.canSearchUnlimited() && (
-                  <small style={{ 
-                    display: 'block', 
-                    marginTop: '6px', 
-                    color: '#6b7280', 
-                    fontSize: '0.875rem',
-                    lineHeight: '1.4'
-                  }}>
-                    <i className="fas fa-info-circle" style={{ marginRight: '4px', color: '#9ca3af' }}></i>
-                    {t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date. Minimum: 210 days from today.')}
-                  </small>
-                )}
+                {/* Explanation visible for all users */}
+                <div className="date-info-box">
+                  <i className="fas fa-info-circle date-info-icon"></i>
+                  <div style={{ flex: 1 }}>
+                    <p className="date-info-text">{t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date. Minimum: 210 days from today.')}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

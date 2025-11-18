@@ -92,6 +92,12 @@ body.menu-open .premium-upgrade-container {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 600px;
+  /* Make sure children stack vertically and texts wrap */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center;
+  gap: 6px; /* tighten spacing between title, text and actions */
+  white-space: normal; /* override any parent white-space: nowrap */
 }
 
 .success-message h2 {
@@ -100,8 +106,38 @@ body.menu-open .premium-upgrade-container {
   color: #2c3e50;
 }
 
+.success-text {
+  display: block !important;
+  width: 100%;
+  margin-bottom: 6px; /* reduce bottom spacing for tighter layout */
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #2c3e50;
+  white-space: normal !important; /* be explicit to avoid global overrides */
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  text-align: center;
+}
+
+.cancel-note {
+  font-size: 0.95rem;
+  color: #666;
+  opacity: 0.95;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+/* Smaller, tighter note inside the plan cards */
+.plan-note {
+  font-size: 0.9rem;
+  color: #6b7280; /* slightly muted */
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
 .success-actions {
-  margin-top: 30px;
+  margin-top: 6px; /* less space above the button */
   display: flex;
   gap: 15px;
   justify-content: center;

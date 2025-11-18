@@ -482,7 +482,7 @@ const ApplicantView = () => {
               {t('targetDates', 'Target Dates')}
             </h2>
             
-            {!permissions.canManageApplicants() && data.target_start_mode === 'days' && data.target_start_days === '120' && (
+            {!permissions.canSearchUnlimited() && data.target_start_mode === 'days' && data.target_start_days === '120' && (
               <div style={{
                 backgroundColor: '#f0f9ff',
                 border: '1px solid #bae6fd',
@@ -526,6 +526,12 @@ const ApplicantView = () => {
                 <div className="applicant-view-field">
                   <label>{t('targetStartDate', 'Target Start Date')}</label>
                   <div className="applicant-view-value">{data.target_start_date || 'N/A'}</div>
+                  <div className="date-info-box">
+                    <i className="fas fa-info-circle date-info-icon"></i>
+                    <div style={{ flex: 1 }}>
+                      <p className="date-info-text">{t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')}</p>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -551,6 +557,14 @@ const ApplicantView = () => {
                             {t('startDate', 'Start date')}: {formatDate(getSearchStartDate(data.target_start_days))}
                           </div>
                         )}
+
+                        {/* Explanation box for start date (days mode) - same style as Target End Date explanation */}
+                        <div className="date-info-box">
+                          <i className="fas fa-info-circle date-info-icon"></i>
+                          <div style={{ flex: 1 }}>
+                            <p className="date-info-text">{t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')}</p>
+                          </div>
+                        </div>
                       </div>
                     </>
                   ) : (
@@ -580,6 +594,23 @@ const ApplicantView = () => {
                           <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
                           {t('startDate', 'Start date')}: {formatDate(getSearchStartDate(data.target_start_days))}
                         </div>
+                        <div style={{
+                          backgroundColor: '#f0f9ff',
+                          border: '1px solid #bae6fd',
+                          borderRadius: '8px',
+                          padding: '1rem',
+                          marginTop: '1rem',
+                          display: 'flex',
+                          gap: '0.75rem',
+                          alignItems: 'flex-start'
+                        }}>
+                          <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
+                          <div style={{ flex: 1 }}>
+                            <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                              {t('targetStartDateExplanationView', 'Esta es la fecha más temprana en que comenzarás a buscar citas disponibles. La búsqueda iniciará 4 meses desde hoy.')}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </>
                   )}
@@ -588,7 +619,7 @@ const ApplicantView = () => {
 
               <div className="applicant-view-field">
                 <label>{t('targetEndDate', 'Target End Date')}</label>
-                {!permissions.canManageApplicants() && data.target_end_date ? (
+                {data.target_end_date ? (
                   <>
                     <div style={{
                       padding: '12px 16px',
@@ -599,21 +630,18 @@ const ApplicantView = () => {
                       fontSize: '1rem',
                       fontWeight: '500'
                     }}>
+                      <br />
                       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
                         <i className="fas fa-calendar-check" style={{ marginRight: '8px', color: '#6b7280' }}></i>
                         {formatEndDate(data.target_end_date)}
                       </div>
-                      <div style={{
-                        marginTop: '8px',
-                        paddingTop: '8px',
-                        borderTop: '1px solid #d1d5db',
-                        fontSize: '0.875rem',
-                        color: '#6b7280',
-                        lineHeight: '1.5'
-                      }}>
-                        <i className="fas fa-info-circle" style={{ marginRight: '6px' }}></i>
-                        {t('targetEndDateExplanationView', 'Esta es la fecha máxima en que aceptarías una cita. La búsqueda buscará citas disponibles entre 4 meses desde ahora y esta fecha.')}
-                      </div>
+                      <br />
+                        <div className="date-info-box">
+                          <i className="fas fa-info-circle date-info-icon"></i>
+                          <div style={{ flex: 1 }}>
+                            <p className="date-info-text">{t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date.')}</p>
+                          </div>
+                        </div>
                     </div>
                   </>
                 ) : (

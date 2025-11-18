@@ -7,6 +7,7 @@ import Banner from './Banner';
 import Footer from './Footer';
 import { UserDetails, updateUser, getRoles, getUSDMXNExchangeRate } from './APIFunctions';
 import FastVisaMetrics from './utils/FastVisaMetrics';
+import { refreshPermissions } from './utils/permissions';
 import './PremiumUpgrade.css';
 
 
@@ -20,7 +21,7 @@ const PremiumUpgrade = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [exchangeRate, setExchangeRate] = useState(null);
-  const [priceUSD] = useState(10.0);
+  const [priceUSD] = useState(3.0);
   const [priceMXN, setPriceMXN] = useState(null);
   const navigate = useNavigate();
 
@@ -165,6 +166,9 @@ const PremiumUpgrade = () => {
       if (updatedUser) {
         setUserDetails(updatedUser);
         
+        // Refresh permissions in sessionStorage
+        await refreshPermissions();
+        
         // Optional: Log payment details for tracking
         console.log('Payment successful:', paymentDetails);
         console.log('User upgraded to premium:', updatedUser);
@@ -263,8 +267,8 @@ const PremiumUpgrade = () => {
           <div className="premium-upgrade-container">
             <div className="success-message">
               <h2>{t('upgradeSuccessful', 'Upgrade Successful!')}</h2>
-              <p>{t('welcomeToPremium', 'Welcome to FastVisa Premium!')}</p>
-              <p>{t('accountUpgradedSuccessfully', 'Your account has been successfully upgraded.')}</p>
+              <div className="success-text">{t('welcomeToPremium', 'Welcome to FastVisa Premium!')}</div>
+              <div className="success-text">{t('accountUpgradedSuccessfully', 'Your account has been successfully upgraded.')}</div>
               <div className="success-actions">
                 <button 
                   onClick={() => navigate('/applicants')} 
@@ -273,6 +277,7 @@ const PremiumUpgrade = () => {
                   {t('startUsingPremiumFeatures', 'Start using Premium Features')}
                 </button>
               </div>
+              <div className="cancel-note">{t('cancelSubscriptionAnytime', 'You can cancel your subscription at any time')}</div>
             </div>
           </div>
         </MainContainer>
@@ -317,7 +322,7 @@ const PremiumUpgrade = () => {
               <div className="plans-comparison">
                 <div className="plan current-plan-card">
                   <h3>{t('basicPlan', 'Basic Plan')}</h3>
-                  <div className="plan-price">$0{t('perMonth', '/month')}</div>
+                  <div className="plan-price">$0{t('perWeek', '/week')}</div>
                   <ul className="plan-features">
                     <li>✅ {t('searchStartsSixMonthsAhead', 'Search starts from 6 months ahead')}</li>
                     <li>✅ {t('basicNotificationsEvery2Hours', 'Basic notifications every 2 hours')}</li>
@@ -338,7 +343,7 @@ const PremiumUpgrade = () => {
                           ? <span className="loading-rate">{t('loadingRate', 'Cargando...')}</span>
                           : priceMXN}
                         <span className="currency-code"> MXN</span>
-                        <span className="period">{t('perMonth', '/mes')}</span>
+                        <span className="period">{t('perWeek', '/semana')}</span>
                         {exchangeRate === null && (
                           <div className="exchange-error" style={{fontSize: '0.8rem', color: '#c00'}}>
                             {t('exchangeRateError', 'No se pudo obtener el tipo de cambio. El precio puede variar.')}
@@ -349,7 +354,7 @@ const PremiumUpgrade = () => {
                       <>
                         <span className="currency">$</span>{priceUSD}
                         <span className="currency-code"> USD</span>
-                        <span className="period">{t('perMonth', '/month')}</span>
+                        <span className="period">{t('perWeek', '/week')}</span>
                       </>
                     )}
                   </div>
@@ -388,6 +393,7 @@ const PremiumUpgrade = () => {
                       </button>
                     </div>
                   )}
+                  <div className="cancel-note plan-note">{t('cancelSubscriptionAnytime', 'You can cancel your subscription at any time')}</div>
                 </div>
               </div>
 

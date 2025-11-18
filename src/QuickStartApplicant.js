@@ -676,6 +676,13 @@ const QuickStartApplicant = () => {
                       <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
                       {t('startDate', 'Start date')}: {formatDate(searchStartDate)}
                     </div>
+                    <br />
+                    <div className="date-info-box">
+                      <i className="fas fa-info-circle date-info-icon"></i>
+                      <div style={{ flex: 1 }}>
+                        <p className="date-info-text">{t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -693,16 +700,12 @@ const QuickStartApplicant = () => {
                     className={`applicant-form-input applicant-form-input-date ${errors.targetEndDate ? 'error' : ''}`}
                   />
                   {errors.targetEndDate && <span className="applicant-form-error">{errors.targetEndDate}</span>}
-                  <small style={{ 
-                    display: 'block', 
-                    marginTop: '6px', 
-                    color: '#6b7280', 
-                    fontSize: '0.875rem',
-                    lineHeight: '1.4'
-                  }}>
-                    <i className="fas fa-info-circle" style={{ marginRight: '4px', color: '#9ca3af' }}></i>
-                    {t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date.')}
-                  </small>
+                  <div className="date-info-box">
+                    <i className="fas fa-info-circle date-info-icon"></i>
+                    <div style={{ flex: 1 }}>
+                      <p className="date-info-text">{t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date.')}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
