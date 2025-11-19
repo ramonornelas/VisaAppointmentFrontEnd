@@ -5,9 +5,9 @@ import PayPalPayment from './PayPalPayment';
 import HamburgerMenu from './HamburgerMenu';
 import Banner from './Banner';
 import Footer from './Footer';
-import { UserDetails, updateUser, getRoles, getUSDMXNExchangeRate } from './APIFunctions';
+import { UserDetails, updateUser, getRoles, getUSDMXNExchangeRate, ApplicantSearch } from './APIFunctions';
 import FastVisaMetrics from './utils/FastVisaMetrics';
-import { refreshPermissions } from './utils/permissions';
+import { refreshPermissions, permissions } from './utils/permissions';
 import './PremiumUpgrade.css';
 
 
@@ -226,6 +226,34 @@ const PremiumUpgrade = () => {
     });
   };
 
+  // Helper to navigate the user to the appropriate applicants page.
+  // Prevents extra redirect logic inside the Applicants page for users
+  // who cannot manage applicants.
+  const handleGoToApplicantsPage = async () => {
+    try {
+      // Ensure session permissions are up to date
+      await refreshPermissions();
+
+      // If user can manage applicants, go to list view
+      if (permissions.canManageApplicants()) {
+        navigate('/applicants');
+        return;
+      }
+
+      // Otherwise fetch their applicants and navigate to the first one or to the form
+      const applicants = await ApplicantSearch(fastVisa_userid);
+      if (applicants && applicants.length > 0) {
+        navigate(`/view-applicant/${applicants[0].id}`);
+      } else {
+        navigate('/applicant-form');
+      }
+    } catch (err) {
+      console.error('[PremiumUpgrade] Error navigating to applicants:', err);
+      // Fallback to applicants if something goes wrong
+      navigate('/applicants');
+    }
+  };
+
   const MainContainer = ({ children }) => (
     <div className="main-centered-container">
       <HamburgerMenu />
@@ -271,7 +299,7 @@ const PremiumUpgrade = () => {
               <div className="success-text">{t('accountUpgradedSuccessfully', 'Your account has been successfully upgraded.')}</div>
               <div className="success-actions">
                 <button 
-                  onClick={() => navigate('/applicants')} 
+                  onClick={handleGoToApplicantsPage} 
                   className="btn btn-primary"
                 >
                   {t('startUsingPremiumFeatures', 'Start using Premium Features')}
@@ -310,7 +338,7 @@ const PremiumUpgrade = () => {
                 <h2>✨ {t('alreadyPremium', "You're Already Premium!")}</h2>
                 <p>{t('accessAllPremiumFeatures', 'You have access to all premium features.')}</p>
                 <button 
-                  onClick={() => navigate('/applicants')} 
+                  onClick={handleGoToApplicantsPage} 
                   className="btn btn-primary"
                 >
                   {t('accessPremiumFeatures', 'Access Premium Features')}
