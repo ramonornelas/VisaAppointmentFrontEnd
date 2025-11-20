@@ -25,6 +25,11 @@
   gap: 1rem;
 }
 
+.applicant-view-header {
+  position: relative; /* allow children to position relative to header */
+  overflow: visible;
+}
+
 .applicant-view-title {
   font-size: 2rem;
   font-weight: 700;
@@ -49,6 +54,74 @@
   display: flex;
   gap: 0.75rem;
   flex-shrink: 0;
+}
+
+/* Floating tip for the Edit button to show next-day search hint */
+/* keep wrapper styles small, use only edit-tooltip-container for positioning */
+
+.edit-tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.edit-floating-tip {
+  position: absolute;
+  top: -80px;
+  right: 0;
+  min-width: 280px;
+  max-width: 420px;
+  background: #fffde7;
+  color: #1f2937;
+  border: 2px solid transparent;
+  border-image: linear-gradient(135deg, #3C89CB 30%, #EB3324 100%) 1;
+  border-radius: 10px;
+  padding: 1rem 0.9rem 0.7rem 0.9rem;
+  box-shadow: 0 10px 30px rgba(60, 137, 203, 0.25);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  text-align: left;
+  z-index: 10010;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  pointer-events: none; /* so it doesn't block the button */
+  font-weight: 700;
+  white-space: pre-line;
+  animation: premiumPulse 1.8s ease-in-out infinite;
+}
+
+/* These helpers are no longer used; the tooltip is now only at the button-level */
+
+.edit-floating-tip::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  right: 30px;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid #3C89CB;
+  filter: drop-shadow(0 -1px 0 rgba(44, 107, 160, 0.04));
+}
+
+@keyframes premiumPulse {
+  0% { transform: translateY(-4px) scale(1); opacity: 0.95 }
+  50% { transform: translateY(-6px) scale(1.02); opacity: 1 }
+  100% { transform: translateY(-4px) scale(1); opacity: 0.95 }
+}
+
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseIn {
+  0% { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  60% { opacity: 1; transform: translateY(4px) scale(1.04); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* ==========================================
@@ -388,6 +461,24 @@
 
   .applicant-view-section-title {
     font-size: 1.1rem;
+  }
+}
+
+/* Hide floating tip on smaller screens to avoid layout issues */
+@media (max-width: 768px) {
+  .edit-floating-tip {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .edit-floating-tip {
+    max-width: 350px;
+    right: -20px;
+  }
+  
+  .edit-floating-tip::after {
+    right: 50px;
   }
 }
 

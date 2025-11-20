@@ -94,7 +94,6 @@ const PremiumUpgrade = () => {
     fetchUserData();
   }, [fastVisa_userid, navigate]);
 
-  // Fetch exchange rate on mount
   useEffect(() => {
     const fetchExchangeRate = async () => {
       try {
@@ -110,6 +109,13 @@ const PremiumUpgrade = () => {
     };
     fetchExchangeRate();
   }, [priceUSD]);
+
+  // Scroll to top when success message is shown
+  useEffect(() => {
+    if (success) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [success]);
 
   const getCurrentRoleName = () => {
     if (!userDetails || !roles.length) return t('unknown', 'Unknown');
@@ -144,6 +150,14 @@ const PremiumUpgrade = () => {
     });
     
     setShowPayment(true);
+
+    // Scroll to payment section after a short delay to ensure it's rendered
+    setTimeout(() => {
+      const paymentSection = document.getElementById('payment-section');
+      if (paymentSection) {
+        paymentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   };
 
   const handlePaymentSuccess = async (paymentDetails) => {
@@ -401,7 +415,7 @@ const PremiumUpgrade = () => {
                       {upgrading ? t('processing', 'Processing...') : t('upgradeNow', 'Upgrade Now')}
                     </button>
                   ) : (
-                    <div className="payment-section">
+                    <div className="payment-section" id="payment-section">
                       <h4>{t('completeYourUpgrade', 'Complete Your Upgrade')}</h4>
                       <p>{t('securePaymentPayPal', 'Secure payment powered by PayPal')}</p>
                       <PayPalPayment

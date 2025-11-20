@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
-import { permissions } from './utils/permissions';
+import { permissions, refreshPermissions } from './utils/permissions';
 import HamburgerMenu from './HamburgerMenu';
 import Modal from './Modal';
 import { 
@@ -32,6 +32,7 @@ const ApplicantView = () => {
   const [loading, setLoading] = useState(true);
   const [cities, setCities] = useState([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const [modal, setModal] = useState({
     isOpen: false,
     title: '',
@@ -65,12 +66,32 @@ const ApplicantView = () => {
     return formatDate(date);
   };
 
+  // Refresh permissions on component mount
+  useEffect(() => {
+    const loadPermissions = async () => {
+      try {
+        await refreshPermissions();
+      } catch (error) {
+        console.error('Error refreshing permissions:', error);
+      }
+    };
+
+    if (isAuthenticated) {
+      loadPermissions();
+    }
+  }, [isAuthenticated]);
+
   // Authentication check
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/');
     }
   }, [isAuthenticated, navigate]);
+
+  // Auto scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Store applicantId in sessionStorage if received from URL
   useEffect(() => {
@@ -101,6 +122,16 @@ const ApplicantView = () => {
         .finally(() => setLoading(false));
     }
   }, [applicantId, refreshFlag]);
+
+  // Check if tooltip should be shown for premium users
+  useEffect(() => {
+    if (permissions.canSearchUnlimited()) {
+      const tooltipShown = localStorage.getItem('premium_tooltip_shown');
+      if (!tooltipShown) {
+        setShowTooltip(true);
+      }
+    }
+  }, []);
 
   const handleEdit = () => {
     navigate(`/applicant-form?id=${applicantId}`);
@@ -389,16 +420,50 @@ const ApplicantView = () => {
                 {t('back', 'Back')}
               </button>
             )}
-            <button onClick={handleEdit} className="applicant-view-btn applicant-view-btn-primary">
-              <i className="fas fa-edit"></i>
-              {t('edit', 'Edit')}
-            </button>
+            
+              <div className="edit-tooltip-container">
+                <button onClick={handleEdit} className="applicant-view-btn applicant-view-btn-primary">
+                  <i className="fas fa-edit"></i>
+                  {t('edit', 'Edit')}
+                </button>
+                {showTooltip && (
+                  <div className="edit-floating-tip" role="tooltip" aria-hidden="false">
+                    <strong>{t('clickEditToStartTomorrow', '¡Click here to start searching from tomorrow!')}</strong>
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowTooltip(false);
+                        localStorage.setItem('premium_tooltip_shown', 'true');
+                      }} 
+                      className="tooltip-close-btn"
+                      style={{ 
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        background: 'none', 
+                        border: 'none', 
+                        color: '#1f2937', 
+                        cursor: 'pointer', 
+                        fontSize: '1rem', 
+                        padding: '0', 
+                        lineHeight: 1,
+                        pointerEvents: 'auto'
+                      }}
+                      title={t('close', 'Close')}
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                )}
+              </div>
             {permissions.canManageApplicants() && (
               <button onClick={handleDelete} className="applicant-view-btn" style={{ background: '#f44336', color: '#fff' }}>
                 <i className="fas fa-trash-alt"></i>
                 {t('delete', 'Delete')}
               </button>
             )}
+            
           </div>
         </div>
 
@@ -439,8 +504,8 @@ const ApplicantView = () => {
                     {data.search_status === 'Stopped' ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
                   </button>
                 </div>
+                </div>
               </div>
-            </div>
           </div>
 
           {/* Visa Appointment System Credentials Section */}

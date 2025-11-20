@@ -40,6 +40,7 @@
   ,"aisScheduleId": "ID del Sistema de Citas de Visas"
   ,"numberOfApplicants": "Número de Solicitantes"
   ,"targetDates": "Fechas Objetivo"
+  ,"targetDatesTooltip": "Aquí puedes configurar la fecha de inicio de tu búsqueda."
   ,"startMode": "Modo de Inicio"
   ,"specificDate": "Fecha Específica"
   ,"daysFromNow": "Días desde Hoy"
@@ -157,7 +158,8 @@
   ,"stopSearch": "Detener Búsqueda"
   ,"viewDetails": "Ver Detalles"
   ,"clickToViewDetails": "Haz clic para ver detalles"
-  ,"copyPassword": "Copiar Contraseña"
+  ,"clickEditToStartTomorrow": "¡Comienza a buscar desde mañana!\nHaz clic en Editar.",
+  "copyPassword": "Copiar Contraseña"
   ,"copyEmail": "Copiar Correo"
   ,"clearStatus": "Limpiar Estado"
   ,"edit": "Editar"

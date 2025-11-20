@@ -40,6 +40,7 @@
   ,"aisScheduleId": "Schedule ID"
   ,"numberOfApplicants": "Number of Applicants"
   ,"targetDates": "Target Dates"
+  ,"targetDatesTooltip": "Here you can configure your search start date."
   ,"startMode": "Start Mode"
   ,"specificDate": "Specific Date"
   ,"daysFromNow": "Days from Now"
@@ -157,7 +158,8 @@
   ,"stopSearch": "Stop Search"
   ,"viewDetails": "View Details"
   ,"clickToViewDetails": "Click to view details"
-  ,"copyPassword": "Copy Password"
+  ,"clickEditToStartTomorrow": "Start searching tomorrow!\nClick Edit.",
+  "copyPassword": "Copy Password"
   ,"copyEmail": "Copy Email"
   ,"clearStatus": "Clear Status"
   ,"edit": "Edit"

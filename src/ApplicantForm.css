@@ -80,6 +80,67 @@
   font-size: 1.2rem;
 }
 
+/* Collapsible section styles */
+.applicant-form-section-header {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  margin: 0 0 24px 0;
+  border-bottom: 2px solid #e3eaf3;
+  transition: all 0.2s ease;
+}
+
+.applicant-form-section-header[aria-expanded="false"] {
+  border-bottom: none;
+}
+
+.applicant-form-section-header:hover {
+  opacity: 0.8;
+}
+
+.applicant-form-section-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2C6BA0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.applicant-form-section-header h2 i {
+  color: #2C6BA0;
+  font-size: 1.2rem;
+}
+
+.section-toggle-icon {
+  color: #6b7280;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.applicant-form-section-content {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .applicant-form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -469,6 +530,114 @@
   .applicant-form-radio-group {
     flex-direction: column;
   }
+}
+
+/* Tooltip styles for section titles */
+.applicant-form-section-title[data-title] {
+  position: relative;
+  cursor: help;
+}
+
+.applicant-form-section-title[data-title]:hover::after {
+  content: attr(data-title);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #333;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  white-space: nowrap;
+  z-index: 9999;
+  margin-top: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+}
+
+.applicant-form-section-title[data-title]:hover::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 20px;
+  border: 6px solid transparent;
+  border-bottom-color: #333;
+  margin-top: -2px;
+  pointer-events: none;
+}
+
+/* Target dates tooltip styles */
+.target-dates-header-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.target-dates-floating-tip {
+  position: absolute;
+  top: -80px;
+  left: 0px;
+  background: #fffde7;
+  color: #1f2937;
+  border: 2px solid transparent;
+  border-image: linear-gradient(135deg, #3C89CB 30%, #EB3324 100%) 1;
+  border-radius: 10px;
+  padding: 1rem 0.9rem 0.7rem 0.9rem;
+  box-shadow: 0 10px 30px rgba(60, 137, 203, 0.25);
+  z-index: 1000;
+  max-width: 300px;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  pointer-events: none;
+  font-weight: 700;
+  white-space: pre-line;
+  animation: premiumPulse 1.8s ease-in-out infinite;
+}
+
+.target-dates-floating-tip::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 30px;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid #3C89CB;
+  filter: drop-shadow(0 -1px 0 rgba(44, 107, 160, 0.04));
+}
+
+@keyframes premiumPulse {
+  0% { transform: translateX(0) translateY(-4px) scale(1); opacity: 0.95 }
+  50% { transform: translateX(0) translateY(-6px) scale(1.02); opacity: 1 }
+  100% { transform: translateX(0) translateY(-4px) scale(1); opacity: 0.95 }
+}
+
+.tooltip-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  pointer-events: auto;
+}
+
+.tooltip-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #374151;
 }
 
 /* Remove dark mode styles to keep consistent with application theme */

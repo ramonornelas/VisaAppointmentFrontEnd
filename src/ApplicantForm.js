@@ -51,6 +51,8 @@ const ApplicantForm = () => {
   const [cities, setCities] = useState([]);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [aisAuthSuccess, setAisAuthSuccess] = useState(false);
+  const [showTargetDatesTooltip, setShowTargetDatesTooltip] = useState(false);
+  const [credentialsExpanded, setCredentialsExpanded] = useState(false);
 
   // Track page view when component mounts
   useEffect(() => {
@@ -150,6 +152,16 @@ const ApplicantForm = () => {
         .finally(() => setLoading(false));
     }
   }, [isEditMode, applicantId]);
+
+  // Check if tooltip should be shown for premium users
+  useEffect(() => {
+    if (permissions.canSearchUnlimited()) {
+      const tooltipShown = localStorage.getItem('target_dates_tooltip_shown');
+      if (!tooltipShown) {
+        setShowTargetDatesTooltip(true);
+      }
+    }
+  }, []);
 
   // Form handlers
   const handleInputChange = (e) => {
@@ -591,147 +603,191 @@ const ApplicantForm = () => {
 
           {/* Visa Credentials Section */}
           <div className="applicant-form-section">
-            <h2 className="applicant-form-section-title">
-              <i className="fas fa-key"></i>
-              {t('aisCredentials', 'Visa Appointment System Credentials')}
-            </h2>
+            <button
+              type="button"
+              className="applicant-form-section-header"
+              onClick={() => setCredentialsExpanded(!credentialsExpanded)}
+              aria-expanded={credentialsExpanded}
+            >
+              <h2 className="applicant-form-section-title">
+                <i className="fas fa-key"></i>
+                {t('aisCredentials', 'Visa Appointment System Credentials')}
+              </h2>
+              <i className={`fas fa-chevron-${credentialsExpanded ? 'up' : 'down'} section-toggle-icon`}></i>
+            </button>
             
-            <div className="applicant-form-row">
-              <div className="applicant-form-field">
-                <label htmlFor="aisEmail" className="applicant-form-label">
-                  {t('visaAppointmentSystemEmail', 'Visa Appointment System Email')} <span className="required">*</span>
-                </label>
-                <input
-                  type="email"
-                  id="aisEmail"
-                  name="aisEmail"
-                  value={formData.aisEmail}
-                  onChange={(e) => {
-                    handleInputChange(e);
-                    setAisAuthSuccess(false);
-                  }}
-                  className={`applicant-form-input applicant-form-input-medium ${errors.aisEmail ? 'error' : ''}`}
-                  placeholder="visa@example.com"
-                />
-                {errors.aisEmail && <span className="applicant-form-error">{errors.aisEmail}</span>}
-              </div>
+            {credentialsExpanded && (
+              <div className="applicant-form-section-content">
+                <div className="applicant-form-row">
+                  <div className="applicant-form-field">
+                    <label htmlFor="aisEmail" className="applicant-form-label">
+                      {t('visaAppointmentSystemEmail', 'Visa Appointment System Email')} <span className="required">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      id="aisEmail"
+                      name="aisEmail"
+                      value={formData.aisEmail}
+                      onChange={(e) => {
+                        handleInputChange(e);
+                        setAisAuthSuccess(false);
+                      }}
+                      className={`applicant-form-input applicant-form-input-medium ${errors.aisEmail ? 'error' : ''}`}
+                      placeholder="visa@example.com"
+                    />
+                    {errors.aisEmail && <span className="applicant-form-error">{errors.aisEmail}</span>}
+                  </div>
 
-              <div className="applicant-form-field">
-                <label htmlFor="aisPassword" className="applicant-form-label">
-                  {t('visaAppointmentSystemPassword', 'Visa Appointment System Password')} {!isEditMode && <span className="required">*</span>}
-                </label>
-                <input
-                  type="password"
-                  id="aisPassword"
-                  name="aisPassword"
-                  value={formData.aisPassword}
-                  onChange={(e) => {
-                    handleInputChange(e);
-                    setAisAuthSuccess(false);
-                  }}
-                  className={`applicant-form-input applicant-form-input-medium ${errors.aisPassword ? 'error' : ''}`}
-                  placeholder={isEditMode ? t('leaveEmptyToKeepPassword', 'Leave empty to keep current password') : t('enterVisaPassword', 'Enter Visa Appointment System password')}
-                />
-                {errors.aisPassword && <span className="applicant-form-error">{errors.aisPassword}</span>}
-              </div>
-            </div>
-            
-            {/* Button to authenticate Visa and auto-fill schedule info */}
-            <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
-              <button
-                type="button"
-                onClick={handleAuthenticateAIS}
-                disabled={isAuthenticating || !formData.aisEmail || !formData.aisPassword}
-                style={{
-                  padding: '12px 24px',
-                  backgroundColor: aisAuthSuccess ? '#10b981' : '#2563eb',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: isAuthenticating || !formData.aisEmail || !formData.aisPassword ? 'not-allowed' : 'pointer',
-                  opacity: isAuthenticating || !formData.aisEmail || !formData.aisPassword ? 0.6 : 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  fontSize: '0.95rem',
-                  fontWeight: '500',
-                  transition: 'all 0.2s',
-                }}
-              >
-                {isAuthenticating ? (
-                  <>
-                    <i className="fas fa-spinner fa-spin"></i>
-                    {t('authenticating', 'Authenticating...')}
-                  </>
-                ) : aisAuthSuccess ? (
-                  <>
-                    <i className="fas fa-check-circle"></i>
-                    {t('authenticationSuccessful', 'Authentication Successful')}
-                  </>
-                ) : (
-                  <>
-                    <i className="fas fa-key"></i>
-                    {t('authenticate', 'Authenticate')}
-                  </>
-                )}
-              </button>
-              <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '8px', display: 'block' }}>
-                {t('clickToVerifyCredentials', 'Click to verify your Visa Appointment System credentials and automatically retrieve your Schedule ID')}
-              </small>
-            </div>
+                  <div className="applicant-form-field">
+                    <label htmlFor="aisPassword" className="applicant-form-label">
+                      {t('visaAppointmentSystemPassword', 'Visa Appointment System Password')} {!isEditMode && <span className="required">*</span>}
+                    </label>
+                    <input
+                      type="password"
+                      id="aisPassword"
+                      name="aisPassword"
+                      value={formData.aisPassword}
+                      onChange={(e) => {
+                        handleInputChange(e);
+                        setAisAuthSuccess(false);
+                      }}
+                      className={`applicant-form-input applicant-form-input-medium ${errors.aisPassword ? 'error' : ''}`}
+                      placeholder={isEditMode ? t('leaveEmptyToKeepPassword', 'Leave empty to keep current password') : t('enterVisaPassword', 'Enter Visa Appointment System password')}
+                    />
+                    {errors.aisPassword && <span className="applicant-form-error">{errors.aisPassword}</span>}
+                  </div>
+                </div>
+                
+                {/* Button to authenticate Visa and auto-fill schedule info */}
+                <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+                  <button
+                    type="button"
+                    onClick={handleAuthenticateAIS}
+                    disabled={isAuthenticating || !formData.aisEmail || !formData.aisPassword}
+                    style={{
+                      padding: '12px 24px',
+                      backgroundColor: aisAuthSuccess ? '#10b981' : '#2563eb',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: isAuthenticating || !formData.aisEmail || !formData.aisPassword ? 'not-allowed' : 'pointer',
+                      opacity: isAuthenticating || !formData.aisEmail || !formData.aisPassword ? 0.6 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '0.95rem',
+                      fontWeight: '500',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    {isAuthenticating ? (
+                      <>
+                        <i className="fas fa-spinner fa-spin"></i>
+                        {t('authenticating', 'Authenticating...')}
+                      </>
+                    ) : aisAuthSuccess ? (
+                      <>
+                        <i className="fas fa-check-circle"></i>
+                        {t('authenticationSuccessful', 'Authentication Successful')}
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-key"></i>
+                        {t('authenticate', 'Authenticate')}
+                      </>
+                    )}
+                  </button>
+                  <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '8px', display: 'block' }}>
+                    {t('clickToVerifyCredentials', 'Click to verify your Visa Appointment System credentials and automatically retrieve your Schedule ID')}
+                  </small>
+                </div>
 
-            {/* Schedule ID - read-only, auto-filled */}
-            <div className="applicant-form-row">
-              <div className="applicant-form-field">
-                <label htmlFor="aisScheduleId" className="applicant-form-label">
-                  {t('aisScheduleId', 'Schedule ID')} <span className="required">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="aisScheduleId"
-                  name="aisScheduleId"
-                  value={formData.aisScheduleId}
-                  readOnly
-                  className="applicant-form-input applicant-form-input-medium"
-                  style={{ 
-                    backgroundColor: '#f3f4f6', 
-                    cursor: 'not-allowed',
-                    color: '#4b5563'
-                  }}
-                  placeholder={t('autoFilledAfterAuth', 'Auto-filled after authentication')}
-                />
-                <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
-                  {t('scheduleIdAutoFilledInfo', 'This field is automatically filled after authenticating with Visa Appointment System')}
-                </small>
-              </div>
+                {/* Schedule ID - read-only, auto-filled */}
+                <div className="applicant-form-row">
+                  <div className="applicant-form-field">
+                    <label htmlFor="aisScheduleId" className="applicant-form-label">
+                      {t('aisScheduleId', 'Schedule ID')} <span className="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="aisScheduleId"
+                      name="aisScheduleId"
+                      value={formData.aisScheduleId}
+                      readOnly
+                      className="applicant-form-input applicant-form-input-medium"
+                      style={{ 
+                        backgroundColor: '#f3f4f6', 
+                        cursor: 'not-allowed',
+                        color: '#4b5563'
+                      }}
+                      placeholder={t('autoFilledAfterAuth', 'Auto-filled after authentication')}
+                    />
+                    <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
+                      {t('scheduleIdAutoFilledInfo', 'This field is automatically filled after authenticating with Visa Appointment System')}
+                    </small>
+                  </div>
 
-              <div className="applicant-form-field">
-                <label htmlFor="name" className="applicant-form-label">
-                  {t('fullName', 'Full Name')} <span className="required">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className={`applicant-form-input applicant-form-input-medium ${errors.name ? 'error' : ''}`}
-                  placeholder={t('autoFilledAfterAuth', 'Auto-filled after authentication')}
-                />
-                {errors.name && <span className="applicant-form-error">{errors.name}</span>}
-                <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
-                  {t('nameAutoFilledInfo', 'This field is automatically filled after authenticating with Visa Appointment System')}
-                </small>
+                  <div className="applicant-form-field">
+                    <label htmlFor="name" className="applicant-form-label">
+                      {t('fullName', 'Full Name')} <span className="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className={`applicant-form-input applicant-form-input-medium ${errors.name ? 'error' : ''}`}
+                      placeholder={t('autoFilledAfterAuth', 'Auto-filled after authentication')}
+                    />
+                    {errors.name && <span className="applicant-form-error">{errors.name}</span>}
+                    <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}>
+                      {t('nameAutoFilledInfo', 'This field is automatically filled after authenticating with Visa Appointment System')}
+                    </small>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Target Dates Section */}
           <div className="applicant-form-section" style={cities.length === 0 ? { borderBottom: 'none', marginBottom: '36px', paddingBottom: 0 } : {}}>
-            <h2 className="applicant-form-section-title">
-              <i className="fas fa-calendar-alt"></i>
-              {t('targetDates', 'Target Dates')}
-            </h2>
+            <div className="target-dates-header-container">
+              <h2 className="applicant-form-section-title">
+                <i className="fas fa-calendar-alt"></i>
+                {t('targetDates', 'Target Dates')}
+              </h2>
+              {showTargetDatesTooltip && (
+                <div className="target-dates-floating-tip" role="tooltip" aria-hidden="false">
+                  <strong>{t('targetDatesTooltip', 'Aquí puedes configurar la fecha de inicio de búsqueda')}</strong>
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowTargetDatesTooltip(false);
+                      localStorage.setItem('target_dates_tooltip_shown', 'true');
+                    }} 
+                    className="tooltip-close-btn"
+                    style={{ 
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      background: 'none', 
+                      border: 'none', 
+                      color: '#1f2937', 
+                      cursor: 'pointer', 
+                      fontSize: '1rem', 
+                      padding: '0', 
+                      lineHeight: 1,
+                      pointerEvents: 'auto'
+                    }}
+                    title={t('close', 'Close')}
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                </div>
+              )}
+            </div>
 
             {!permissions.canSearchUnlimited() && formData.targetStartMode === 'days' && formData.targetStartDays === '120' && (
               <div style={{
