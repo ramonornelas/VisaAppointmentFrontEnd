@@ -169,7 +169,7 @@
   ,"limitReached": "Limit Reached"
   ,"concurrentLimitMessage": "You have reached your concurrent applicants limit ({limit}).\nTo start a new applicant, please end one of your currently running applicants first."
   ,"success": "Success"
-  ,"searchStartedSuccess": "Search started successfully."
+  ,"searchStartedSuccess": "Search started!\nOur system will monitor 24/7 and send you reports via email. You can log out safely."
   ,"searchStoppedSuccess": "Search stopped successfully."
   ,"errorPerformingAction": "Error performing action."
   ,"copied": "Copied"

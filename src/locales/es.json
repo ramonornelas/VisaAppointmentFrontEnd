@@ -169,7 +169,7 @@
   ,"limitReached": "Límite Alcanzado"
   ,"concurrentLimitMessage": "Has alcanzado tu límite de solicitantes concurrentes ({limit}).\nPara iniciar un nuevo solicitante, por favor detén uno de los solicitantes que están actualmente en ejecución."
   ,"success": "Éxito"
-  ,"searchStartedSuccess": "Búsqueda iniciada exitosamente."
+  ,"searchStartedSuccess": "¡Búsqueda iniciada!\nNuestro sistema monitoreará 24/7 y te enviará informes por correo. Puedes cerrar sesión tranquilamente."
   ,"searchStoppedSuccess": "Búsqueda detenida exitosamente."
   ,"errorPerformingAction": "Error al realizar la acción."
   ,"copied": "Copiado"
