@@ -771,7 +771,7 @@ const ApplicantForm = () => {
                 {t('targetDates', 'Target Dates')}
               </h2>
               {showTargetDatesTooltip && (
-                <div className="target-dates-floating-tip" role="tooltip" aria-hidden="false">
+                <div className="target-dates-floating-tip" role="tooltip" aria-hidden="false" style={{ minWidth: '320px' }}>
                   <strong>{t('targetDatesTooltip', 'Aquí puedes configurar la fecha de inicio de búsqueda')}</strong>
                   <button 
                     onClick={(e) => {
