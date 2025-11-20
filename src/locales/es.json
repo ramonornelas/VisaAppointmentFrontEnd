@@ -365,4 +365,5 @@
   ,"passwordChangedSuccess": "Contraseña cambiada exitosamente"
   ,"failedToChangePassword": "Error al cambiar la contraseña"
   ,"errorChangingPassword": "Ocurrió un error al cambiar la contraseña"
+  ,"configured": "Configurado"
 }

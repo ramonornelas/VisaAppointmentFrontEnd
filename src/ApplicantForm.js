@@ -52,7 +52,7 @@ const ApplicantForm = () => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [aisAuthSuccess, setAisAuthSuccess] = useState(false);
   const [showTargetDatesTooltip, setShowTargetDatesTooltip] = useState(false);
-  const [credentialsExpanded, setCredentialsExpanded] = useState(false);
+  const [credentialsExpanded, setCredentialsExpanded] = useState(true);
 
   // Track page view when component mounts
   useEffect(() => {
@@ -143,6 +143,11 @@ const ApplicantForm = () => {
               targetEndDate: data.target_end_date || '',
               selectedCities: data.target_city_codes ? data.target_city_codes.split(',') : [],
             });
+
+            // Collapse credentials section if applicant already has email data
+            if (data.ais_username) {
+              setCredentialsExpanded(false);
+            }
           }
         })
         .catch(error => {
@@ -609,10 +614,18 @@ const ApplicantForm = () => {
               onClick={() => setCredentialsExpanded(!credentialsExpanded)}
               aria-expanded={credentialsExpanded}
             >
-              <h2 className="applicant-form-section-title">
-                <i className="fas fa-key"></i>
-                {t('aisCredentials', 'Visa Appointment System Credentials')}
-              </h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                <h2 className="applicant-form-section-title">
+                  <i className="fas fa-key"></i>
+                  {t('aisCredentials', 'Visa Appointment System Credentials')}
+                </h2>
+                {!credentialsExpanded && formData.aisEmail && (
+                  <span className="credentials-status-badge">
+                    <i className="fas fa-check-circle"></i>
+                    {t('configured', 'Configured')}
+                  </span>
+                )}
+              </div>
               <i className={`fas fa-chevron-${credentialsExpanded ? 'up' : 'down'} section-toggle-icon`}></i>
             </button>
             
