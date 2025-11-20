@@ -501,10 +501,15 @@ const ApplicantForm = () => {
         <div className="applicant-form-header">
           <div>
             <h1 className="applicant-form-title">
-              {isEditMode ? (
+              {!permissions.canManageApplicants() ? (
                 <>
-                  <i className={permissions.canManageApplicants() ? "fas fa-edit" : "fas fa-calendar-check"}></i>
-                  {permissions.canManageApplicants() ? t('editApplicant', 'Edit Applicant') : t('myAppointment', 'My Appointment')}
+                  <i className="fas fa-calendar-check"></i>
+                  {t('myAppointment', 'My Appointment')}
+                </>
+              ) : isEditMode ? (
+                <>
+                  <i className="fas fa-edit"></i>
+                  {t('editApplicant', 'Edit Applicant')}
                 </>
               ) : (
                 <>
