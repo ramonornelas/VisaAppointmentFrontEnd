@@ -44,6 +44,7 @@ const UserRegistrationForm = () => {
   });
   const [rolesLoaded, setRolesLoaded] = useState(false);
   const [roleError, setRoleError] = useState("");
+  const [detectingLocation, setDetectingLocation] = useState(false);
   
   // Track page view when component mounts
   useEffect(() => {
@@ -54,6 +55,111 @@ const UserRegistrationForm = () => {
       page: 'register',
       timestamp: new Date().toISOString()
     });
+  }, []);
+
+  // Try to detect the user's country to pre-select a likely country value
+  useEffect(() => {
+    let isMounted = true;
+    const detectCountry = async () => {
+      if (typeof window === 'undefined' || !navigator) return;
+      setDetectingLocation(true);
+
+      // Helper: set the country code (uppercase) if available in countries
+      const setDetected = (countryCode, method = 'geolocation') => {
+        if (!isMounted || !countryCode) return;
+        // store only for debugging - not shown to user
+        const codeLower = countryCode.toLowerCase();
+        // 1) Direct match by full value
+        let found = countries.find(c => c.value && c.value.toLowerCase() === codeLower);
+        // 2) Fallback: match by suffix (e.g., "es-mx" -> "mx")
+        if (!found) {
+          found = countries.find(c => c.value && c.value.split('-').pop().toLowerCase() === codeLower);
+        }
+        if (found) {
+          setFormData(prev => ({ ...prev, country_code: found.value }));
+          try {
+            const uid = sessionStorage.getItem('fastVisa_userid');
+            if (uid) metrics.setUserId(uid);
+            metrics.trackCustomEvent('location_detected', {
+              method,
+              detected_code: countryCode,
+              matched_value: found.value,
+              timestamp: new Date().toISOString()
+            });
+          } catch (err) {
+            console.warn('[RegisterUser] Metrics error tracking location_detected:', err);
+          }
+        } else {
+          // Don't show user any message when country is not supported; keep silent
+          console.warn('[RegisterUser] Detected country not supported by list:', countryCode);
+          try {
+            const uid = sessionStorage.getItem('fastVisa_userid');
+            if (uid) metrics.setUserId(uid);
+            metrics.trackCustomEvent('location_detected', {
+              method,
+              detected_code: countryCode,
+              matched_value: null,
+              timestamp: new Date().toISOString()
+            });
+          } catch (err) {
+            console.warn('[RegisterUser] Metrics error tracking location_detected (no match):', err);
+          }
+        }
+      };
+
+      // 1) Try browser geolocation (more accurate) and reverse geocode using BigDataCloud
+      try {
+        if (navigator.geolocation) {
+          const pos = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 8000 });
+          });
+
+          const { latitude, longitude } = pos.coords;
+
+          try {
+            const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`;
+            const resp = await fetch(url);
+            if (resp.ok) {
+              const data = await resp.json();
+              const countryCode = data && (data.countryCode || data.country_code);
+              if (countryCode) {
+                setDetected(countryCode, 'geolocation');
+                setDetectingLocation(false);
+                return;
+              }
+            }
+          } catch (err) {
+            // Ignore and fallback
+            console.warn('[RegisterUser] Reverse geocode failed, falling back to IP geo', err);
+          }
+        }
+      } catch (geoErr) {
+        console.warn('[RegisterUser] Geolocation error or denied', geoErr);
+      }
+
+      // 2) Fallback to IP-based lookup (less accurate but widely supported)
+      try {
+        const resp = await fetch('https://ipapi.co/json/');
+        if (resp.ok) {
+          const data = await resp.json();
+          const countryCode = data && (data.country || data.country_code);
+          if (countryCode) {
+            setDetected(countryCode, 'ip');
+            setDetectingLocation(false);
+            return;
+          }
+        }
+      } catch (ipErr) {
+        console.warn('[RegisterUser] IP geolocation failed', ipErr);
+      }
+
+      // fallback: no visible error — user picks manually
+      setDetectingLocation(false);
+    };
+
+    // Run detection only once on mount
+    detectCountry();
+    return () => { isMounted = false; };
   }, []);
   // Fetch roles and set role_id to the id of 'basic_user'
   useEffect(() => {
@@ -362,6 +468,12 @@ const UserRegistrationForm = () => {
                 />
                 {errors.country_code && (
                   <div className="form-error">{errors.country_code}</div>
+                )}
+                {detectingLocation && (
+                  <p style={{ color: '#6b7280', marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                    <i className="fas fa-spinner fa-spin" style={{ marginRight: '8px' }}></i>
+                    {t('detectingLocation', 'Detecting your location...')}
+                  </p>
                 )}
               </div>
               <div className="form-field">
