@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import Banner from "./Banner";
 import HamburgerMenu from "./HamburgerMenu";
 import Modal from "./Modal";
 import {
@@ -10,8 +9,7 @@ import {
   StopApplicantContainer,
   ApplicantUpdate,
   ApplicantDetails,
-  UserDetails,
-  getRoles,
+  // UserDetails, getRoles - not used in this component
   ApplicantDelete,
 } from "./APIFunctions";
 import { useNavigate } from "react-router-dom";
@@ -42,7 +40,7 @@ const Applicants = () => {
   });
 
   // Initialize metrics tracker
-  const metrics = new FastVisaMetrics();
+  const metrics = useMemo(() => new FastVisaMetrics(), []);
 
   // Define the included fields
   const includeFields = [
@@ -163,6 +161,7 @@ const Applicants = () => {
     canViewAllApplicants,
     navigate,
     refreshFlag,
+    metrics,
   ]);
 
   const handleRegisterApplicant = () => {
@@ -677,65 +676,7 @@ const Applicants = () => {
     );
   };
 
-  const renderActionButton = (id, isActive) => (
-    <td key={`toggle-${id}`} style={{ textAlign: "center" }}>
-      <button
-        className="applicants-action-btn"
-        data-title={isActive === "Stopped" ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
-        onClick={() => handleAction(id, isActive)}
-      >
-        <i className={isActive === "Stopped" ? "fas fa-play-circle" : "fas fa-stop-circle"}></i>
-      </button>
-    </td>
-  );
-
-  const renderViewButton = (id) => (
-    <td key={`edit-${id}`} style={{ textAlign: "center" }}>
-      <button
-        className="applicants-action-btn"
-        data-title={t('viewDetails', 'View Details')}
-        onClick={() => handleView(id)}
-      >
-        <i className="fas fa-eye"></i>
-      </button>
-    </td>
-  );
-
-  const renderPasswordButton = (id) => (
-    <td key={`password-${id}`} style={{ textAlign: "center" }}>
-      <button
-        className="applicants-action-btn"
-        data-title={t('copyPassword', 'Copy Password')}
-        onClick={() => handleCopyPassword(id)}
-      >
-        <i className="fas fa-key"></i>
-      </button>
-    </td>
-  );
-
-  const renderEmailButton = (id) => (
-    <td key={`email-${id}`} style={{ textAlign: "center" }}>
-      <button
-        className="applicants-action-btn"
-        data-title={t('copyEmail', 'Copy Email')}
-        onClick={() => handleCopyEmail(id)}
-      >
-        <i className="fas fa-envelope"></i>
-      </button>
-    </td>
-  );
-
-  const renderResetStatusButton = (id) => (
-    <td key={`reset-${id}`} style={{ textAlign: "center" }}>
-      <button
-        className="applicants-action-btn"
-        data-title={t('clearStatus', 'Clear Status')}
-        onClick={() => handleResetStatus(id)}
-      >
-        <i className="fas fa-eraser"></i>
-      </button>
-    </td>
-  );
+  // Inline button renderers were removed because they were not used
 
   return (
     <>
@@ -829,17 +770,16 @@ const Applicants = () => {
                         : field === "ais_schedule_id"
                         ? (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <a
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleView(item.id);
-                              }}
+                            <button
+                              type="button"
+                              onClick={() => handleView(item.id)}
                               className="applicants-id-link"
+                              aria-label={t('clickToViewDetails', 'Click to view details')}
                               data-title={t('clickToViewDetails', 'Click to view details')}
+                              title={t('clickToViewDetails', 'Click to view details')}
                             >
                               {item[field]}
-                            </a>
+                            </button>
                             <div style={{ display: 'flex', gap: '4px' }}>
                               <button
                                 className="applicants-action-btn"

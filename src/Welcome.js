@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+// Link import removed: not used
 import { useTranslation } from 'react-i18next';
 
 const Welcome = ({ name }) => {

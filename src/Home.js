@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
@@ -18,8 +18,8 @@ const Home = () => {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
 
-    // Initialize metrics tracker
-    const metrics = new FastVisaMetrics();
+    // Initialize metrics tracker (stable reference)
+    const metrics = useMemo(() => new FastVisaMetrics(), []);
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -56,7 +56,7 @@ const Home = () => {
         if (fastVisa_userid) {
             fetchUserData();
         }
-    }, [isAuthenticated, fastVisa_userid, navigate]);
+    }, [isAuthenticated, fastVisa_userid, navigate, metrics]);
 
     useEffect(() => {
         if (userData) {

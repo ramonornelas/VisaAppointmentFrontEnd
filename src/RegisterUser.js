@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import Welcome from "./Welcome";
@@ -14,11 +14,11 @@ import "./RegisterUser.css";
 const UserRegistrationForm = () => {
   const { t, i18n } = useTranslation();
   
-  // Initialize metrics tracker
-  const metrics = new FastVisaMetrics();
-  
-  // Get translated countries list
-  const countries = getTranslatedCountries(t);
+  // Initialize metrics tracker (stable)
+  const metrics = useMemo(() => new FastVisaMetrics(), []);
+
+  // Get translated countries list (stable)
+  const countries = useMemo(() => getTranslatedCountries(t), [t]);
   
   // Calculate expiration date (one month from now)
   const getExpirationDate = () => {
@@ -55,7 +55,7 @@ const UserRegistrationForm = () => {
       page: 'register',
       timestamp: new Date().toISOString()
     });
-  }, []);
+  }, [metrics]);
 
   // Try to detect the user's country to pre-select a likely country value
   useEffect(() => {
@@ -160,7 +160,7 @@ const UserRegistrationForm = () => {
     // Run detection only once on mount
     detectCountry();
     return () => { isMounted = false; };
-  }, []);
+  }, [countries, metrics]);
   // Fetch roles and set role_id to the id of 'basic_user'
   useEffect(() => {
     let isMounted = true;

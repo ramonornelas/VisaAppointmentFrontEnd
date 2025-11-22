@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Banner from './Banner';
 import Footer from './Footer';
@@ -24,7 +24,7 @@ const LogIn = () => {
   const permissionsErrorMsg = t('permissionsErrorMsg', 'Please contact the administrator to grant you access to the system.');
 
   // Initialize metrics tracker
-  const metrics = new FastVisaMetrics();
+  const metrics = useMemo(() => new FastVisaMetrics(), []);
 
   // Track page view when component mounts
   useEffect(() => {
@@ -35,7 +35,7 @@ const LogIn = () => {
       page: 'login',
       timestamp: new Date().toISOString()
     });
-  }, []);
+  }, [metrics]);
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);

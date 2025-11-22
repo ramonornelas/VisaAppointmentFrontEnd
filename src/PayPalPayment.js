@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useTranslation } from 'react-i18next';
 import { getPayPalConfig } from "./APIFunctions";
@@ -22,7 +22,7 @@ const PayPalPayment = ({
   const [currentAmount, setCurrentAmount] = useState(defaultCurrency === "USD" ? amount : amountMXN);
 
   // Initialize metrics tracker
-  const metrics = new FastVisaMetrics();
+  const metrics = useMemo(() => new FastVisaMetrics(), []);
 
   // Set user ID if available
   const fastVisa_userid = sessionStorage.getItem('fastVisa_userid');
@@ -30,7 +30,7 @@ const PayPalPayment = ({
     if (fastVisa_userid) {
       metrics.setUserId(fastVisa_userid);
     }
-  }, [fastVisa_userid]);
+  }, [fastVisa_userid, metrics]);
 
   // Load PayPal configuration on component mount
   useEffect(() => {

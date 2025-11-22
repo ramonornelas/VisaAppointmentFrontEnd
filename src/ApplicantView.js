@@ -324,14 +324,7 @@ const ApplicantView = () => {
     }
   };
 
-  const getCityNames = (cityCodes) => {
-    if (!cityCodes) return 'N/A';
-    const codes = cityCodes.split(',').filter(Boolean);
-    return codes.map(code => {
-      const city = cities.find(c => c.city_code === code);
-      return city ? city.city_name : code;
-    }).join(', ');
-  };
+  // Note: city name mapping is performed inline where needed; helper removed as it was unused.
 
   const renderStatusBadge = (status) => {
     const statusTranslations = {

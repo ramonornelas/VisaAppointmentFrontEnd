@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Banner from './Banner';
@@ -27,8 +27,8 @@ const QuickStartApplicant = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
-  // Get translated countries list
-  const countries = getTranslatedCountries(t);
+  // Get translated countries list (stable reference)
+  const countries = useMemo(() => getTranslatedCountries(t), [t]);
 
   // Calculate minimum end date (210 days from today) - Updated Nov 2025
   const getMinEndDate = () => {
@@ -99,7 +99,7 @@ const QuickStartApplicant = () => {
   const [detectingLocation, setDetectingLocation] = useState(false);
 
   // Initialize metrics tracker
-  const metrics = new FastVisaMetrics();
+  const metrics = useMemo(() => new FastVisaMetrics(), []);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -126,7 +126,7 @@ const QuickStartApplicant = () => {
     };
     fetchRoles();
     return () => { isMounted = false; };
-  }, []);
+  }, [countries, metrics]);
 
   // Load cities when country changes
   useEffect(() => {
@@ -250,7 +250,7 @@ const QuickStartApplicant = () => {
     // Run detection only once on mount
     detectCountry();
     return () => { isMounted = false; };
-  }, []);
+  }, [countries, metrics]);
 
   const handleChange = (e) => {
     // For react-select country dropdown

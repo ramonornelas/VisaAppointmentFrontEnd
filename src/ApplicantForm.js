@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './utils/AuthContext';
@@ -17,7 +17,7 @@ const ApplicantForm = () => {
   const { isAuthenticated } = useAuth();
   
   // Initialize metrics tracker
-  const metrics = new FastVisaMetrics();
+  const metrics = useMemo(() => new FastVisaMetrics(), []);
   
   const applicantId = searchParams.get('id');
   const isEditMode = !!applicantId;
@@ -70,7 +70,7 @@ const ApplicantForm = () => {
       applicantId: applicantId || null,
       timestamp: new Date().toISOString()
     });
-  }, []);
+  }, [applicantId, fastVisaUserId, isEditMode, metrics]);
 
   // Format date for display
   const formatDate = (date) => {
@@ -156,7 +156,7 @@ const ApplicantForm = () => {
         })
         .finally(() => setLoading(false));
     }
-  }, [isEditMode, applicantId]);
+  }, [isEditMode, applicantId, t]);
 
   // Check if tooltip should be shown for premium users
   useEffect(() => {

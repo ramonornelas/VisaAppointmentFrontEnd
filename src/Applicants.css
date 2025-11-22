@@ -138,10 +138,30 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+
+  /* Make button look like a plain text link
+     When the element is a <button> it inherits browser button styles, so
+     we explicitly reset visual button properties and preserve link look. */
+  background: none;
+  border: none;
+  padding: 0;
+  display: inline;
+  font: inherit;
+  line-height: inherit;
+  text-align: left; /* keep alignment inside tables */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .applicants-id-link:hover {
   color: #1a4d7a;
+}
+
+.applicants-id-link:focus {
+  outline: 3px solid rgba(44,107,160,0.18);
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 .applicants-id-link[data-title]:hover::after {

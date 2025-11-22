@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Banner from './Banner';
@@ -21,8 +21,8 @@ const ChangePassword = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Initialize metrics tracker
-  const metrics = new FastVisaMetrics();
+  // Initialize metrics tracker (stable across renders)
+  const metrics = useMemo(() => new FastVisaMetrics(), []);
 
   const fastVisa_userid = sessionStorage.getItem('fastVisa_userid');
   const fastVisa_username = sessionStorage.getItem('fastVisa_username');
@@ -41,7 +41,7 @@ const ChangePassword = () => {
       page: 'change_password',
       timestamp: new Date().toISOString()
     });
-  }, []);
+  }, [metrics, fastVisa_userid]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

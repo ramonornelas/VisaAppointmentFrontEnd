@@ -20,9 +20,7 @@ const HamburgerMenu = () => {
   const fastVisa_username = sessionStorage.getItem('fastVisa_username');
   const fastVisa_name = sessionStorage.getItem('fastVisa_name');
 
-  const toggleMenu = () => {
-    // Menu is now always open
-  };
+  // toggleMenu removed - menu remains always open in UI
 
   const toggleUserMenu = () => {
     setShowUserMenu((prev) => !prev);

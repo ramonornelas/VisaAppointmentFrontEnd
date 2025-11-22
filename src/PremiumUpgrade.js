@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import PayPalPayment from './PayPalPayment';
@@ -26,7 +26,7 @@ const PremiumUpgrade = () => {
   const navigate = useNavigate();
 
   // Initialize metrics tracker
-  const metrics = new FastVisaMetrics();
+  const metrics = useMemo(() => new FastVisaMetrics(), []);
 
   // Get current language from i18n
   const selectedLanguage = i18n.language;
@@ -92,7 +92,7 @@ const PremiumUpgrade = () => {
     };
 
     fetchUserData();
-  }, [fastVisa_userid, navigate]);
+  }, [fastVisa_userid, navigate, metrics]);
 
   useEffect(() => {
     const fetchExchangeRate = async () => {

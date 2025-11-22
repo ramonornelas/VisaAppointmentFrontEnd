@@ -48,7 +48,7 @@ const Users = () => {
     const [editIndex, setEditIndex] = useState(null);
     const [editData, setEditData] = useState({});
     const [refreshFlag, setRefreshFlag] = useState(false);
-    const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
+    // username stored in sessionStorage when needed; no local usage required here
 
     useEffect(() => {
         if (permissions.canManageUsers()) {
