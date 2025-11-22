@@ -53,13 +53,11 @@ const PremiumBanner = () => {
     <div className="premium-banner">
       <div className="premium-banner-content">
         <div className="premium-banner-text">
-          <span className="premium-icon">⭐</span>
+          <span className="premium-icon"></span>
           <span className="premium-message">
-            Upgrade to Premium: Start searching as early as tomorrow + custom notifications!
           </span>
         </div>
         <Link to="/premium-upgrade" className="premium-banner-button">
-          Upgrade Now - $10/month
         </Link>
       </div>
     </div>

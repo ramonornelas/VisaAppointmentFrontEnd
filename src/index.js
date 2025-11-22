@@ -5,7 +5,6 @@ import { AuthProvider } from './utils/AuthContext';
 import './index.css';
 import LogIn from './LogIn';
 import Home from './Home';
-import About from './About';
 import RegisterUser from './RegisterUser';
 import QuickStartApplicant from './QuickStartApplicant';
 import Applicants from './Applicants';
@@ -26,7 +25,6 @@ ReactDOM.render(
       <Routes>
         <Route path="/" element={<LogIn />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/about" element={<About />} />
         <Route path="/registeruser" element={<RegisterUser />} />
         <Route path="/quickstart" element={<QuickStartApplicant />} />
         <Route path="/applicants" element={<Applicants />} />
