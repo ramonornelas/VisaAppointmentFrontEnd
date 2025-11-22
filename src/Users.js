@@ -1,20 +1,54 @@
 
+
 import React, { useEffect, useState } from 'react';
-import Banner from './Banner';
+import { useTranslation } from 'react-i18next';
 import HamburgerMenu from './HamburgerMenu';
-import Footer from './Footer';
 import { permissions } from './utils/permissions';
 import { getUsers, updateUser, getRoles } from './APIFunctions';
+import { deleteUser } from './APIFunctions';
+import Modal from './Modal';
 import './index.css';
+import './Applicants.css';
 import { ALL_COUNTRIES } from './utils/countries';
 
 const Users = () => {
+    const { t } = useTranslation();
     const [users, setUsers] = useState([]);
+    // Modal state for delete confirmation
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [pendingDeleteUserId, setPendingDeleteUserId] = useState(null);
+
+    // Show modal when delete is requested
+    const requestDeleteUser = (userId) => {
+        setPendingDeleteUserId(userId);
+        setShowDeleteModal(true);
+    };
+
+    // Confirm delete action
+    const confirmDeleteUser = async () => {
+        if (pendingDeleteUserId) {
+            const result = await deleteUser(pendingDeleteUserId);
+            setShowDeleteModal(false);
+            setPendingDeleteUserId(null);
+            if (result && result.success) {
+                setRefreshFlag(flag => !flag);
+            } else {
+                // Show error modal (optional, for now use alert)
+                alert(t('failedToDeleteUser', 'Failed to delete user.'));
+            }
+        }
+    };
+
+    // Cancel delete action
+    const cancelDeleteUser = () => {
+        setShowDeleteModal(false);
+        setPendingDeleteUserId(null);
+    };
     const [roles, setRoles] = useState([]);
     const [editIndex, setEditIndex] = useState(null);
     const [editData, setEditData] = useState({});
     const [refreshFlag, setRefreshFlag] = useState(false);
-    const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
+    // username stored in sessionStorage when needed; no local usage required here
 
     useEffect(() => {
         if (permissions.canManageUsers()) {
@@ -45,96 +79,177 @@ const Users = () => {
     };
 
     if (!permissions.canManageUsers()) {
-        return <div>Access denied.</div>;
+        return <div>{t('accessDenied', 'Access denied.')}</div>;
     }
 
     return (
-        <div className="page-container">
-            <div className="content-wrap">
-                <HamburgerMenu />
-                <div style={{ marginBottom: '5px' }}></div>
-                <Banner />
-                <div style={{ marginBottom: '5px' }}></div>
-                <p className="username-right">{fastVisaUsername}</p>
-                <h2>Users</h2>
-                <div style={{ marginBottom: '5px' }}></div>
-                <table className="table-content" style={{ textAlign: 'left' }}>
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Active</th>
-                            <th>Country</th>
-                            <th>Expiration Date</th>
-                            <th>Concurrent Applicants</th>
-                            <th>Phone Number</th>
-                            <th>Role</th>
-                            <th>Edit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map((user, idx) => (
-                            <tr key={user.username}>
-                                <td>{user.username}</td>
-                                <td>{editIndex === idx ? (
-                                    <input type="checkbox" name="active" checked={editData.active} onChange={handleChange} />
-                                ) : (user.active ? 'Yes' : 'No')}</td>
-                                <td>
-                                    {editIndex === idx ? (
-                                        <select
-                                            name="country_code"
-                                            value={editData.country_code || ""}
-                                            onChange={handleChange}
-                                        >
-                                            <option value="" disabled>Select country</option>
-                                            {ALL_COUNTRIES.map(opt => (
-                                                <option key={opt.value} value={opt.value}>
-                                                    {opt.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    ) : (
-                                        ALL_COUNTRIES.find(opt => opt.value === user.country_code)?.label || user.country_code
-                                    )}
-                                </td>
-                                <td>{editIndex === idx ? (
-                                    <input name="expiration_date" value={editData.expiration_date || ''} onChange={handleChange} type="date" />
-                                ) : user.expiration_date}</td>
-                                <td>{editIndex === idx ? (
-                                    <input name="concurrent_applicants" value={editData.concurrent_applicants || ''} onChange={handleChange} type="number" />
-                                ) : user.concurrent_applicants}</td>
-                                <td>{editIndex === idx ? (
-                                    <input name="phone_number" value={editData.phone_number || ''} onChange={handleChange} />
-                                ) : user.phone_number}</td>
-                                <td>{editIndex === idx ? (
-                                    <select name="role_id" value={editData.role_id || ''} onChange={handleChange}>
-                                        <option value="" disabled>Select role</option>
-                                        {roles.map((role) => (
-                                            <option key={role.id} value={role.id}>{role.name}</option>
-                                        ))}
-                                    </select>
-                                ) : (
-                                    roles.length > 0
-                                        ? (roles.find(r => r.id === user.role_id)?.name || user.role_id)
-                                        : user.role_id
-                                )}
-                                </td>
-                                <td>
-                                    {editIndex === idx ? (
-                                        <>
-                                            <button onClick={handleSave}>Save</button>
-                                            <button onClick={() => setEditIndex(null)} style={{ marginLeft: '5px' }}>Cancel</button>
-                                        </>
-                                    ) : (
-                                        <button onClick={() => handleEdit(idx)}>Edit</button>
-                                    )}
-                                </td>
+        <>
+            <HamburgerMenu />
+            <div className="applicants-main-container">
+                <h2 className="applicants-title">{t('users', 'Users')}</h2>
+                <div className="applicants-table-container">
+                    <table className="applicants-table">
+                        <thead>
+                            <tr>
+                                <th>{t('username', 'Username')}</th>
+                                <th>{t('active', 'Active')}</th>
+                                <th>{t('country', 'Country')}</th>
+                                <th>{t('expirationDate', 'Expiration Date')}</th>
+                                <th>{t('concurrentApplicants', 'Concurrent Applicants')}</th>
+                                <th>{t('phoneNumber', 'Phone Number')}</th>
+                                <th>{t('role', 'Role')}</th>
+                                <th>{t('actions', 'Actions')}</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {users && users.length > 0 ? (
+                                users.map((user, idx) => (
+                                    <tr key={user.username}>
+                                        <td>
+                                            <span>{user.username}</span>
+                                        </td>
+                                        <td>
+                                            {editIndex === idx ? (
+                                                <input type="checkbox" name="active" checked={editData.active} onChange={handleChange} />
+                                            ) : (
+                                                <span style={{
+                                                    display: 'inline-block',
+                                                    padding: '2px 10px',
+                                                    borderRadius: '12px',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.95em',
+                                                    color: user.active ? '#fff' : '#888',
+                                                    background: user.active ? '#4caf50' : '#e0e0e0',
+                                                    letterSpacing: '0.5px',
+                                                    minWidth: 60,
+                                                    textAlign: 'center',
+                                                }}>{user.active ? t('active', 'Active') : t('inactive', 'Inactive')}</span>
+                                            )}
+                                        </td>
+                                        <td>
+                                            {editIndex === idx ? (
+                                                <select
+                                                    name="country_code"
+                                                    value={editData.country_code || ""}
+                                                    onChange={handleChange}
+                                                >
+                                                    <option value="" disabled>{t('selectCountry', 'Select country')}</option>
+                                                    {ALL_COUNTRIES.map(opt => (
+                                                        <option key={opt.value} value={opt.value}>
+                                                            {opt.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            ) : (
+                                                ALL_COUNTRIES.find(opt => opt.value === user.country_code)?.label || user.country_code
+                                            )}
+                                        </td>
+                                        <td>{editIndex === idx ? (
+                                            <input name="expiration_date" value={editData.expiration_date || ''} onChange={handleChange} type="date" />
+                                        ) : user.expiration_date}</td>
+                                        <td>{editIndex === idx ? (
+                                            <input name="concurrent_applicants" value={editData.concurrent_applicants || ''} onChange={handleChange} type="number" />
+                                        ) : user.concurrent_applicants}</td>
+                                        <td>{editIndex === idx ? (
+                                            <input name="phone_number" value={editData.phone_number || ''} onChange={handleChange} />
+                                        ) : user.phone_number}</td>
+                                        <td>{editIndex === idx ? (
+                                            <select name="role_id" value={editData.role_id || ''} onChange={handleChange}>
+                                                <option value="" disabled>{t('selectRole', 'Select role')}</option>
+                                                {roles.map((role) => (
+                                                    <option key={role.id} value={role.id}>{role.name}</option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            roles.length > 0
+                                                ? (roles.find(r => r.id === user.role_id)?.name || user.role_id)
+                                                : user.role_id
+                                        )}
+                                        </td>
+                                        <td>
+                                            <div style={{ display: 'flex', gap: '4px' }}>
+                                                {editIndex === idx ? (
+                                                    <>
+                                                        <button 
+                                                            className="applicants-action-btn" 
+                                                            onClick={handleSave}
+                                                            data-title={t('save', 'Save')}
+                                                            style={{ padding: '4px 8px', fontSize: '12px' }}
+                                                        >
+                                                            <i className="fas fa-check"></i>
+                                                        </button>
+                                                        <button 
+                                                            className="applicants-action-btn" 
+                                                            onClick={() => setEditIndex(null)}
+                                                            data-title={t('cancel', 'Cancel')}
+                                                            style={{ padding: '4px 8px', fontSize: '12px' }}
+                                                        >
+                                                            <i className="fas fa-times"></i>
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button 
+                                                            className="applicants-action-btn" 
+                                                            onClick={() => handleEdit(idx)}
+                                                            data-title={t('edit', 'Edit')}
+                                                            style={{ padding: '6px 10px', fontSize: '14px' }}
+                                                        >
+                                                            <i className="fas fa-edit"></i>
+                                                        </button>
+                                                        <button 
+                                                            className="applicants-action-btn" 
+                                                            onClick={() => requestDeleteUser(user.id)}
+                                                            data-title={t('delete', 'Delete')}
+                                                            style={{ padding: '6px 10px', fontSize: '14px', color: '#f44336' }}
+                                                        >
+                                                            <i className="fas fa-trash"></i>
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={8} style={{ textAlign: "center", padding: "40px 20px" }}>
+                                        <div style={{ 
+                                            display: "flex", 
+                                            flexDirection: "column", 
+                                            alignItems: "center", 
+                                            justifyContent: "center",
+                                            color: "#888",
+                                            gap: "15px"
+                                        }}>
+                                            <i className="fas fa-user-cog" style={{ fontSize: "48px", color: "#ddd" }}></i>
+                                            <div style={{ fontSize: "18px", fontWeight: "500", color: "#666" }}>
+                                                {t('noUsersFound', 'No users found')}
+                                            </div>
+                                            <div style={{ fontSize: "14px", color: "#999" }}>
+                                                {t('noUsersAvailable', 'No users available in the system.')}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <Footer />
-        </div>
+        {/* Delete confirmation modal */}
+        <Modal
+            isOpen={showDeleteModal}
+            title={t('deleteUser', 'Delete User')}
+            message={t('deleteUserConfirm', 'Are you sure you want to delete this user? This action cannot be undone.')}
+            type="confirm"
+            onClose={cancelDeleteUser}
+            onConfirm={confirmDeleteUser}
+            confirmText={t('delete', 'Delete')}
+            cancelText={t('cancel', 'Cancel')}
+            showCancel={true}
+        />
+        </>
     );
 };
 

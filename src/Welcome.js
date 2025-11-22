@@ -1,14 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+// Link import removed: not used
+import { useTranslation } from 'react-i18next';
 
-const Welcome = ({ username }) => {
+const Welcome = ({ name }) => {
+  const { t } = useTranslation();
+
   return (
     <div>
       <div style={{ marginBottom: '5px' }}></div>
-      <h2>Welcome, {username}!</h2>
-      <p>You have been registered successfully</p>
-      <p>Click below to go to log in page</p>
-      <Link to="/">Log in</Link>
+      <h2>{t('welcomeUser', { name })}</h2>
+      <p>{t('registeredSuccessfully')}</p>
+      <p>{t('loginToGetAppointment')}</p>
     </div>
   );
 };

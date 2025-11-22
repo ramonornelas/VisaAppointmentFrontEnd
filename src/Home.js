@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Banner from './Banner';
 import HamburgerMenu from './HamburgerMenu';
 import Footer from './Footer';
+import PremiumBanner from './PremiumBanner';
 import { UserDetails } from './APIFunctions';
 import { useNavigate } from 'react-router-dom';   
 import { useAuth } from './utils/AuthContext';
 import { APP_TITLE } from './constants';
+import FastVisaMetrics from './utils/FastVisaMetrics';
+
+import LanguageSelector from './LanguageSelector';
 
 const Home = () => {
     const [userData, setUserData] = useState(null);
@@ -14,11 +18,22 @@ const Home = () => {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
 
+    // Initialize metrics tracker (stable reference)
+    const metrics = useMemo(() => new FastVisaMetrics(), []);
+
     useEffect(() => {
         if (!isAuthenticated) {
             document.body.classList.remove('menu-open');
             navigate('/');
             return;
+        }
+        
+        // Track page view
+        metrics.trackPageView();
+        
+        // Set user ID if available
+        if (fastVisa_userid) {
+            metrics.setUserId(fastVisa_userid);
         }
         
         const fetchUserData = async () => {
@@ -27,13 +42,21 @@ const Home = () => {
                 setUserData(data);
             } catch (error) {
                 console.error('Error fetching user data:', error);
+                
+                // Track error
+                await metrics.trackCustomEvent('error_encountered', {
+                    page: 'home',
+                    error: 'fetch_user_data_failed',
+                    errorMessage: error.message,
+                    timestamp: new Date().toISOString()
+                });
             }
         };
 
         if (fastVisa_userid) {
             fetchUserData();
         }
-    }, [isAuthenticated, fastVisa_userid, navigate]);
+    }, [isAuthenticated, fastVisa_userid, navigate, metrics]);
 
     useEffect(() => {
         if (userData) {
@@ -50,8 +73,10 @@ const Home = () => {
             <div className="content-wrap">
             <HamburgerMenu />
             <div style={{ marginBottom: '5px' }}></div>
+            <LanguageSelector />
             <Banner />
             <div style={{ marginBottom: '5px' }}></div>
+            <PremiumBanner />
             <p className="username-right">{username}</p>
             <h2>{APP_TITLE}</h2>
             {filteredUserData && (

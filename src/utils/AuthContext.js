@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     // Clear session storage to log out the user
     sessionStorage.removeItem('fastVisa_userid');
     sessionStorage.removeItem('fastVisa_username');
+    sessionStorage.removeItem('fastVisa_name');
     setIsAuthenticated(false);
   };
 

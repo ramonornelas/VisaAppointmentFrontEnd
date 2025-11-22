@@ -23,7 +23,7 @@ export function NameField({ value, onChange, error }) {
 export function EmailField({ value, onChange, error }) {
   return (
     <div className="form-field">
-      <label htmlFor="email">AIS Email: <span style={{ color: 'red' }}>*</span></label>
+      <label htmlFor="email">Visa Appointment System Email: <span style={{ color: 'red' }}>*</span></label>
       <input
         type="email"
         id="email"
@@ -41,7 +41,7 @@ export function EmailField({ value, onChange, error }) {
 export function PasswordField({ value, onChange, error }) {
   return (
     <div className="form-field">
-      <label htmlFor="password">AIS Password: <span style={{ color: 'red' }}>*</span></label>
+      <label htmlFor="password">Visa Appointment System Password: <span style={{ color: 'red' }}>*</span></label>
       <input
         type="password"
         id="password"
@@ -56,25 +56,32 @@ export function PasswordField({ value, onChange, error }) {
   );
 }
 
-export function ScheduleIdField({ value, onChange, error }) {
+export function ScheduleIdField({ value, onChange, error, disabled, style }) {
   return (
     <div className="form-field">
-      <label htmlFor="scheduleId">AIS Schedule ID: <span style={{ color: 'red' }}>*</span></label>
+      <label htmlFor="scheduleId">Schedule ID: <span style={{ color: 'red' }}>*</span></label>
       <input
-        type="number"
+        type="text"
         id="scheduleId"
         name="scheduleId"
         value={value}
         onChange={onChange}
-        style={{ borderColor: error ? 'red' : '', width: '80px' }}
+        disabled={disabled}
+        style={{ borderColor: error ? 'red' : '', width: '150px', ...style }}
         required
+        placeholder={disabled ? "Auto-filled after authentication" : ""}
       />
       {error && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{error}</div>}
+      {disabled && (
+        <small style={{ color: '#666', fontSize: '12px', marginTop: '2px', display: 'block' }}>
+          This field is automatically filled after authenticating with Visa Appointment System
+        </small>
+      )}
     </div>
   );
 }
 
-export function NumberOfApplicantsField({ value, onChange, error }) {
+export function NumberOfApplicantsField({ value, onChange, error, disabled, style }) {
   return (
     <div className="form-field">
       <label htmlFor="numberofapplicants">Number of Applicants: <span style={{ color: 'red' }}>*</span></label>
@@ -84,10 +91,16 @@ export function NumberOfApplicantsField({ value, onChange, error }) {
         name="numberofapplicants"
         value={value}
         onChange={onChange}
-        style={{ borderColor: error ? 'red' : '', width: '80px' }}
+        disabled={disabled}
+        style={{ borderColor: error ? 'red' : '', width: '80px', ...style }}
         required
       />
       {error && <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>{error}</div>}
+      {disabled && (
+        <small style={{ color: '#666', fontSize: '12px', marginTop: '2px', display: 'block' }}>
+          This field is automatically filled after authenticating with AIS
+        </small>
+      )}
     </div>
   );
 }

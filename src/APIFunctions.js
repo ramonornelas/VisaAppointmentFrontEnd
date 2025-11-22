@@ -1,5 +1,29 @@
 import { BASE_URL } from "./config.js";
 
+// Delete user by ID
+const deleteUser = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/${userId}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status === 204) {
+      // 204 No Content: deletion successful, no body
+      return { success: true };
+    } else if (response.status === 200) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to delete user");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, error };
+  }
+};
+
 // Get all users
 const getUsers = async () => {
   try {
@@ -239,6 +263,269 @@ const GetApplicantPassword = async (applicant_userid) => {
   }
 };
 
+
+// Get PayPal config from API Gateway endpoint
+const getPayPalConfig = async () => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/paypal-config`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to fetch PayPal config");
+    }
+  } catch (error) {
+    console.error("Error fetching PayPal config:", error);
+    return null;
+  }
+};
+
+// Get current USD to MXN exchange rate from open.er-api.com (no access key required)
+const getUSDMXNExchangeRate = async () => {
+  try {
+    const response = await fetch(
+      "https://open.er-api.com/v6/latest/USD",
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+    if (response.status === 200) {
+      const data = await response.json();
+      // data.rates.MXN contains the exchange rate
+      return data.rates.MXN;
+    } else {
+      throw new Error("Failed to fetch exchange rate");
+    }
+  } catch (error) {
+    console.error("Error fetching exchange rate:", error);
+    return null;
+  }
+};
+// Authenticate AIS credentials and get user info
+const authenticateAIS = async ({ username, password, country_code }) => {
+  try {
+    const response = await fetch(`${BASE_URL}/ais/auth`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password, country_code }),
+    });
+    if (response.status === 200) {
+      // Expected output: { schedule_id, username, country_code }
+      return await response.json();
+    } else {
+      throw new Error("Failed to authenticate AIS credentials");
+    }
+  } catch (error) {
+    console.error("AIS Auth Error:", error);
+    return null;
+  }
+};
+
+// Notify admin about AIS authentication failure
+const notifyAdminAISFailure = async ({ username, ais_username, country_code }) => {
+  try {
+    const response = await fetch(`${BASE_URL}/admin/notify-ais-failure`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, ais_username, country_code }),
+    });
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      console.error("Failed to notify admin about AIS failure");
+    }
+  } catch (error) {
+    console.error("Error notifying admin:", error);
+  }
+};
+
+// Change user password
+const changePassword = async ({ userId, username, currentPassword, newPassword }) => {
+  try {
+    const response = await fetch(`${BASE_URL}/auth/change-password`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        username,
+        currentPassword,
+        newPassword,
+      }),
+    });
+
+    if (response.status === 200) {
+      const data = await response.json();
+      return { success: true, message: data.message };
+    } else if (response.status === 401) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.message || "Current password is incorrect" };
+    } else {
+      const errorData = await response.json();
+      return { success: false, message: errorData.message || "Failed to change password" };
+    }
+  } catch (error) {
+    console.error("Error changing password:", error);
+    return { success: false, message: "An error occurred while changing password" };
+  }
+};
+
+// Create a new user
+const createUser = async (userData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+    
+    if (response.status === 201) {
+      return { success: true, status: 201 };
+    } else {
+      let errorMessage = 'Registration failed';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorData.error || 'Registration failed';
+      } catch {
+        errorMessage = response.statusText || 'Registration failed';
+      }
+      return { success: false, error: errorMessage };
+    }
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return { success: false, error: error.message || 'An unexpected error occurred' };
+  }
+};
+
+// Search for user by username
+const searchUserByUsername = async (username) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/search`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username }),
+    });
+    
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to search for user");
+    }
+  } catch (error) {
+    console.error("Error searching user:", error);
+    return null;
+  }
+};
+
+// Create a new applicant
+const createApplicant = async (applicantData) => {
+  try {
+    console.log('[APIFunctions] createApplicant - Sending request to:', `${BASE_URL}/applicants`);
+    console.log('[APIFunctions] createApplicant - Payload:', applicantData);
+    
+    const response = await fetch(`${BASE_URL}/applicants`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(applicantData),
+    });
+    
+    console.log('[APIFunctions] createApplicant - Response status:', response.status);
+    
+    // Accept both 200 and 201 as success
+    if (response.status === 200 || response.status === 201) {
+      const data = await response.json();
+      console.log('[APIFunctions] createApplicant - Success, data:', data);
+      return data;
+    } else {
+      // Try to get error details from response
+      let errorMessage = "Failed to create applicant";
+      try {
+        const errorData = await response.json();
+        console.error('[APIFunctions] createApplicant - Error response:', errorData);
+        errorMessage = errorData.message || errorData.error || errorMessage;
+      } catch {
+        console.error('[APIFunctions] createApplicant - Could not parse error response');
+      }
+      throw new Error(errorMessage);
+    }
+  } catch (error) {
+    console.error('[APIFunctions] createApplicant - Exception:', error);
+    return null;
+  }
+};
+
+// Login user
+const loginUser = async (username, password) => {
+  try {
+    const response = await fetch(`${BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
+    
+    if (response.status === 200) {
+      return { success: true };
+    } else {
+      throw new Error("Failed to log in");
+    }
+  } catch (error) {
+    console.error("Error logging in:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Get user permissions
+const getUserPermissions = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/permissions/${userId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to fetch user permissions");
+    }
+  } catch (error) {
+    console.error("Error fetching permissions:", error);
+    return null;
+  }
+};
+
 export {
   UserDetails,
   ApplicantSearch,
@@ -251,4 +538,15 @@ export {
   getUsers,
   updateUser,
   getRoles,
+  getPayPalConfig,
+  deleteUser,
+  getUSDMXNExchangeRate,
+  authenticateAIS,
+  notifyAdminAISFailure,
+  changePassword,
+  createUser,
+  searchUserByUsername,
+  createApplicant,
+  loginUser,
+  getUserPermissions,
 };

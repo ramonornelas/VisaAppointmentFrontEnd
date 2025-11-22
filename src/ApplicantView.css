@@ -1,0 +1,505 @@
+/* ==========================================
+   APPLICANT VIEW - MODERN DESIGN
+   ========================================== */
+
+.applicant-view-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  padding-top: 100px;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.applicant-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e3eaf3;
+  gap: 1rem;
+}
+
+.applicant-view-header {
+  position: relative; /* allow children to position relative to header */
+  overflow: visible;
+}
+
+.applicant-view-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2C6BA0;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.applicant-view-title i {
+  font-size: 1.8rem;
+}
+
+.applicant-view-subtitle {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.applicant-view-header-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Floating tip for the Edit button to show next-day search hint */
+/* keep wrapper styles small, use only edit-tooltip-container for positioning */
+
+.edit-tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.edit-floating-tip {
+  position: absolute;
+  top: -80px;
+  right: 0;
+  min-width: 280px;
+  max-width: 420px;
+  background: #fffde7;
+  color: #1f2937;
+  border: 2px solid transparent;
+  border-image: linear-gradient(135deg, #3C89CB 30%, #EB3324 100%) 1;
+  border-radius: 10px;
+  padding: 1rem 0.9rem 0.7rem 0.9rem;
+  box-shadow: 0 10px 30px rgba(60, 137, 203, 0.25);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  text-align: left;
+  z-index: 10010;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  pointer-events: none; /* so it doesn't block the button */
+  font-weight: 700;
+  white-space: pre-line;
+  animation: premiumPulse 1.8s ease-in-out infinite;
+}
+
+/* These helpers are no longer used; the tooltip is now only at the button-level */
+
+.edit-floating-tip::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  right: 30px;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid #3C89CB;
+  filter: drop-shadow(0 -1px 0 rgba(44, 107, 160, 0.04));
+}
+
+@keyframes premiumPulse {
+  0% { transform: translateY(-4px) scale(1); opacity: 0.95 }
+  50% { transform: translateY(-6px) scale(1.02); opacity: 1 }
+  100% { transform: translateY(-4px) scale(1); opacity: 0.95 }
+}
+
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseIn {
+  0% { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  60% { opacity: 1; transform: translateY(4px) scale(1.04); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+
+.applicant-view-btn {
+  padding: 0.65rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.applicant-view-btn i {
+  font-size: 1rem;
+}
+
+.applicant-view-btn-primary {
+  background: linear-gradient(135deg, #2C6BA0 0%, #4A9EFF 100%);
+  color: white;
+}
+
+.applicant-view-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 107, 160, 0.3);
+}
+
+.applicant-view-btn-secondary {
+  background: white;
+  color: #2C6BA0;
+  border: 2px solid #e3eaf3;
+}
+
+.applicant-view-btn-secondary:hover {
+  border-color: #2C6BA0;
+  background: #f4f8fb;
+}
+
+/* ==========================================
+   CONTENT AREA
+   ========================================== */
+
+.applicant-view-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ==========================================
+   QUICK ACTIONS BAR
+   ========================================== */
+
+.applicant-view-actions-bar {
+  background: white;
+  border: 2px solid #e3eaf3;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.applicant-view-action-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e3eaf3;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.applicant-view-action-btn:hover {
+  border-color: #2C6BA0;
+  background: #f4f8fb;
+  color: #2C6BA0;
+  transform: translateY(-1px);
+}
+
+.applicant-view-action-btn.start {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+  border-color: transparent;
+}
+
+.applicant-view-action-btn.start:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.applicant-view-action-btn.stop {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  color: white;
+  border-color: transparent;
+}
+
+.applicant-view-action-btn.stop:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.applicant-view-action-btn.delete {
+  background: white;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.applicant-view-action-btn.delete:hover {
+  background: #fef2f2;
+  border-color: #dc2626;
+}
+
+/* ==========================================
+   SECTIONS
+   ========================================== */
+
+.applicant-view-section {
+  background: white;
+  border: 2px solid #e3eaf3;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.applicant-view-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2C6BA0;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #eaf4fb;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.applicant-view-section-title i {
+  font-size: 1.1rem;
+}
+
+/* ==========================================
+   GRID LAYOUT
+   ========================================== */
+
+.applicant-view-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.applicant-view-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.applicant-view-field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.applicant-view-value {
+  font-size: 1rem;
+  color: #1f2937;
+  padding: 0.75rem;
+  background: #f4f8fb;
+  border: 2px solid #e3eaf3;
+  border-radius: 8px;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+}
+
+.applicant-view-value-code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  background: #eaf4fb;
+  color: #2C6BA0;
+  font-weight: 500;
+}
+
+/* ==========================================
+   BADGES
+   ========================================== */
+
+.applicant-view-badge {
+  display: inline-block;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================
+   CITIES DISPLAY
+   ========================================== */
+
+.applicant-view-cities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.applicant-view-city-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: linear-gradient(135deg, #eaf4fb 0%, #f4f8fb 100%);
+  border: 2px solid #e3eaf3;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.applicant-view-city-tag:hover {
+  border-color: #2C6BA0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(44, 107, 160, 0.1);
+}
+
+.applicant-view-city-tag .city-name {
+  font-weight: 600;
+  color: #2C6BA0;
+  font-size: 0.95rem;
+}
+
+.applicant-view-city-tag .city-code {
+  font-size: 0.8rem;
+  color: #6b7280;
+  padding: 0.2rem 0.5rem;
+  background: white;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+/* ==========================================
+   LOADING & ERROR STATES
+   ========================================== */
+
+.applicant-view-loading,
+.applicant-view-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  gap: 1rem;
+}
+
+.applicant-view-loading i {
+  font-size: 3rem;
+  color: #2C6BA0;
+}
+
+.applicant-view-loading p {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.applicant-view-error i {
+  font-size: 3rem;
+  color: #dc2626;
+}
+
+.applicant-view-error p {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
+
+@media (max-width: 768px) {
+  .applicant-view-container {
+    padding: 1rem;
+    padding-top: 100px;
+  }
+
+  .applicant-view-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .applicant-view-header-actions {
+    width: 100%;
+  }
+
+  .applicant-view-header-actions button {
+    flex: 1;
+  }
+
+  .applicant-view-title {
+    font-size: 1.5rem;
+  }
+
+  .applicant-view-actions-bar {
+    flex-direction: column;
+  }
+
+  .applicant-view-action-btn {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .applicant-view-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .applicant-view-section {
+    padding: 1rem;
+  }
+
+  .applicant-view-section-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Hide floating tip on smaller screens to avoid layout issues */
+@media (max-width: 768px) {
+  .edit-floating-tip {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .edit-floating-tip {
+    max-width: 350px;
+    right: -20px;
+  }
+  
+  .edit-floating-tip::after {
+    right: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .applicant-view-container {
+    padding: 0.75rem;
+    padding-top: 100px;
+  }
+
+  .applicant-view-title {
+    font-size: 1.25rem;
+  }
+
+  .applicant-view-btn,
+  .applicant-view-action-btn {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.9rem;
+  }
+
+  .applicant-view-city-tag {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

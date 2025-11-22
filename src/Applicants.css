@@ -1,0 +1,221 @@
+/* Espacio para que el menú fijo no tape el contenido */
+/* Espacio suficiente para el menú fijo */
+/* Espacio suficiente para el menú fijo */
+/* Espacio suficiente para el menú fijo y separación lateral */
+.applicants-main-container {
+  margin-top: 100px;
+  margin-left: 64px;
+  margin-right: 32px;
+}
+/* Applicants Modern Redesign */
+
+
+.applicants-filters-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  margin-top: 10px;
+  gap: 18px;
+}
+
+.applicants-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2C6BA0;
+  letter-spacing: 0.5px;
+  margin: 0 0 0 0;
+  padding-right: 16px;
+}
+
+.applicants-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.applicants-filters {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.applicants-filters label {
+  font-weight: 500;
+  color: #2C6BA0;
+}
+
+.applicants-table-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(44,107,160,0.07);
+  padding: 0 0 40px 0;
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.applicants-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.95rem;
+  min-width: 800px;
+}
+
+.applicants-table th {
+  background: #f4f8fb;
+  color: #2C6BA0;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-bottom: 2px solid #e3eaf3;
+  padding: 12px 8px;
+  text-align: left;
+}
+
+.applicants-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #e3eaf3;
+  background: #fff;
+  vertical-align: middle;
+}
+
+.applicants-table tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+.applicants-table tr:hover td {
+  background: #eaf4fb;
+}
+
+.applicants-action-btn {
+  background: none;
+  border: none;
+  color: #2C6BA0;
+  font-size: 1.1em;
+  cursor: pointer;
+  padding: 4px 7px;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+  position: relative;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.applicants-table tr:hover .applicants-action-btn {
+  opacity: 1;
+  visibility: visible;
+}
+
+.applicants-action-btn:hover {
+  background: #e3eaf3;
+}
+
+.applicants-action-btn[data-title]:hover::after {
+  content: attr(data-title);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -28px;
+  background: #222;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.applicants-id-link {
+  color: #2C6BA0;
+  text-decoration: underline;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+
+  /* Make button look like a plain text link
+     When the element is a <button> it inherits browser button styles, so
+     we explicitly reset visual button properties and preserve link look. */
+  background: none;
+  border: none;
+  padding: 0;
+  display: inline;
+  font: inherit;
+  line-height: inherit;
+  text-align: left; /* keep alignment inside tables */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.applicants-id-link:hover {
+  color: #1a4d7a;
+}
+
+.applicants-id-link:focus {
+  outline: 3px solid rgba(44,107,160,0.18);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.applicants-id-link[data-title]:hover::after {
+  content: attr(data-title);
+  position: absolute;
+  left: 0;
+  bottom: -28px;
+  background: #222;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 400;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-style: normal;
+  text-decoration: none;
+  white-space: nowrap;
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.applicants-register-btn {
+  background: linear-gradient(90deg, #2C6BA0 0%, #4A9EFF 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 7px;
+  padding: 10px 28px;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(44,107,160,0.08);
+  cursor: pointer;
+  transition: background 0.18s, box-shadow 0.18s;
+  margin-left: auto;
+  display: block;
+  margin-top: 4px;
+}
+.applicants-register-btn:hover {
+  background: linear-gradient(90deg, #4A9EFF 0%, #2C6BA0 100%);
+  box-shadow: 0 4px 16px rgba(44,107,160,0.13);
+}
+
+@media (max-width: 900px) {
+  .applicants-table {
+    min-width: 600px;
+    font-size: 0.85rem;
+  }
+  .applicants-header, .applicants-filters {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .applicants-register-btn {
+    width: 100%;
+    margin-left: 0;
+  }
+}

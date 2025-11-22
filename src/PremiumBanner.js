@@ -1,0 +1,67 @@
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { UserDetails, getRoles } from './APIFunctions';
+import './PremiumBanner.css';
+
+const PremiumBanner = () => {
+  const [shouldShowBanner, setShouldShowBanner] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const fastVisa_userid = sessionStorage.getItem('fastVisa_userid');
+
+  useEffect(() => {
+    const checkUserRole = async () => {
+      try {
+        if (!fastVisa_userid) {
+          setLoading(false);
+          return;
+        }
+
+        const [userData, rolesData] = await Promise.all([
+          UserDetails(fastVisa_userid),
+          getRoles()
+        ]);
+
+        if (userData && rolesData) {
+          const currentRole = rolesData.find(role => role.id === userData.role_id);
+          const roleName = currentRole ? currentRole.name : 'unknown';
+          
+          // Show banner only for basic users
+          setShouldShowBanner(roleName === 'basic_user' || roleName === 'unknown');
+        }
+      } catch (error) {
+        console.error('Error checking user role:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkUserRole();
+  }, [fastVisa_userid]);
+
+  // Hide banner if on premium-upgrade page
+  if (location.pathname === '/premium-upgrade') {
+    return null;
+  }
+
+  // Hide banner if loading or user is not basic
+  if (loading || !shouldShowBanner) {
+    return null;
+  }
+
+  return (
+    <div className="premium-banner">
+      <div className="premium-banner-content">
+        <div className="premium-banner-text">
+          <span className="premium-icon"></span>
+          <span className="premium-message">
+          </span>
+        </div>
+        <Link to="/premium-upgrade" className="premium-banner-button">
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default PremiumBanner;
