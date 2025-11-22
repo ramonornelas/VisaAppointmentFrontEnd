@@ -8,15 +8,15 @@ const resources = {
   es: { translation: es }
 };
 
-// Get saved language from localStorage or use 'en' as default
-const savedLanguage = localStorage.getItem('fastVisa_language') || 'en';
+// Get saved language from localStorage or use 'es' as default
+const savedLanguage = localStorage.getItem('fastVisa_language') || 'es';
 
 i18n
   .use(initReactI18next)
   .init({
     resources,
     lng: savedLanguage,
-    fallbackLng: 'en',
+    fallbackLng: 'es',
     interpolation: {
       escapeValue: false
     }
