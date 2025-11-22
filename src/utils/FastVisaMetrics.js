@@ -176,6 +176,8 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = FastVisaMetrics;
 }
 
+export default FastVisaMetrics;
+
 // Example usage:
 /*
 
