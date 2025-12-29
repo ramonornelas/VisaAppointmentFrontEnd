@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { UserDetails, getRoles } from './APIFunctions';
-import './PremiumBanner.css';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { UserDetails, getRoles } from "../../services/APIFunctions";
+import "./PremiumBanner.css";
 
 const PremiumBanner = () => {
   const [shouldShowBanner, setShouldShowBanner] = useState(false);
   const [loading, setLoading] = useState(true);
   const location = useLocation();
-  const fastVisa_userid = sessionStorage.getItem('fastVisa_userid');
+  const fastVisa_userid = sessionStorage.getItem("fastVisa_userid");
 
   useEffect(() => {
     const checkUserRole = async () => {
@@ -19,18 +19,22 @@ const PremiumBanner = () => {
 
         const [userData, rolesData] = await Promise.all([
           UserDetails(fastVisa_userid),
-          getRoles()
+          getRoles(),
         ]);
 
         if (userData && rolesData) {
-          const currentRole = rolesData.find(role => role.id === userData.role_id);
-          const roleName = currentRole ? currentRole.name : 'unknown';
-          
+          const currentRole = rolesData.find(
+            (role) => role.id === userData.role_id
+          );
+          const roleName = currentRole ? currentRole.name : "unknown";
+
           // Show banner only for basic users
-          setShouldShowBanner(roleName === 'basic_user' || roleName === 'unknown');
+          setShouldShowBanner(
+            roleName === "basic_user" || roleName === "unknown"
+          );
         }
       } catch (error) {
-        console.error('Error checking user role:', error);
+        console.error("Error checking user role:", error);
       } finally {
         setLoading(false);
       }
@@ -40,7 +44,7 @@ const PremiumBanner = () => {
   }, [fastVisa_userid]);
 
   // Hide banner if on premium-upgrade page
-  if (location.pathname === '/premium-upgrade') {
+  if (location.pathname === "/premium-upgrade") {
     return null;
   }
 
@@ -54,11 +58,9 @@ const PremiumBanner = () => {
       <div className="premium-banner-content">
         <div className="premium-banner-text">
           <span className="premium-icon"></span>
-          <span className="premium-message">
-          </span>
+          <span className="premium-message"></span>
         </div>
-        <Link to="/premium-upgrade" className="premium-banner-button">
-        </Link>
+        <Link to="/premium-upgrade" className="premium-banner-button"></Link>
       </div>
     </div>
   );

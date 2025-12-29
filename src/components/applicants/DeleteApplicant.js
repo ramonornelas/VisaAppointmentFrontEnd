@@ -1,11 +1,11 @@
 import React, { useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import Banner from './Banner';
-import HamburgerMenu from './HamburgerMenu';
-import Footer from './Footer';
-import { ApplicantDelete } from './APIFunctions';  
-import { useAuth } from './utils/AuthContext';
-import './index.css';
+import Banner from '../common/Banner';
+import HamburgerMenu from '../common/HamburgerMenu';
+import Footer from '../common/Footer';
+import { ApplicantDelete } from '../../services/APIFunctions';  
+import { useAuth } from '../../utils/AuthContext';
+import '../../index.css';
 
 const DeleteApplicant = () => {
     const { isAuthenticated } = useAuth();

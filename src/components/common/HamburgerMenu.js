@@ -1,12 +1,12 @@
 // HamburgerMenu.js
-import React, { useState, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from './utils/AuthContext';
-import { UserDetails, getRoles } from './APIFunctions';
-import './HamburgerMenu.css';
+import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../utils/AuthContext";
+import { UserDetails, getRoles } from "../../services/APIFunctions";
+import "./HamburgerMenu.css";
 
-import { permissions } from './utils/permissions';
+import { permissions } from "../../utils/permissions";
 
 const HamburgerMenu = () => {
   const { t } = useTranslation();
@@ -14,11 +14,11 @@ const HamburgerMenu = () => {
   const location = useLocation();
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [userRole, setUserRole] = useState('');
+  const [userRole, setUserRole] = useState("");
   const userMenuRef = useRef(null);
-  const fastVisa_userid = sessionStorage.getItem('fastVisa_userid');
-  const fastVisa_username = sessionStorage.getItem('fastVisa_username');
-  const fastVisa_name = sessionStorage.getItem('fastVisa_name');
+  const fastVisa_userid = sessionStorage.getItem("fastVisa_userid");
+  const fastVisa_username = sessionStorage.getItem("fastVisa_username");
+  const fastVisa_name = sessionStorage.getItem("fastVisa_name");
 
   // toggleMenu removed - menu remains always open in UI
 
@@ -33,9 +33,9 @@ const HamburgerMenu = () => {
         setShowUserMenu(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showUserMenu]);
 
@@ -45,15 +45,15 @@ const HamburgerMenu = () => {
     } else if (fastVisa_username && fastVisa_username.trim().length > 0) {
       return fastVisa_username.charAt(0).toUpperCase();
     }
-    return '';
+    return "";
   };
 
   const mapRoleName = (roleName) => {
     const roleMap = {
-      'basic_user': t('basicUser', 'Basic user'),
-      'visa_agent': t('visaAgent', 'Visa agent'),
-      'administrator': t('administrator', 'Administrator'),
-      'premium_user': t('premiumUser', 'Premium user')
+      basic_user: t("basicUser", "Basic user"),
+      visa_agent: t("visaAgent", "Visa agent"),
+      administrator: t("administrator", "Administrator"),
+      premium_user: t("premiumUser", "Premium user"),
     };
     return roleMap[roleName] || roleName;
   };
@@ -68,22 +68,27 @@ const HamburgerMenu = () => {
 
         const [userData, rolesData] = await Promise.all([
           UserDetails(fastVisa_userid),
-          getRoles()
+          getRoles(),
         ]);
 
         if (userData && rolesData) {
-          const currentRole = rolesData.find(role => role.id === userData.role_id);
-          const roleName = currentRole ? currentRole.name : 'unknown';
+          const currentRole = rolesData.find(
+            (role) => role.id === userData.role_id
+          );
+          const roleName = currentRole ? currentRole.name : "unknown";
           setUserRole(roleName);
-          setShowUpgrade(roleName === 'basic_user');
+          setShowUpgrade(roleName === "basic_user");
 
           // Store user's name in sessionStorage if not already present
-          if (userData.name && sessionStorage.getItem('fastVisa_name') !== userData.name) {
-            sessionStorage.setItem('fastVisa_name', userData.name);
+          if (
+            userData.name &&
+            sessionStorage.getItem("fastVisa_name") !== userData.name
+          ) {
+            sessionStorage.setItem("fastVisa_name", userData.name);
           }
         }
       } catch (error) {
-        console.error('Error checking user role or name:', error);
+        console.error("Error checking user role or name:", error);
         setShowUpgrade(false);
       }
     };
@@ -93,44 +98,60 @@ const HamburgerMenu = () => {
 
   useEffect(() => {
     // Menu is now always visible
-    document.body.classList.add('menu-open');
+    document.body.classList.add("menu-open");
   }, []);
 
   if (!isAuthenticated) {
     return null;
   }
-  
+
   return (
     <div className="hamburger-menu-icon">
       <nav className="menu open">
         <div className="menu-items">
-          {showUpgrade && location.pathname !== '/premium-upgrade' && (
+          {showUpgrade && location.pathname !== "/premium-upgrade" && (
             <div className="menu-item premium-section">
               <Link to="/premium-upgrade" className="premium-link shiny-btn">
                 <i className="fas fa-crown"></i>
-                <span className="menu-text">{t('upgradeToPremium', 'Upgrade to Premium')}</span>
+                <span className="menu-text">
+                  {t("upgradeToPremium", "Upgrade to Premium")}
+                </span>
               </Link>
             </div>
           )}
           <div className="regular-menu-items">
             {permissions.canManageApplicants() ? (
-              <Link to="/applicants" className={showUpgrade ? "first-after-premium" : ""} title={t('applicants', 'Applicants')}>
+              <Link
+                to="/applicants"
+                className={showUpgrade ? "first-after-premium" : ""}
+                title={t("applicants", "Applicants")}
+              >
                 <i className="fas fa-users"></i>
               </Link>
             ) : (
-              sessionStorage.getItem('applicant_userid') && (
-                <Link to={`/view-applicant/${sessionStorage.getItem('applicant_userid')}`} className={showUpgrade ? "first-after-premium" : ""} title={t('myAppointment', 'My Appointment')}>
+              sessionStorage.getItem("applicant_userid") && (
+                <Link
+                  to={`/view-applicant/${sessionStorage.getItem(
+                    "applicant_userid"
+                  )}`}
+                  className={showUpgrade ? "first-after-premium" : ""}
+                  title={t("myAppointment", "My Appointment")}
+                >
                   <i className="fas fa-calendar-check"></i>
                 </Link>
               )
             )}
             {permissions.canManageUsers() && (
-              <Link to="/users" title={t('users', 'Users')}>
+              <Link to="/users" title={t("users", "Users")}>
                 <i className="fas fa-user-cog"></i>
               </Link>
             )}
             <div className="user-menu-container" ref={userMenuRef}>
-              <div className="user-initial" onClick={toggleUserMenu} title={t('userMenu', 'User Menu')}>
+              <div
+                className="user-initial"
+                onClick={toggleUserMenu}
+                title={t("userMenu", "User Menu")}
+              >
                 {getUserInitial()}
               </div>
               {showUserMenu && (
@@ -139,21 +160,34 @@ const HamburgerMenu = () => {
                     <div className="user-name">
                       {fastVisa_name && fastVisa_name.trim().length > 0 ? (
                         <>
-                          <span style={{ fontWeight: 'bold' }}>{fastVisa_name}</span>
+                          <span style={{ fontWeight: "bold" }}>
+                            {fastVisa_name}
+                          </span>
                           <br />
-                          <span style={{ color: '#888', fontSize: '0.95em' }}>{fastVisa_username}</span>
+                          <span style={{ color: "#888", fontSize: "0.95em" }}>
+                            {fastVisa_username}
+                          </span>
                         </>
                       ) : (
-                        fastVisa_username || 'User'
+                        fastVisa_username || "User"
                       )}
                     </div>
                     <div className="user-role">
-                      {mapRoleName(userRole)}<br /><a href="/change-password" className="change-password-text-link">
-                        {t('changePassword', 'Change Password')}
+                      {mapRoleName(userRole)}
+                      <br />
+                      <a
+                        href="/change-password"
+                        className="change-password-text-link"
+                      >
+                        {t("changePassword", "Change Password")}
                       </a>
                     </div>
                   </div>
-                  <Link to="/logout" className="logout-link" title={t('logout', 'Log Out')}>
+                  <Link
+                    to="/logout"
+                    className="logout-link"
+                    title={t("logout", "Log Out")}
+                  >
                     <i className="fas fa-sign-out-alt"></i>
                   </Link>
                 </div>

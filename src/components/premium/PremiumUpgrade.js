@@ -2,12 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import PayPalPayment from './PayPalPayment';
-import HamburgerMenu from './HamburgerMenu';
-import Banner from './Banner';
-import Footer from './Footer';
-import { UserDetails, updateUser, getRoles, getUSDMXNExchangeRate, ApplicantSearch } from './APIFunctions';
-import FastVisaMetrics from './utils/FastVisaMetrics';
-import { refreshPermissions, permissions } from './utils/permissions';
+import HamburgerMenu from '../common/HamburgerMenu';
+import Banner from '../common/Banner';
+import Footer from '../common/Footer';
+import { UserDetails, updateUser, getRoles, getUSDMXNExchangeRate, ApplicantSearch } from '../../services/APIFunctions';
+import FastVisaMetrics from '../../utils/FastVisaMetrics';
+import { refreshPermissions, permissions } from '../../utils/permissions';
 import './PremiumUpgrade.css';
 
 

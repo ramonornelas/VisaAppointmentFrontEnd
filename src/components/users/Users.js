@@ -1,0 +1,329 @@
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import HamburgerMenu from "../common/HamburgerMenu";
+import { permissions } from "../../utils/permissions";
+import { getUsers, updateUser, getRoles } from "../../services/APIFunctions";
+import { deleteUser } from "../../services/APIFunctions";
+import Modal from "../common/Modal";
+import "../../index.css";
+import "../applicants/Applicants.css";
+import { ALL_COUNTRIES } from "../../utils/countries";
+
+const Users = () => {
+  const { t } = useTranslation();
+  const [users, setUsers] = useState([]);
+  // Modal state for delete confirmation
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [pendingDeleteUserId, setPendingDeleteUserId] = useState(null);
+
+  // Show modal when delete is requested
+  const requestDeleteUser = (userId) => {
+    setPendingDeleteUserId(userId);
+    setShowDeleteModal(true);
+  };
+
+  // Confirm delete action
+  const confirmDeleteUser = async () => {
+    if (pendingDeleteUserId) {
+      const result = await deleteUser(pendingDeleteUserId);
+      setShowDeleteModal(false);
+      setPendingDeleteUserId(null);
+      if (result && result.success) {
+        setRefreshFlag((flag) => !flag);
+      } else {
+        // Show error modal (optional, for now use alert)
+        alert(t("failedToDeleteUser", "Failed to delete user."));
+      }
+    }
+  };
+
+  // Cancel delete action
+  const cancelDeleteUser = () => {
+    setShowDeleteModal(false);
+    setPendingDeleteUserId(null);
+  };
+  const [roles, setRoles] = useState([]);
+  const [editIndex, setEditIndex] = useState(null);
+  const [editData, setEditData] = useState({});
+  const [refreshFlag, setRefreshFlag] = useState(false);
+  // username stored in sessionStorage when needed; no local usage required here
+
+  useEffect(() => {
+    if (permissions.canManageUsers()) {
+      getUsers().then(setUsers);
+      getRoles().then(setRoles);
+    }
+  }, [refreshFlag]);
+
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setEditData({ ...users[index] });
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setEditData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSave = async () => {
+    // Remove id, password from payload
+    const { id, password, ...payload } = editData;
+    await updateUser(id, payload);
+    setEditIndex(null);
+    setRefreshFlag((flag) => !flag);
+  };
+
+  if (!permissions.canManageUsers()) {
+    return <div>{t("accessDenied", "Access denied.")}</div>;
+  }
+
+  return (
+    <>
+      <HamburgerMenu />
+      <div className="applicants-main-container">
+        <h2 className="applicants-title">{t("users", "Users")}</h2>
+        <div className="applicants-table-container">
+          <table className="applicants-table">
+            <thead>
+              <tr>
+                <th>{t("username", "Username")}</th>
+                <th>{t("active", "Active")}</th>
+                <th>{t("country", "Country")}</th>
+                <th>{t("expirationDate", "Expiration Date")}</th>
+                <th>{t("concurrentApplicants", "Concurrent Applicants")}</th>
+                <th>{t("phoneNumber", "Phone Number")}</th>
+                <th>{t("role", "Role")}</th>
+                <th>{t("actions", "Actions")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users && users.length > 0 ? (
+                users.map((user, idx) => (
+                  <tr key={user.username}>
+                    <td>
+                      <span>{user.username}</span>
+                    </td>
+                    <td>
+                      {editIndex === idx ? (
+                        <input
+                          type="checkbox"
+                          name="active"
+                          checked={editData.active}
+                          onChange={handleChange}
+                        />
+                      ) : (
+                        <span
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 10px",
+                            borderRadius: "12px",
+                            fontWeight: 600,
+                            fontSize: "0.95em",
+                            color: user.active ? "#fff" : "#888",
+                            background: user.active ? "#4caf50" : "#e0e0e0",
+                            letterSpacing: "0.5px",
+                            minWidth: 60,
+                            textAlign: "center",
+                          }}
+                        >
+                          {user.active
+                            ? t("active", "Active")
+                            : t("inactive", "Inactive")}
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      {editIndex === idx ? (
+                        <select
+                          name="country_code"
+                          value={editData.country_code || ""}
+                          onChange={handleChange}
+                        >
+                          <option value="" disabled>
+                            {t("selectCountry", "Select country")}
+                          </option>
+                          {ALL_COUNTRIES.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        ALL_COUNTRIES.find(
+                          (opt) => opt.value === user.country_code
+                        )?.label || user.country_code
+                      )}
+                    </td>
+                    <td>
+                      {editIndex === idx ? (
+                        <input
+                          name="expiration_date"
+                          value={editData.expiration_date || ""}
+                          onChange={handleChange}
+                          type="date"
+                        />
+                      ) : (
+                        user.expiration_date
+                      )}
+                    </td>
+                    <td>
+                      {editIndex === idx ? (
+                        <input
+                          name="concurrent_applicants"
+                          value={editData.concurrent_applicants || ""}
+                          onChange={handleChange}
+                          type="number"
+                        />
+                      ) : (
+                        user.concurrent_applicants
+                      )}
+                    </td>
+                    <td>
+                      {editIndex === idx ? (
+                        <input
+                          name="phone_number"
+                          value={editData.phone_number || ""}
+                          onChange={handleChange}
+                        />
+                      ) : (
+                        user.phone_number
+                      )}
+                    </td>
+                    <td>
+                      {editIndex === idx ? (
+                        <select
+                          name="role_id"
+                          value={editData.role_id || ""}
+                          onChange={handleChange}
+                        >
+                          <option value="" disabled>
+                            {t("selectRole", "Select role")}
+                          </option>
+                          {roles.map((role) => (
+                            <option key={role.id} value={role.id}>
+                              {role.name}
+                            </option>
+                          ))}
+                        </select>
+                      ) : roles.length > 0 ? (
+                        roles.find((r) => r.id === user.role_id)?.name ||
+                        user.role_id
+                      ) : (
+                        user.role_id
+                      )}
+                    </td>
+                    <td>
+                      <div style={{ display: "flex", gap: "4px" }}>
+                        {editIndex === idx ? (
+                          <>
+                            <button
+                              className="applicants-action-btn"
+                              onClick={handleSave}
+                              data-title={t("save", "Save")}
+                              style={{ padding: "4px 8px", fontSize: "12px" }}
+                            >
+                              <i className="fas fa-check"></i>
+                            </button>
+                            <button
+                              className="applicants-action-btn"
+                              onClick={() => setEditIndex(null)}
+                              data-title={t("cancel", "Cancel")}
+                              style={{ padding: "4px 8px", fontSize: "12px" }}
+                            >
+                              <i className="fas fa-times"></i>
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              className="applicants-action-btn"
+                              onClick={() => handleEdit(idx)}
+                              data-title={t("edit", "Edit")}
+                              style={{ padding: "6px 10px", fontSize: "14px" }}
+                            >
+                              <i className="fas fa-edit"></i>
+                            </button>
+                            <button
+                              className="applicants-action-btn"
+                              onClick={() => requestDeleteUser(user.id)}
+                              data-title={t("delete", "Delete")}
+                              style={{
+                                padding: "6px 10px",
+                                fontSize: "14px",
+                                color: "#f44336",
+                              }}
+                            >
+                              <i className="fas fa-trash"></i>
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={8}
+                    style={{ textAlign: "center", padding: "40px 20px" }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#888",
+                        gap: "15px",
+                      }}
+                    >
+                      <i
+                        className="fas fa-user-cog"
+                        style={{ fontSize: "48px", color: "#ddd" }}
+                      ></i>
+                      <div
+                        style={{
+                          fontSize: "18px",
+                          fontWeight: "500",
+                          color: "#666",
+                        }}
+                      >
+                        {t("noUsersFound", "No users found")}
+                      </div>
+                      <div style={{ fontSize: "14px", color: "#999" }}>
+                        {t(
+                          "noUsersAvailable",
+                          "No users available in the system."
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {/* Delete confirmation modal */}
+      <Modal
+        isOpen={showDeleteModal}
+        title={t("deleteUser", "Delete User")}
+        message={t(
+          "deleteUserConfirm",
+          "Are you sure you want to delete this user? This action cannot be undone."
+        )}
+        type="confirm"
+        onClose={cancelDeleteUser}
+        onConfirm={confirmDeleteUser}
+        confirmText={t("delete", "Delete")}
+        cancelText={t("cancel", "Cancel")}
+        showCancel={true}
+      />
+    </>
+  );
+};
+
+export default Users;

@@ -1,4 +1,4 @@
-import { BASE_URL } from "./config.js";
+import { BASE_URL } from "../config/config.js";
 
 // Delete user by ID
 const deleteUser = async (userId) => {
@@ -263,19 +263,15 @@ const GetApplicantPassword = async (applicant_userid) => {
   }
 };
 
-
 // Get PayPal config from API Gateway endpoint
 const getPayPalConfig = async () => {
   try {
-    const response = await fetch(
-      `${BASE_URL}/paypal-config`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
-      }
-    );
+    const response = await fetch(`${BASE_URL}/paypal-config`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
     if (response.status === 200) {
       return await response.json();
     } else {
@@ -290,15 +286,12 @@ const getPayPalConfig = async () => {
 // Get current USD to MXN exchange rate from open.er-api.com (no access key required)
 const getUSDMXNExchangeRate = async () => {
   try {
-    const response = await fetch(
-      "https://open.er-api.com/v6/latest/USD",
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
-      }
-    );
+    const response = await fetch("https://open.er-api.com/v6/latest/USD", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
     if (response.status === 200) {
       const data = await response.json();
       // data.rates.MXN contains the exchange rate
@@ -335,7 +328,11 @@ const authenticateAIS = async ({ username, password, country_code }) => {
 };
 
 // Notify admin about AIS authentication failure
-const notifyAdminAISFailure = async ({ username, ais_username, country_code }) => {
+const notifyAdminAISFailure = async ({
+  username,
+  ais_username,
+  country_code,
+}) => {
   try {
     const response = await fetch(`${BASE_URL}/admin/notify-ais-failure`, {
       method: "POST",
@@ -356,7 +353,12 @@ const notifyAdminAISFailure = async ({ username, ais_username, country_code }) =
 };
 
 // Change user password
-const changePassword = async ({ userId, username, currentPassword, newPassword }) => {
+const changePassword = async ({
+  userId,
+  username,
+  currentPassword,
+  newPassword,
+}) => {
   try {
     const response = await fetch(`${BASE_URL}/auth/change-password`, {
       method: "POST",
@@ -377,14 +379,23 @@ const changePassword = async ({ userId, username, currentPassword, newPassword }
       return { success: true, message: data.message };
     } else if (response.status === 401) {
       const errorData = await response.json();
-      return { success: false, message: errorData.message || "Current password is incorrect" };
+      return {
+        success: false,
+        message: errorData.message || "Current password is incorrect",
+      };
     } else {
       const errorData = await response.json();
-      return { success: false, message: errorData.message || "Failed to change password" };
+      return {
+        success: false,
+        message: errorData.message || "Failed to change password",
+      };
     }
   } catch (error) {
     console.error("Error changing password:", error);
-    return { success: false, message: "An error occurred while changing password" };
+    return {
+      success: false,
+      message: "An error occurred while changing password",
+    };
   }
 };
 
@@ -399,22 +410,26 @@ const createUser = async (userData) => {
       },
       body: JSON.stringify(userData),
     });
-    
+
     if (response.status === 201) {
       return { success: true, status: 201 };
     } else {
-      let errorMessage = 'Registration failed';
+      let errorMessage = "Registration failed";
       try {
         const errorData = await response.json();
-        errorMessage = errorData.message || errorData.error || 'Registration failed';
+        errorMessage =
+          errorData.message || errorData.error || "Registration failed";
       } catch {
-        errorMessage = response.statusText || 'Registration failed';
+        errorMessage = response.statusText || "Registration failed";
       }
       return { success: false, error: errorMessage };
     }
   } catch (error) {
     console.error("Error creating user:", error);
-    return { success: false, error: error.message || 'An unexpected error occurred' };
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
   }
 };
 
@@ -429,7 +444,7 @@ const searchUserByUsername = async (username) => {
       },
       body: JSON.stringify({ username }),
     });
-    
+
     if (response.status === 200) {
       return await response.json();
     } else {
@@ -444,9 +459,12 @@ const searchUserByUsername = async (username) => {
 // Create a new applicant
 const createApplicant = async (applicantData) => {
   try {
-    console.log('[APIFunctions] createApplicant - Sending request to:', `${BASE_URL}/applicants`);
-    console.log('[APIFunctions] createApplicant - Payload:', applicantData);
-    
+    console.log(
+      "[APIFunctions] createApplicant - Sending request to:",
+      `${BASE_URL}/applicants`
+    );
+    console.log("[APIFunctions] createApplicant - Payload:", applicantData);
+
     const response = await fetch(`${BASE_URL}/applicants`, {
       method: "POST",
       headers: {
@@ -455,28 +473,36 @@ const createApplicant = async (applicantData) => {
       },
       body: JSON.stringify(applicantData),
     });
-    
-    console.log('[APIFunctions] createApplicant - Response status:', response.status);
-    
+
+    console.log(
+      "[APIFunctions] createApplicant - Response status:",
+      response.status
+    );
+
     // Accept both 200 and 201 as success
     if (response.status === 200 || response.status === 201) {
       const data = await response.json();
-      console.log('[APIFunctions] createApplicant - Success, data:', data);
+      console.log("[APIFunctions] createApplicant - Success, data:", data);
       return data;
     } else {
       // Try to get error details from response
       let errorMessage = "Failed to create applicant";
       try {
         const errorData = await response.json();
-        console.error('[APIFunctions] createApplicant - Error response:', errorData);
+        console.error(
+          "[APIFunctions] createApplicant - Error response:",
+          errorData
+        );
         errorMessage = errorData.message || errorData.error || errorMessage;
       } catch {
-        console.error('[APIFunctions] createApplicant - Could not parse error response');
+        console.error(
+          "[APIFunctions] createApplicant - Could not parse error response"
+        );
       }
       throw new Error(errorMessage);
     }
   } catch (error) {
-    console.error('[APIFunctions] createApplicant - Exception:', error);
+    console.error("[APIFunctions] createApplicant - Exception:", error);
     return null;
   }
 };
@@ -492,7 +518,7 @@ const loginUser = async (username, password) => {
       },
       body: JSON.stringify({ username, password }),
     });
-    
+
     if (response.status === 200) {
       return { success: true };
     } else {
@@ -514,7 +540,7 @@ const getUserPermissions = async (userId) => {
         "Content-Type": "application/json",
       },
     });
-    
+
     if (response.status === 200) {
       return await response.json();
     } else {

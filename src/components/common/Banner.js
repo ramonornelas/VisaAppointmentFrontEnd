@@ -1,5 +1,5 @@
-import BannerImage from './assets/fastvisa-icon.png';
-import './index.css';
+import BannerImage from '../../assets/fastvisa-icon.png';
+import '../../index.css';
 
 const Banner = () => {
   return (
