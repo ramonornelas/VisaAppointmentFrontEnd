@@ -12,6 +12,7 @@ import {
   Modal as AntModal,
   message,
   Empty,
+  Card,
 } from "antd";
 import {
   PlayCircleOutlined,
@@ -55,6 +56,7 @@ const ApplicantsAntD = () => {
   const fastVisaUserId = sessionStorage.getItem("fastVisa_userid");
   const navigate = useNavigate();
   const [refreshFlag, setRefreshFlag] = useState(false);
+  const [hoveredRowId, setHoveredRowId] = useState(null);
 
   // Initialize metrics tracker
   const metrics = useMemo(() => new FastVisaMetrics(), []);
@@ -481,10 +483,10 @@ const ApplicantsAntD = () => {
 
   const getSearchStatusColor = (status) => {
     const colors = {
-      Running: "blue",
-      Stopped: "orange",
-      Error: "red",
-      Completed: "green",
+      Running: "#2C6BA0", // Primary color
+      Stopped: "#ff9800", // Warning color
+      Error: "#f44336", // Error color
+      Completed: "#4caf50", // Success color
     };
     return colors[status] || "default";
   };
@@ -494,6 +496,7 @@ const ApplicantsAntD = () => {
       title: t("aisId", "AIS ID"),
       dataIndex: "ais_schedule_id",
       key: "ais_schedule_id",
+      width: 200,
       render: (text, record) => (
         <Space>
           <Button
@@ -509,6 +512,11 @@ const ApplicantsAntD = () => {
               icon={<EditOutlined />}
               onClick={() => handleEditApplicant(record.id)}
               size="small"
+              style={{
+                opacity: hoveredRowId === record.id ? 1 : 0,
+                transition: "opacity 0.2s ease-in",
+                pointerEvents: hoveredRowId === record.id ? "auto" : "none",
+              }}
             />
           </Tooltip>
           <Tooltip title={t("deleteApplicant", "Delete Applicant")}>
@@ -518,6 +526,11 @@ const ApplicantsAntD = () => {
               icon={<DeleteOutlined />}
               onClick={() => handleDeleteApplicant(record.id)}
               size="small"
+              style={{
+                opacity: hoveredRowId === record.id ? 1 : 0,
+                transition: "opacity 0.2s ease-in",
+                pointerEvents: hoveredRowId === record.id ? "auto" : "none",
+              }}
             />
           </Tooltip>
         </Space>
@@ -527,6 +540,7 @@ const ApplicantsAntD = () => {
       title: t("aisUsername", "AIS Username"),
       dataIndex: "ais_username",
       key: "ais_username",
+      width: 250,
       render: (text, record) => (
         <Space>
           <span>{text}</span>
@@ -536,6 +550,11 @@ const ApplicantsAntD = () => {
               icon={<CopyOutlined />}
               onClick={() => handleCopyEmail(record.id)}
               size="small"
+              style={{
+                opacity: hoveredRowId === record.id ? 1 : 0,
+                transition: "opacity 0.2s ease-in",
+                pointerEvents: hoveredRowId === record.id ? "auto" : "none",
+              }}
             />
           </Tooltip>
           <Tooltip title={t("copyPassword", "Copy Password")}>
@@ -544,6 +563,11 @@ const ApplicantsAntD = () => {
               icon={<KeyOutlined />}
               onClick={() => handleCopyPassword(record.id)}
               size="small"
+              style={{
+                opacity: hoveredRowId === record.id ? 1 : 0,
+                transition: "opacity 0.2s ease-in",
+                pointerEvents: hoveredRowId === record.id ? "auto" : "none",
+              }}
             />
           </Tooltip>
         </Space>
@@ -553,13 +577,15 @@ const ApplicantsAntD = () => {
       title: t("name", "Name"),
       dataIndex: "name",
       key: "name",
+      width: 180,
     },
     {
       title: t("applicantStatus", "Applicant Status"),
       dataIndex: "applicant_active",
       key: "applicant_active",
+      width: 150,
       render: (active) => (
-        <Tag color={active ? "success" : "default"}>
+        <Tag color={active ? "#4caf50" : "default"}>
           {active ? t("active", "Active") : t("inactive", "Inactive")}
         </Tag>
       ),
@@ -568,6 +594,7 @@ const ApplicantsAntD = () => {
       title: t("searchStatus", "Search Status"),
       dataIndex: "search_status",
       key: "search_status",
+      width: 200,
       render: (status, record) => (
         <Space>
           <Tag color={getSearchStatusColor(status)}>
@@ -587,6 +614,11 @@ const ApplicantsAntD = () => {
               }
               onClick={() => handleAction(record.id, status)}
               size="small"
+              style={{
+                opacity: hoveredRowId === record.id ? 1 : 0,
+                transition: "opacity 0.2s ease-in",
+                pointerEvents: hoveredRowId === record.id ? "auto" : "none",
+              }}
             />
           </Tooltip>
           {canClearStatus && (
@@ -596,6 +628,11 @@ const ApplicantsAntD = () => {
                 icon={<ClearOutlined />}
                 onClick={() => handleResetStatus(record.id)}
                 size="small"
+                style={{
+                  opacity: hoveredRowId === record.id ? 1 : 0,
+                  transition: "opacity 0.2s ease-in",
+                  pointerEvents: hoveredRowId === record.id ? "auto" : "none",
+                }}
               />
             </Tooltip>
           )}
@@ -606,6 +643,7 @@ const ApplicantsAntD = () => {
       title: t("targetEndDate", "Target End Date"),
       dataIndex: "target_end_date",
       key: "target_end_date",
+      width: 150,
     },
   ];
 
@@ -615,6 +653,7 @@ const ApplicantsAntD = () => {
       title: t("registeredBy", "Registered By"),
       dataIndex: "fastVisa_username",
       key: "fastVisa_username",
+      width: 180,
     });
   }
 
@@ -623,107 +662,135 @@ const ApplicantsAntD = () => {
       <HamburgerMenu />
       <div
         style={{
-          padding: "120px 32px 0 32px",
-          maxWidth: "100%",
+          padding: "120px 32px 32px 32px",
+          maxWidth: "1400px",
           margin: "0 auto",
+          backgroundColor: "#f5f5f5",
+          minHeight: "100vh",
         }}
       >
-        <div
+        <Card
+          bordered={false}
           style={{
             marginBottom: 24,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            boxShadow:
+              "0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02)",
           }}
         >
-          <div>
-            <Title level={2} style={{ marginBottom: 0, marginTop: 0 }}>
-              <UsergroupAddOutlined style={{ marginRight: 8 }} />
-              {t("applicants", "Applicants")}
-            </Title>
-          </div>
-          <Button
-            type="primary"
-            icon={<UserAddOutlined />}
-            onClick={handleRegisterApplicant}
-            size="large"
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "16px",
+            }}
           >
-            {t("registerApplicant", "Register Applicant")}
-          </Button>
-        </div>
-
-        <Space style={{ marginBottom: 16 }} size="large" wrap>
-          <Space>
-            <span>{t("onlyActive", "Only Active")}:</span>
-            <Switch checked={filterActive} onChange={setFilterActive} />
-          </Space>
-
-          <Space>
-            <span>{t("onlyRunning", "Only Running")}:</span>
-            <Switch checked={filterRunning} onChange={setFilterRunning} />
-          </Space>
-
-          {canViewAllApplicants && allRegisteredUsers.length > 0 && (
-            <Space>
-              <span>{t("registeredBy", "Registered by")}:</span>
-              <Select
-                value={registeredByFilter}
-                onChange={setRegisteredByFilter}
-                style={{ minWidth: 150 }}
-                placeholder={t("all", "All")}
-                allowClear
+            <div>
+              <Title
+                level={2}
+                style={{ marginBottom: 4, marginTop: 0, color: "#2C6BA0" }}
               >
-                <Option value="">{t("all", "All")}</Option>
-                {allRegisteredUsers.map((username) => (
-                  <Option key={username} value={username}>
-                    {username}
-                  </Option>
-                ))}
-              </Select>
+                <UsergroupAddOutlined style={{ marginRight: 8 }} />
+                {t("applicants", "Applicants")}
+              </Title>
+            </div>
+            <Button
+              type="primary"
+              icon={<UserAddOutlined />}
+              onClick={handleRegisterApplicant}
+              size="large"
+            >
+              {t("registerApplicant", "Register Applicant")}
+            </Button>
+          </div>
+          <Space style={{ marginTop: 20, marginBottom: 20 }} size="large" wrap>
+            <Space>
+              <span style={{ fontWeight: 500 }}>
+                {t("onlyActive", "Only Active")}:
+              </span>
+              <Switch checked={filterActive} onChange={setFilterActive} />
             </Space>
-          )}
-        </Space>
 
-        <Table
-          columns={columns}
-          dataSource={data}
-          loading={loading}
-          rowKey="id"
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showTotal: (total, range) =>
-              `${range[0]}-${range[1]} ${t("of", "of")} ${total} ${t(
-                "items",
-                "items"
-              )}`,
-          }}
-          locale={{
-            emptyText: (
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={
-                  <span>
-                    {t("noApplicantsFound", "No applicants found")}
-                    <br />
-                    <small>
-                      {filterActive || filterRunning || registeredByFilter
-                        ? t(
-                            "adjustFilters",
-                            "Try adjusting your filters or register a new applicant to get started."
-                          )
-                        : t(
-                            "clickToAddFirst",
-                            "Click 'Register Applicant' to add your first applicant."
-                          )}
-                    </small>
-                  </span>
-                }
-              />
-            ),
-          }}
-          scroll={{ x: "max-content" }}
-        />
+            <Space>
+              <span style={{ fontWeight: 500 }}>
+                {t("onlyRunning", "Only Running")}:
+              </span>
+              <Switch checked={filterRunning} onChange={setFilterRunning} />
+            </Space>
+
+            {canViewAllApplicants && allRegisteredUsers.length > 0 && (
+              <Space>
+                <span style={{ fontWeight: 500 }}>
+                  {t("registeredBy", "Registered by")}:
+                </span>
+                <Select
+                  value={registeredByFilter}
+                  onChange={setRegisteredByFilter}
+                  style={{ minWidth: 150 }}
+                  placeholder={t("all", "All")}
+                  allowClear
+                >
+                  <Option value="">{t("all", "All")}</Option>
+                  {allRegisteredUsers.map((username) => (
+                    <Option key={username} value={username}>
+                      {username}
+                    </Option>
+                  ))}
+                </Select>
+              </Space>
+            )}
+          </Space>
+          <Table
+            columns={columns}
+            dataSource={data}
+            loading={loading}
+            rowKey="id"
+            onRow={(record, index) => ({
+              style: {
+                backgroundColor: index % 2 === 0 ? "#ffffff" : "#dbecfa1a",
+                transition: "background-color 0.2s ease",
+              },
+              onMouseEnter: () => setHoveredRowId(record.id),
+              onMouseLeave: () => setHoveredRowId(null),
+            })}
+            /* pagination={{
+              pageSize: 10,
+              showSizeChanger: true,
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} ${t("of", "of")} ${total} ${t(
+                  "items",
+                  "items"
+                )}`,
+            }} */
+            pagination={false}
+            locale={{
+              emptyText: (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={
+                    <span>
+                      {t("noApplicantsFound", "No applicants found")}
+                      <br />
+                      <small>
+                        {filterActive || filterRunning || registeredByFilter
+                          ? t(
+                              "adjustFilters",
+                              "Try adjusting your filters or register a new applicant to get started."
+                            )
+                          : t(
+                              "clickToAddFirst",
+                              "Click 'Register Applicant' to add your first applicant."
+                            )}
+                      </small>
+                    </span>
+                  }
+                />
+              ),
+            }}
+            scroll={{ x: "max-content" }}
+          />
+        </Card>
       </div>
     </>
   );
