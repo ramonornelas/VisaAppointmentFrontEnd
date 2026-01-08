@@ -482,6 +482,7 @@ const ApplicantsAntD = () => {
   };
 
   const getSearchStatusColor = (status) => {
+    if (!status) return "default";
     const colors = {
       Running: "#2C6BA0", // Primary color
       Stopped: "#ff9800", // Warning color
@@ -493,16 +494,16 @@ const ApplicantsAntD = () => {
 
   const columns = [
     {
-      title: t("aisId", "AIS ID"),
+      title: <div>{t("aisId", "AIS ID")}</div>,
       dataIndex: "ais_schedule_id",
       key: "ais_schedule_id",
-      width: 200,
       render: (text, record) => (
         <Space>
           <Button
             type="link"
             onClick={() => handleView(record.id)}
             icon={<EyeOutlined />}
+            style={{ padding: 0 }}
           >
             {text}
           </Button>
@@ -537,10 +538,9 @@ const ApplicantsAntD = () => {
       ),
     },
     {
-      title: t("aisUsername", "AIS Username"),
+      title: <div>{t("aisUsername", "AIS Username")}</div>,
       dataIndex: "ais_username",
       key: "ais_username",
-      width: 250,
       render: (text, record) => (
         <Space>
           <span>{text}</span>
@@ -574,16 +574,14 @@ const ApplicantsAntD = () => {
       ),
     },
     {
-      title: t("name", "Name"),
+      title: <div>{t("name", "Name")}</div>,
       dataIndex: "name",
       key: "name",
-      width: 180,
     },
     {
-      title: t("applicantStatus", "Applicant Status"),
+      title: <div>{t("applicantStatus", "Applicant Status")}</div>,
       dataIndex: "applicant_active",
       key: "applicant_active",
-      width: 150,
       render: (active) => (
         <Tag color={active ? "#4caf50" : "default"}>
           {active ? t("active", "Active") : t("inactive", "Inactive")}
@@ -591,14 +589,13 @@ const ApplicantsAntD = () => {
       ),
     },
     {
-      title: t("searchStatus", "Search Status"),
+      title: <div>{t("searchStatus", "Search Status")} </div>,
       dataIndex: "search_status",
       key: "search_status",
-      width: 200,
       render: (status, record) => (
         <Space>
           <Tag color={getSearchStatusColor(status)}>
-            {t(status.toLowerCase(), status)}
+            {t(status ? status.toLowerCase() : "unknown", status || "Unknown")}
           </Tag>
           <Tooltip
             title={
@@ -640,20 +637,18 @@ const ApplicantsAntD = () => {
       ),
     },
     {
-      title: t("targetEndDate", "Target End Date"),
+      title: <div>{t("targetEndDate", "Target End Date")}</div>,
       dataIndex: "target_end_date",
       key: "target_end_date",
-      width: 150,
     },
   ];
 
   // Add Registered By column if user can view all applicants
   if (canViewAllApplicants) {
     columns.push({
-      title: t("registeredBy", "Registered By"),
+      title: <div>{t("registeredBy", "Registered By")}</div>,
       dataIndex: "fastVisa_username",
       key: "fastVisa_username",
-      width: 180,
     });
   }
 
@@ -662,8 +657,7 @@ const ApplicantsAntD = () => {
       <HamburgerMenu />
       <div
         style={{
-          padding: "120px 32px 32px 32px",
-          maxWidth: "1400px",
+          padding: "120px 18px 0px 18px",
           margin: "0 auto",
           backgroundColor: "#f5f5f5",
           minHeight: "100vh",
@@ -675,6 +669,9 @@ const ApplicantsAntD = () => {
             marginBottom: 24,
             boxShadow:
               "0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02)",
+            maxWidth: "1580px",
+            margin: "0 auto",
+            padding: "0px",
           }}
         >
           <div
@@ -727,7 +724,7 @@ const ApplicantsAntD = () => {
                 <Select
                   value={registeredByFilter}
                   onChange={setRegisteredByFilter}
-                  style={{ minWidth: 150 }}
+                  style={{ width: 260 }}
                   placeholder={t("all", "All")}
                   allowClear
                 >
@@ -746,6 +743,7 @@ const ApplicantsAntD = () => {
             dataSource={data}
             loading={loading}
             rowKey="id"
+            tableLayout="auto"
             onRow={(record, index) => ({
               style: {
                 backgroundColor: index % 2 === 0 ? "#ffffff" : "#dbecfa1a",
@@ -788,7 +786,7 @@ const ApplicantsAntD = () => {
                 />
               ),
             }}
-            scroll={{ x: "max-content" }}
+            scroll={{ x: 1000 }}
           />
         </Card>
       </div>

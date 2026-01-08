@@ -58,11 +58,17 @@ const theme = {
       rowHoverBg: "#f5f5f5",
       headerSplitColor: "transparent",
       cellPaddingBlock: 8,
-      cellPaddingInline: 12,
+      cellPaddingInline: 6,
       rowSelectedBg: "#e6f4ff",
       rowSelectedHoverBg: "#bae0ff",
       colorBgContainer: "#ffffff",
       colorFillAlter: "#fafafa",
+    },
+
+    Card: {
+      paddingLG: 12,
+      paddingMD: 8,
+      paddingSM: 8,
     },
 
     Tag: {
