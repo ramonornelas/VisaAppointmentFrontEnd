@@ -583,7 +583,9 @@ const ApplicantView = () => {
               {data.target_start_mode === 'date' && (
                 <div className="applicant-view-field">
                   <label>{t('targetStartDate', 'Target Start Date')}</label>
-                  <div className="applicant-view-value">{data.target_start_date || 'N/A'}</div>
+                  <div className="applicant-view-value">
+                          <i className="fas fa-calendar-check" style={{ marginRight: '8px', color: '#6b7280' }}></i>
+                    {formatEndDate(data.target_start_date) || 'N/A'}</div>
                   <div className="date-info-box">
                     <i className="fas fa-info-circle date-info-icon"></i>
                     <div style={{ flex: 1 }}>
@@ -766,12 +768,16 @@ const ApplicantView = () => {
               <div className="applicant-view-grid">
                 <div className="applicant-view-field">
                   <label>{t('consulateAppointmentDate', 'Consulate Appointment Date')}</label>
-                  <div className="applicant-view-value">{data.consul_appointment_date || t('notSet', 'Not set')}</div>
+                  <div className="applicant-view-value">
+                          <i className="fas fa-calendar-check" style={{ marginRight: '8px', color: '#6b7280' }}></i>
+                    {formatEndDate(data.consul_appointment_date) || t('notSet', 'Not set')}</div>
                 </div>
 
                 <div className="applicant-view-field">
                   <label>{t('ascAppointmentDate', 'ASC Appointment Date')}</label>
-                  <div className="applicant-view-value">{data.asc_appointment_date || t('notSet', 'Not set')}</div>
+                  <div className="applicant-view-value">
+                          <i className="fas fa-calendar-check" style={{ marginRight: '8px', color: '#6b7280' }}></i>
+                    {formatEndDate(data.asc_appointment_date) || t('notSet', 'Not set')}</div>
                 </div>
               </div>
             </div>
