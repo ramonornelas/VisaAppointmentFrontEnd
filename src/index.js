@@ -1,7 +1,9 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ConfigProvider } from "antd";
 import { AuthProvider } from "./utils/AuthContext";
+import theme from "./config/theme";
 import "./index.css";
 import LogIn from "./components/auth/LogIn";
 import Home from "./components/home/Home";
@@ -24,24 +26,26 @@ const container = document.getElementById("root");
 const root = createRoot(container);
 
 root.render(
-  <AuthProvider>
-    <Router>
-      <Routes>
-        <Route path="/" element={<LogIn />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/registeruser" element={<RegisterUser />} />
-        <Route path="/quickstart" element={<QuickStartApplicant />} />
-        <Route path="/applicants" element={<Applicants />} />
-        <Route path="/applicants-antd" element={<ApplicantsAntD />} />
-        <Route path="/applicant-form" element={<ApplicantForm />} />
-        <Route path="/viewapplicant" element={<ApplicantView />} />
-        <Route path="/view-applicant/:id" element={<ApplicantView />} />
-        <Route path="/deleteapplicant" element={<DeleteApplicant />} />
-        <Route path="/logout" element={<LogOut />} />
-        <Route path="/premium-upgrade" element={<PremiumUpgrade />} />
-        <Route path="/change-password" element={<ChangePassword />} />
-        <Route path="/users" element={<Users />} />
-      </Routes>
-    </Router>
-  </AuthProvider>
+  <ConfigProvider theme={theme}>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LogIn />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/registeruser" element={<RegisterUser />} />
+          <Route path="/quickstart" element={<QuickStartApplicant />} />
+          <Route path="/applicants" element={<Applicants />} />
+          <Route path="/applicants-antd" element={<ApplicantsAntD />} />
+          <Route path="/applicant-form" element={<ApplicantForm />} />
+          <Route path="/viewapplicant" element={<ApplicantView />} />
+          <Route path="/view-applicant/:id" element={<ApplicantView />} />
+          <Route path="/deleteapplicant" element={<DeleteApplicant />} />
+          <Route path="/logout" element={<LogOut />} />
+          <Route path="/premium-upgrade" element={<PremiumUpgrade />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/users" element={<Users />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  </ConfigProvider>
 );
