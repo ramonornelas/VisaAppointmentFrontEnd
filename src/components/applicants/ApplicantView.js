@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from './utils/AuthContext';
-import { permissions, refreshPermissions } from './utils/permissions';
-import HamburgerMenu from './HamburgerMenu';
-import Modal from './Modal';
+import { useAuth } from '../../utils/AuthContext';
+import { permissions, refreshPermissions } from '../../utils/permissions';
+import HamburgerMenu from '../common/HamburgerMenu';
+import Modal from '../common/Modal';
 import { 
   ApplicantDetails, 
   ApplicantDelete,
@@ -12,10 +12,10 @@ import {
   StartApplicantContainer,
   StopApplicantContainer,
   GetApplicantPassword 
-} from './APIFunctions';
-import { ALL_CITIES } from './utils/cities';
+} from '../../services/APIFunctions';
+import { ALL_CITIES } from '../../utils/cities';
 import './ApplicantView.css';
-import './index.css';
+import '../../index.css';
 
 const ApplicantView = () => {
   const { t, i18n } = useTranslation();
