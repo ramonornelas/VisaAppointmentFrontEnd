@@ -6,364 +6,384 @@
   "login": "Iniciar sesión",
   "logout": "Cerrar sesión",
   "register": "Regístrate",
-  "language": "Idioma"
-  ,"signUp": "Regístrate"
-  ,"name": "Nombre"
-  ,"username": "Correo electrónico"
-  ,"password": "Contraseña"
-  ,"confirmPassword": "Confirmar contraseña"
-  ,"country": "País"
-  ,"selectCountry": "Selecciona un país"
-  ,"phoneNumber": "Número de teléfono"
-  ,"cancel": "Cancelar"
-  ,"submit": "Enviar"
-  ,"noAccount": "¿No tienes una cuenta?"
-  ,"or": "o"
-  ,"tryAppNow": "Pruébalo ahora"
-  ,"noRegistrationRequired": "No requiere registro"
-  ,"orLoginBelow": "O inicia sesión si ya tienes cuenta"
-  ,"quickStart": "Inicio Rápido"
-  ,"quickStartDescription": "Comienza a usar la aplicación inmediatamente. Crearemos tu cuenta automáticamente."
-  ,"registeringUser": "Creando tu cuenta..."
-  ,"startingSearch": "Iniciando búsqueda de citas..."
-  ,"pleaseWait": "Por favor espera mientras configuramos tu cuenta"
-  ,"almostDone": "¡Casi listo! Configurando tu búsqueda de citas"
-  ,"personalInfo": "Información Personal"
-  ,"enterName": "Ingresa tu nombre completo"
-  ,"enterPhone": "Opcional"
-  ,"enterPassword": "Mínimo 6 caracteres"
-  ,"confirmYourPassword": "Confirma tu contraseña"
-  ,"aisCredentials": "Credenciales del Sistema de Citas de Visas"
-  ,"aisEmail": "Correo del Sistema de Citas"
-  ,"aisPassword": "Contraseña del Sistema de Citas"
-  ,"enterAisPassword": "Ingresa tu contraseña del sistema de citas"
-  ,"aisScheduleId": "ID del Sistema de Citas de Visas"
-  ,"numberOfApplicants": "Número de Solicitantes"
-  ,"targetDates": "Fechas Objetivo"
-  ,"targetDatesTooltip": "Aquí puedes configurar la fecha de inicio de tu búsqueda."
-  ,"startMode": "Modo de Inicio"
-  ,"specificDate": "Fecha Específica"
-  ,"daysFromNow": "Días desde Hoy"
-  ,"targetStartDate": "Fecha de Inicio Objetivo"
-  ,"startAfterDays": "Iniciar Después de (Días)"
-  ,"targetEndDate": "Fecha de Fin Objetivo"
-  ,"targetCities": "Ciudades Objetivo"
-  ,"noCitiesAvailable": "No hay ciudades disponibles para este país"
-  ,"processing": "Procesando..."
-  ,"startNow": "Comenzar Ahora"
-  ,"nameRequired": "El nombre es requerido"
-  ,"usernameRequired": "El correo electrónico es requerido"
-  ,"invalidEmail": "Por favor ingresa un correo electrónico válido"
-  ,"passwordRequired": "La contraseña es requerida"
-  ,"endDateRequired": "La fecha objetivo final es requerida"
-  ,"endDateMinimum": "La fecha objetivo final debe ser al menos 210 días desde hoy"
-  ,"passwordTooShort": "La contraseña debe tener al menos 6 caracteres"
-  ,"confirmPasswordRequired": "Por favor confirma tu contraseña"
-  ,"passwordsNotMatch": "Las contraseñas no coinciden"
-  ,"countryRequired": "La selección del país es requerida"
-  ,"aisEmailRequired": "El correo del sistema de citas es requerido"
-  ,"aisPasswordRequired": "La contraseña del sistema de citas es requerida"
-  ,"scheduleIdRequired": "El ID del Sistema de Citas de Visas es requerido"
-  ,"invalidNumber": "Debe ser al menos 1"
-  ,"startDaysRequired": "Requerido cuando se usa modo de días"
-  ,"startDateRequired": "Requerido cuando se usa modo de fecha"
-  ,"cityRequired": "Por favor selecciona al menos una ciudad"
-  ,"loadingConfig": "La configuración aún se está cargando. Por favor espera."
-  ,"userCreationFailed": "Error al crear la cuenta de usuario"
-  ,"userSearchFailed": "Error al recuperar los datos del usuario"
-  ,"applicantCreationFailed": "Error al crear el solicitante"
-  ,"loginFailed": "Error al iniciar sesión"
-  ,"unexpectedError": "Ocurrió un error inesperado"
-  ,"basicUserSearchInfo": "Configuración de Búsqueda para Usuario Básico:"
-  ,"basicUserSearchDesc": "Tu búsqueda de citas comenzará dentro de 4 meses a partir de hoy."
-  ,"premiumUpgradeNote": "Usuarios Premium"
-  ,"premiumCanSearchTomorrow": "pueden buscar citas comenzando desde mañana sin restricciones en la fecha de fin."
-  ,"searchStartsIn": "La Búsqueda Inicia En"
-  ,"sixMonthsFromToday": "4 meses desde hoy (120 días)"
-  ,"fourMonthsFromToday": "4 meses desde hoy (120 días)"
-  ,"startDate": "Fecha de inicio"
-  ,"targetEndDateExplanation": "Esta es la fecha máxima en que aceptarías una cita."
-  ,"targetStartDateExplanationView": "Esta es la fecha más temprana en que el sistema buscará citas disponibles."
-  ,"basicInfo": "Información Básica"
-  ,"optional": "(Opcional)"
-  ,"aisCredentialsInfo": "Ingresa tus credenciales de acceso al sistema de citas. Obtendremos automáticamente tu ID del Sistema de Citas de Visas y número de solicitantes del sistema."
-  ,"detectingLocation": "Detectando tu ubicación..."
-  ,"countryArgentina": "Argentina"
-  ,"countryBolivia": "Bolivia"
-  ,"countryBrazil": "Brasil"
-  ,"countryChile": "Chile"
-  ,"countryColombia": "Colombia"
-  ,"countryCostaRica": "Costa Rica"
-  ,"countryCuba": "Cuba"
-  ,"countryDominicanRepublic": "República Dominicana"
-  ,"countryEcuador": "Ecuador"
-  ,"countryElSalvador": "El Salvador"
-  ,"countryGuatemala": "Guatemala"
-  ,"countryHonduras": "Honduras"
-  ,"countryMexico": "México"
-  ,"countryNicaragua": "Nicaragua"
-  ,"countryPanama": "Panamá"
-  ,"countryParaguay": "Paraguay"
-  ,"countryPeru": "Perú"
-  ,"countryUruguay": "Uruguay"
-  ,"countryVenezuela": "Venezuela"
-  ,"howItWorks": "¿Cómo funciona?"
-  ,"step1Title": "Monitoreo Continuo"
-  ,"step1Desc": "Nuestro sistema monitorea 24/7 la disponibilidad de citas de visa americana en los consulados y rango de fechas que selecciones."
-  ,"step2Title": "Actualizaciones Regulares"
-  ,"step2Desc": "Te enviamos notificaciones continuas para que sepas cómo va tu búsqueda."
-  ,"step3Title": "Reservación Automática"
-  ,"step3Desc": "Cuando encontramos una fecha que coincide con tus criterios, hacemos la reservación automáticamente para que nadie más la tome y te notificamos inmediatamente."
-  ,"step4Title": "Notificación Instantánea"
-  ,"step4Desc": "Recibes notificación inmediata cuando tu cita ha sido reservada."
-  ,"importantNote": "Importante:"
-  ,"moneyBackGuarantee": "No podemos garantizar encontrar una fecha ya que depende de la disponibilidad de la embajada, pero si en un mes no tienes resultados, te regresamos tu dinero."
-  ,"securityBenefit": "Seguridad:"
-  ,"securityBenefitText": "Tus datos están cifrados y protegidos."
-  ,"globalCoverage": "Cobertura Latinoamericana:"
-  ,"globalCoverageText": "Compatible con embajadas y consulados en toda Latinoamérica."
-  ,"availabilityDisclaimer": "No podemos garantizar encontrar una fecha ya que depende de la disponibilidad de la embajada, pero nos comprometemos a encontrar una cita en un máximo de un mes."
-  ,"securityNote": "Seguridad:"
-  ,"securityText": "Tus datos están cifrados y protegidos. Cobertura en Latinoamérica disponible."
-  ,"whyChooseUs": "¿Por qué elegir FastVisa?"
-  ,"feature1Title": "Monitoreo Automático"
-  ,"feature1Desc": "Verificamos la disponibilidad de citas 24/7 para que tú no tengas que hacerlo"
-  ,"feature2Title": "Notificaciones Instantáneas"
-  ,"feature2Desc": "Recibe notificación inmediata cuando una cita esté disponible"
-  ,"feature3Title": "Seguro y Protegido"
-  ,"feature3Desc": "Tus datos están cifrados y protegidos en todo momento"
-  ,"feature4Title": "Múltiples Solicitantes"
-  ,"feature4Desc": "Administra citas para toda tu familia en un solo lugar"
-  ,"feature5Title": "Cobertura Latinoamericana"
-  ,"feature5Desc": "Compatible con embajadas y consulados en Latinoamérica"
-  ,"feature6Title": "Fácil de Usar"
-  ,"feature6Desc": "Interfaz simple diseñada para todos"
-  ,"applicants": "Solicitantes"
-  ,"onlyActive": "Solo Activos"
-  ,"onlyRunning": "Solo Búsquedas en Ejecución"
-  ,"registeredBy": "Registrado por"
-  ,"all": "Todos"
-  ,"registerApplicant": "Registrar Solicitante"
-  ,"aisId": "ID Sistema de Visas"
-  ,"aisUsername": "Usuario Sistema de Visas"
-  ,"applicantStatus": "Estado del Solicitante"
-  ,"searchStatus": "Estado de Búsqueda"
-  ,"active": "Activo"
-  ,"inactive": "Inactivo"
-  ,"running": "Buscando"
-  ,"stopped": "Detenido"
-  ,"error": "Error"
-  ,"completed": "Completado"
-  ,"startSearch": "Iniciar Búsqueda"
-  ,"stopSearch": "Detener Búsqueda"
-  ,"viewDetails": "Ver Detalles"
-  ,"clickToViewDetails": "Haz clic para ver detalles"
-  ,"clickEditToStartTomorrow": "¡Comienza a buscar desde mañana!\nHaz clic en Editar.",
-  "copyPassword": "Copiar Contraseña"
-  ,"copyEmail": "Copiar Correo"
-  ,"clearStatus": "Limpiar Estado"
-  ,"edit": "Editar"
-  ,"noApplicantsFound": "No se encontraron solicitantes"
-  ,"adjustFilters": "Intenta ajustar tus filtros o registra un nuevo solicitante para comenzar."
-  ,"clickToAddFirst": "Haz clic en 'Registrar Solicitante' para agregar tu primer solicitante."
-  ,"limitReached": "Límite Alcanzado"
-  ,"concurrentLimitMessage": "Has alcanzado tu límite de solicitantes concurrentes ({limit}).\nPara iniciar un nuevo solicitante, por favor detén uno de los solicitantes que están actualmente en ejecución."
-  ,"success": "Éxito"
-  ,"searchStartedSuccess": "¡Búsqueda iniciada!\nNuestro sistema monitoreará 24/7 y te enviará informes por correo. Puedes cerrar sesión tranquilamente."
-  ,"searchStoppedSuccess": "Búsqueda detenida exitosamente."
-  ,"errorPerformingAction": "Error al realizar la acción."
-  ,"copied": "Copiado"
-  ,"passwordCopied": "Contraseña copiada al portapapeles"
-  ,"emailCopied": "Correo copiado al portapapeles"
-  ,"appointmentSearchStartsSixMonths": "Tu búsqueda de cita comenzará 4 meses a partir de hoy."
-  ,"searchStartingTomorrow": "pueden buscar citas comenzando desde mañana."
-  ,"searchPerformedAllCities": "La búsqueda se realizará en todas las ciudades disponibles para este país."
-  ,"canSelectSpecificCities": "pueden seleccionar ciudades específicas para su búsqueda."
-  ,"statusClearedSuccess": "Estado limpiado exitosamente."
-  ,"failedToClearStatus": "Error al limpiar el estado."
-  ,"errorClearingStatus": "Error al limpiar el estado."
-  ,"upgradeToPremium": "Actualizar a Premium"
-  ,"users": "Usuarios"
-  ,"userMenu": "Menú de Usuario"
-  ,"basicUser": "Usuario Básico"
-  ,"premiumUser": "Usuario Premium"
-  ,"visaAgent": "Agente de Visas"
-  ,"administrator": "Administrador"
-  ,"myAppointment": "Mi Cita"
-  ,"editApplicant": "Editar Solicitante"
-  ,"addApplicant": "Agregar Solicitante"
-  ,"loadingApplicant": "Cargando datos del solicitante..."
-  ,"authenticating": "Autenticando..."
-  ,"authenticate": "Autenticar"
-  ,"authenticationSuccess": "¡Autenticación exitosa!"
-  ,"authenticationFailed": "Error de autenticación. Por favor verifica tus credenciales."
-  ,"autoFillNote": "Los campos ID del Sistema de Citas de Visas y Número de Solicitantes se completarán automáticamente después de la autenticación."
-  ,"saveChanges": "Guardar Cambios"
-  ,"savingChanges": "Guardando cambios..."
-  ,"updatedSuccessfully": "Solicitante actualizado exitosamente"
-  ,"createdSuccessfully": "Solicitante creado exitosamente"
-  ,"failedToUpdate": "Error al actualizar el solicitante"
-  ,"failedToCreate": "Error al crear el solicitante"
-  ,"searchWillStart": "La búsqueda comenzará"
-  ,"from": "desde"
-  ,"to": "hasta"
-  ,"selectedCities": "Ciudades seleccionadas"
-  ,"selectAtLeastOneCity": "Selecciona al menos una ciudad"
-  ,"expirationDate": "Fecha de Expiración"
-  ,"concurrentApplicants": "Solicitantes Concurrentes"
-  ,"role": "Rol"
-  ,"actions": "Acciones"
-  ,"save": "Guardar"
-  ,"delete": "Eliminar"
-  ,"selectRole": "Selecciona un rol"
-  ,"noUsersFound": "No se encontraron usuarios"
-  ,"noUsersAvailable": "No hay usuarios disponibles en el sistema."
-  ,"accessDenied": "Acceso denegado."
-  ,"deleteUser": "Eliminar Usuario"
-  ,"deleteUserConfirm": "¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."
-  ,"failedToDeleteUser": "Error al eliminar el usuario."
-  ,"newApplicant": "Nuevo Solicitante"
-  ,"updateApplicantInfo": "Actualizar la información de este solicitante"
-  ,"updateAppointmentSettings": "Actualizar la configuración de búsqueda de tu cita"
-  ,"fillDetailsToRegister": "Completa los detalles para registrar un nuevo solicitante"
-  ,"updating": "Actualizando..."
-  ,"creating": "Creando..."
-  ,"updateApplicant": "Actualizar Solicitante"
-  ,"createApplicant": "Crear Solicitante"
-  ,"fullName": "Nombre Completo"
-  ,"enterFullName": "Ingresa el nombre completo"
-  ,"applicantIsActive": "El solicitante está activo"
-  ,"visaAppointmentSystemEmail": "Correo del Sistema de Citas de Visas"
-  ,"visaAppointmentSystemPassword": "Contraseña del Sistema de Citas de Visas"
-  ,"leaveEmptyToKeepPassword": "Dejar vacío para mantener la contraseña actual"
-  ,"enterVisaPassword": "Ingresa la contraseña del sistema de citas de visas"
-  ,"clickToVerifyCredentials": "Haz clic para verificar tus credenciales del Sistema de Citas de Visas y obtener automáticamente tu ID del Sistema de Citas de Visas"
-  ,"authenticationSuccessful": "Autenticación Exitosa"
-  ,"autoFilledAfterAuth": "Este campo se completa automáticamente después de autenticar con el Sistema de Citas de Visas"
-  ,"basicUserSearchSettings": "Configuración de Búsqueda para Usuario Básico:"
-  ,"searchWillStartIn": "Tu búsqueda de citas comenzará dentro de 4 meses a partir de hoy."
-  ,"premiumUsersCanSearchTomorrow": "pueden buscar citas comenzando desde mañana."
-  ,"searchAllCities": "Buscar en todas las ciudades:"
-  ,"searchInAllCities": "La búsqueda se realizará en todas las ciudades disponibles para este país."
-  ,"premiumUsersCanSelectCities": "pueden seleccionar ciudades específicas para su búsqueda."
-  ,"required": "*"
-  ,"visaEmailRequired": "El correo del Sistema de Citas de Visas es requerido"
-  ,"pleaseEnterValidEmail": "Por favor ingresa un correo electrónico válido"
-  ,"visaPasswordRequired": "La contraseña del Sistema de Citas de Visas es requerida"
-  ,"failedToAuthVisa": "Error al autenticar las credenciales del Sistema de Citas de Visas. Por favor verifica tu correo y contraseña."
-  ,"authErrorOccurred": "Ocurrió un error durante la autenticación. Por favor intenta de nuevo."
-  ,"passwordRequiredForNewApplicants": "La contraseña es requerida para nuevos solicitantes"
-  ,"failedToCreateApplicant": "Error al crear el solicitante"
-  ,"failedToUpdateApplicant": "Error al actualizar el solicitante"
-  ,"applicantDetails": "Detalles del Solicitante"
-  ,"viewManageApplicantInfo": "Ver y gestionar la información del solicitante"
-  ,"viewManageAppointmentSearch": "Ver y gestionar tu búsqueda de cita"
-  ,"back": "Atrás"
-  ,"loadingApplicantDetails": "Cargando detalles del solicitante..."
-  ,"applicantNotFound": "Solicitante no encontrado"
-  ,"backToApplicants": "Volver a Solicitantes"
-  ,"notSet": "No establecido"
-  ,"deleteApplicant": "Eliminar Solicitante"
-  ,"deleteApplicantConfirm": "¿Estás seguro de que deseas eliminar este solicitante?"
-  ,"searchInProgress": "Búsqueda en Progreso"
-  ,"stopSearchBeforeDeleting": "La búsqueda está en progreso. ¿Deseas detener la búsqueda antes de eliminar?"
-  ,"searchStopped": "Búsqueda Detenida"
-  ,"searchStoppedApplicantDeleted": "Búsqueda detenida. El solicitante será eliminado ahora."
-  ,"applicantDeletedSuccessfully": "Solicitante eliminado exitosamente."
-  ,"unexpectedResponseDeleting": "Respuesta inesperada al eliminar el solicitante."
-  ,"failedToDeleteApplicant": "Error al eliminar el solicitante. Por favor intenta de nuevo."
-  ,"failedToStopSearchOrDelete": "Error al detener la búsqueda o eliminar el solicitante. Por favor intenta de nuevo."
-  ,"errorDeletingApplicant": "Error al eliminar el solicitante."
-  ,"reservedAppointments": "Citas Reservadas"
-  ,"consulateAppointmentDate": "Fecha de Cita en Consulado"
-  ,"ascAppointmentDate": "Fecha de Cita CAS"
-  ,"targetStartDays": "Días de Inicio Objetivo"
-  ,"onlyRelevantFields": "Solo campos relevantes"
-  ,"showAllFields": "Mostrar todos los campos"
-  ,"fastVisaId": "ID de FastVisa"
-  ,"applicantActive": "Solicitante Activo"
-  ,"targetStartMode": "Modo de Inicio Objetivo"
-  ,"targetCityCodes": "Códigos de Ciudades Objetivo"
-  ,"true": "Verdadero"
-  ,"false": "Falso"
-  ,"noDataAvailable": "No hay datos disponibles"
-  ,"emailCopiedToClipboard": "Correo copiado al portapapeles"
-  ,"errorCopyingEmail": "Error al copiar el correo"
-  ,"concurrentLimitReached": "Has alcanzado tu límite de solicitantes concurrentes ({limit}).\nPara iniciar un nuevo solicitante, por favor detén uno de los solicitantes que están actualmente en ejecución."
-  ,"basicInformation": "Información Básica"
-  ,"visaCredentials": "Credenciales del Sistema de Citas de Visas"
-  ,"visaEmail": "Correo del Sistema de Citas de Visas"
-  ,"scheduleId": "ID del Sistema de Citas de Visas"
-  ,"viewManageAppointment": "Ver y gestionar tu búsqueda de cita"
-  ,"loading": "Cargando..."
-  ,"failedToLoadUserInfo": "Error al cargar la información del usuario"
-  ,"upgradeSuccessful": "¡Actualización Exitosa!"
-  ,"welcomeToPremium": "¡Bienvenido a FastVisa Premium!"
-  ,"accountUpgradedSuccessfully": "Tu cuenta ha sido actualizada exitosamente."
-  ,"menuUpdatedPremium": "¡Tu menú ha sido actualizado para reflejar tu nuevo estado premium!"
-  ,"startUsingPremiumFeatures": "Comenzar a usar funciones Premium"
-  ,"cancelSubscriptionAnytime": "Puedes cancelar tu suscripción en cualquier momento."
-  ,"upgradeToPremiumTitle": "Actualizar a Premium"
-  ,"currentPlan": "Plan Actual"
-  ,"alreadyPremium": "¡Ya Eres Premium!"
-  ,"accessAllPremiumFeatures": "Tienes acceso a todas las funciones premium."
-  ,"accessPremiumFeatures": "Acceder a Funciones Premium"
-  ,"basicPlan": "Plan Básico"
-  ,"premiumPlan": "Plan Premium"
-  ,"mostPopular": "Más popular"
-  ,"perWeek": "/semana"
-  ,"loadingRate": "Cargando..."
-  ,"exchangeRateError": "No se pudo obtener el tipo de cambio. El precio puede variar."
-  ,"allBasicFeatures": "Todas las funciones básicas"
-  ,"searchStartsSixMonthsAhead": "La búsqueda comienza desde 4 meses adelante"
-  ,"searchCanStartTomorrow": "La búsqueda puede comenzar desde mañana"
-  ,"basicNotificationsEvery2Hours": "Notificaciones básicas cada 2 horas"
-  ,"customizableNotifications": "Notificaciones personalizables (cuándo y cómo quieras)"
-  ,"standardSearchQueue": "Cola de búsqueda estándar"
-  ,"prioritySearchQueue": "Cola de búsqueda prioritaria"
-  ,"customNotificationSettings": "Configuración de notificaciones personalizadas"
-  ,"prioritySupport": "Soporte prioritario al cliente"
-  ,"yourCurrentPlan": "Tu plan actual"
-  ,"upgradeNow": "Actualizar ahora"
-  ,"completeYourUpgrade": "Completa tu actualización"
-  ,"securePaymentPayPal": "Pago seguro con PayPal"
-  ,"premiumUpgradeDescription": "Actualización a FastVisa Premium"
-  ,"whyUpgradePremium": "¿Por qué Actualizar a Premium?"
-  ,"nextDaySearch": "Búsqueda desde mañana"
-  ,"nextDaySearchDesc": "Busca citas desde mañana en lugar de esperar 4 meses."
-  ,"customNotifications": "Notificaciones Personalizadas"
-  ,"customNotificationsDesc": "Elige cuándo y cómo recibir notificaciones vs alertas básicas cada 2 horas"
-  ,"priorityQueue": "Cola de Búsqueda Prioritaria"
-  ,"priorityQueueDesc": "Tus búsquedas tienen prioridad sobre los usuarios Básicos para resultados más rápidos"
-  ,"moneyBackGuarantee30Days": "Garantía de devolución de 30 días"
-  ,"moneyBackGuaranteeDesc": "¿No estás satisfecho? Obtén un reembolso completo dentro de 30 días si no has realizado ninguna reservación con la aplicación."
-  ,"paymentSuccessUpgradeFailed": "El pago fue exitoso pero no se pudo actualizar la cuenta. Por favor contacta a soporte."
-  ,"paymentFailed": "El pago falló. Por favor intenta de nuevo."
-  ,"unknown": "Desconocido"
-  ,"basic": "Básico"
-  ,"premium": "Premium"
-  ,"admin": "Administrador"
-  ,"loadingPaymentConfig": "Cargando configuración de pago..."
-  ,"paypalConfigNotAvailable": "Configuración de PayPal no disponible. Por favor contacta a soporte."
-  ,"selectPaymentCurrency": "Selecciona la moneda de pago"
-  ,"usdDollars": "USD (Dólares)"
-  ,"mxnPesos": "MXN (Pesos)"
-  ,"paymentDetails": "Detalles del pago"
-  ,"amount": "Monto"
-  ,"description": "Descripción"
-  ,"processingPayment": "Procesando pago..."
-  ,"whyFullMonthSubscription": "¿Por qué una suscripción de una semana completa?"
-  ,"whyFullMonthSubscriptionDesc": "La búsqueda de citas de visa puede durar un par de horas, días o incluso semanas ya que depende de la disponibilidad de citas que publique la embajada de Estados Unidos."
-  ,"changePassword": "Cambiar Contraseña"
-  ,"currentPassword": "Contraseña Actual"
-  ,"newPassword": "Nueva Contraseña"
-  ,"confirmNewPassword": "Confirmar Nueva Contraseña"
-  ,"changePasswordDescription": "Ingresa tu contraseña actual y elige una nueva"
-  ,"currentPasswordRequired": "La contraseña actual es requerida"
-  ,"newPasswordRequired": "La nueva contraseña es requerida"
-  ,"newPasswordSameAsCurrent": "La nueva contraseña debe ser diferente de la actual"
-  ,"passwordChangedSuccess": "Contraseña cambiada exitosamente"
-  ,"failedToChangePassword": "Error al cambiar la contraseña"
-  ,"errorChangingPassword": "Ocurrió un error al cambiar la contraseña"
-  ,"configured": "Configurado"
+  "language": "Idioma",
+  "signUp": "Regístrate",
+  "name": "Nombre",
+  "username": "Correo electrónico",
+  "password": "Contraseña",
+  "confirmPassword": "Confirmar contraseña",
+  "country": "País",
+  "selectCountry": "Selecciona un país",
+  "phoneNumber": "Número de teléfono",
+  "cancel": "Cancelar",
+  "submit": "Enviar",
+  "noAccount": "¿No tienes una cuenta?",
+  "or": "o",
+  "tryAppNow": "Pruébalo ahora",
+  "noRegistrationRequired": "No requiere registro",
+  "orLoginBelow": "O inicia sesión si ya tienes cuenta",
+  "quickStart": "Inicio Rápido",
+  "quickStartDescription": "Comienza a usar la aplicación inmediatamente. Crearemos tu cuenta automáticamente.",
+  "registeringUser": "Creando tu cuenta...",
+  "startingSearch": "Iniciando búsqueda de citas...",
+  "pleaseWait": "Por favor espera mientras configuramos tu cuenta",
+  "almostDone": "¡Casi listo! Configurando tu búsqueda de citas",
+  "personalInfo": "Información Personal",
+  "enterName": "Ingresa tu nombre completo",
+  "enterPhone": "Opcional",
+  "enterPassword": "Mínimo 6 caracteres",
+  "confirmYourPassword": "Confirma tu contraseña",
+  "aisCredentials": "Credenciales del Sistema de Citas de Visas",
+  "aisEmail": "Correo del Sistema de Citas",
+  "aisPassword": "Contraseña del Sistema de Citas",
+  "enterAisPassword": "Ingresa tu contraseña del sistema de citas",
+  "aisScheduleId": "ID del Sistema de Citas de Visas",
+  "numberOfApplicants": "Número de Solicitantes",
+  "targetDates": "Fechas Objetivo",
+  "targetDatesTooltip": "Aquí puedes configurar la fecha de inicio de tu búsqueda.",
+  "startMode": "Modo de Inicio",
+  "specificDate": "Fecha Específica",
+  "daysFromNow": "Días desde Hoy",
+  "targetStartDate": "Fecha de Inicio Objetivo",
+  "startAfterDays": "Iniciar Después de (Días)",
+  "targetEndDate": "Fecha de Fin Objetivo",
+  "targetCities": "Ciudades Objetivo",
+  "noCitiesAvailable": "No hay ciudades disponibles para este país",
+  "processing": "Procesando...",
+  "startNow": "Comenzar Ahora",
+  "nameRequired": "El nombre es requerido",
+  "usernameRequired": "El correo electrónico es requerido",
+  "invalidEmail": "Por favor ingresa un correo electrónico válido",
+  "passwordRequired": "La contraseña es requerida",
+  "endDateRequired": "La fecha objetivo final es requerida",
+  "endDateMinimum": "La fecha objetivo final debe ser al menos 210 días desde hoy",
+  "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+  "confirmPasswordRequired": "Por favor confirma tu contraseña",
+  "passwordsNotMatch": "Las contraseñas no coinciden",
+  "countryRequired": "La selección del país es requerida",
+  "aisEmailRequired": "El correo del sistema de citas es requerido",
+  "aisPasswordRequired": "La contraseña del sistema de citas es requerida",
+  "scheduleIdRequired": "El ID del Sistema de Citas de Visas es requerido",
+  "invalidNumber": "Debe ser al menos 1",
+  "startDaysRequired": "Requerido cuando se usa modo de días",
+  "startDateRequired": "Requerido cuando se usa modo de fecha",
+  "cityRequired": "Por favor selecciona al menos una ciudad",
+  "loadingConfig": "La configuración aún se está cargando. Por favor espera.",
+  "userCreationFailed": "Error al crear la cuenta de usuario",
+  "userSearchFailed": "Error al recuperar los datos del usuario",
+  "applicantCreationFailed": "Error al crear el solicitante",
+  "loginFailed": "Error al iniciar sesión",
+  "unexpectedError": "Ocurrió un error inesperado",
+  "basicUserSearchInfo": "Configuración de Búsqueda para Usuario Básico:",
+  "basicUserSearchDesc": "Tu búsqueda de citas comenzará dentro de 4 meses a partir de hoy.",
+  "premiumUpgradeNote": "Usuarios Premium",
+  "premiumCanSearchTomorrow": "pueden buscar citas comenzando desde mañana sin restricciones en la fecha de fin.",
+  "searchStartsIn": "La Búsqueda Inicia En",
+  "sixMonthsFromToday": "4 meses desde hoy (120 días)",
+  "fourMonthsFromToday": "4 meses desde hoy (120 días)",
+  "startDate": "Fecha de inicio",
+  "targetEndDateExplanation": "Esta es la fecha máxima en que aceptarías una cita.",
+  "targetStartDateExplanationView": "Esta es la fecha más temprana en que el sistema buscará citas disponibles.",
+  "basicInfo": "Información Básica",
+  "optional": "(Opcional)",
+  "aisCredentialsInfo": "Ingresa tus credenciales de acceso al sistema de citas. Obtendremos automáticamente tu ID del Sistema de Citas de Visas y número de solicitantes del sistema.",
+  "detectingLocation": "Detectando tu ubicación...",
+  "countryArgentina": "Argentina",
+  "countryBolivia": "Bolivia",
+  "countryBrazil": "Brasil",
+  "countryChile": "Chile",
+  "countryColombia": "Colombia",
+  "countryCostaRica": "Costa Rica",
+  "countryCuba": "Cuba",
+  "countryDominicanRepublic": "República Dominicana",
+  "countryEcuador": "Ecuador",
+  "countryElSalvador": "El Salvador",
+  "countryGuatemala": "Guatemala",
+  "countryHonduras": "Honduras",
+  "countryMexico": "México",
+  "countryNicaragua": "Nicaragua",
+  "countryPanama": "Panamá",
+  "countryParaguay": "Paraguay",
+  "countryPeru": "Perú",
+  "countryUruguay": "Uruguay",
+  "countryVenezuela": "Venezuela",
+  "howItWorks": "¿Cómo funciona?",
+  "step1Title": "Monitoreo Continuo",
+  "step1Desc": "Nuestro sistema monitorea 24/7 la disponibilidad de citas de visa americana en los consulados y rango de fechas que selecciones.",
+  "step2Title": "Actualizaciones Regulares",
+  "step2Desc": "Te enviamos notificaciones continuas para que sepas cómo va tu búsqueda.",
+  "step3Title": "Reservación Automática",
+  "step3Desc": "Cuando encontramos una fecha que coincide con tus criterios, hacemos la reservación automáticamente para que nadie más la tome y te notificamos inmediatamente.",
+  "step4Title": "Notificación Instantánea",
+  "step4Desc": "Recibes notificación inmediata cuando tu cita ha sido reservada.",
+  "importantNote": "Importante:",
+  "moneyBackGuarantee": "No podemos garantizar encontrar una fecha ya que depende de la disponibilidad de la embajada, pero si en un mes no tienes resultados, te regresamos tu dinero.",
+  "securityBenefit": "Seguridad:",
+  "securityBenefitText": "Tus datos están cifrados y protegidos.",
+  "globalCoverage": "Cobertura Latinoamericana:",
+  "globalCoverageText": "Compatible con embajadas y consulados en toda Latinoamérica.",
+  "availabilityDisclaimer": "No podemos garantizar encontrar una fecha ya que depende de la disponibilidad de la embajada, pero nos comprometemos a encontrar una cita en un máximo de un mes.",
+  "securityNote": "Seguridad:",
+  "securityText": "Tus datos están cifrados y protegidos. Cobertura en Latinoamérica disponible.",
+  "whyChooseUs": "¿Por qué elegir FastVisa?",
+  "feature1Title": "Monitoreo Automático",
+  "feature1Desc": "Verificamos la disponibilidad de citas 24/7 para que tú no tengas que hacerlo",
+  "feature2Title": "Notificaciones Instantáneas",
+  "feature2Desc": "Recibe notificación inmediata cuando una cita esté disponible",
+  "feature3Title": "Seguro y Protegido",
+  "feature3Desc": "Tus datos están cifrados y protegidos en todo momento",
+  "feature4Title": "Múltiples Solicitantes",
+  "feature4Desc": "Administra citas para toda tu familia en un solo lugar",
+  "feature5Title": "Cobertura Latinoamericana",
+  "feature5Desc": "Compatible con embajadas y consulados en Latinoamérica",
+  "feature6Title": "Fácil de Usar",
+  "feature6Desc": "Interfaz simple diseñada para todos",
+  "applicants": "Solicitantes",
+  "onlyActive": "Solo Activos",
+  "onlyRunning": "Solo Búsquedas en Ejecución",
+  "registeredBy": "Registrado por",
+  "all": "Todos",
+  "registerApplicant": "Registrar Solicitante",
+  "aisId": "ID Sistema de Visas",
+  "aisUsername": "Usuario Sistema de Visas",
+  "applicantStatus": "Estado del Solicitante",
+  "searchStatus": "Estado de Búsqueda",
+  "active": "Activo",
+  "inactive": "Inactivo",
+  "running": "Buscando",
+  "stopped": "Detenido",
+  "error": "Error",
+  "completed": "Completado",
+  "startSearch": "Iniciar Búsqueda",
+  "stopSearch": "Detener Búsqueda",
+  "viewDetails": "Ver Detalles",
+  "clickToViewDetails": "Haz clic para ver detalles",
+  "clickEditToStartTomorrow": "¡Comienza a buscar desde mañana!\nHaz clic en Editar.",
+  "copyPassword": "Copiar Contraseña",
+  "copyEmail": "Copiar Correo",
+  "clearStatus": "Limpiar Estado",
+  "edit": "Editar",
+  "noApplicantsFound": "No se encontraron solicitantes",
+  "adjustFilters": "Intenta ajustar tus filtros o registra un nuevo solicitante para comenzar.",
+  "clickToAddFirst": "Haz clic en 'Registrar Solicitante' para agregar tu primer solicitante.",
+  "limitReached": "Límite Alcanzado",
+  "concurrentLimitMessage": "Has alcanzado tu límite de solicitantes concurrentes ({limit}).\nPara iniciar un nuevo solicitante, por favor detén uno de los solicitantes que están actualmente en ejecución.",
+  "success": "Éxito",
+  "searchStartedSuccess": "¡Búsqueda iniciada!\nNuestro sistema monitoreará 24/7 y te enviará informes por correo. Puedes cerrar sesión tranquilamente.",
+  "searchStoppedSuccess": "Búsqueda detenida exitosamente.",
+  "errorPerformingAction": "Error al realizar la acción.",
+  "copied": "Copiado",
+  "passwordCopied": "Contraseña copiada al portapapeles",
+  "emailCopied": "Correo copiado al portapapeles",
+  "appointmentSearchStartsSixMonths": "Tu búsqueda de cita comenzará 4 meses a partir de hoy.",
+  "searchStartingTomorrow": "pueden buscar citas comenzando desde mañana.",
+  "searchPerformedAllCities": "La búsqueda se realizará en todas las ciudades disponibles para este país.",
+  "canSelectSpecificCities": "pueden seleccionar ciudades específicas para su búsqueda.",
+  "statusClearedSuccess": "Estado limpiado exitosamente.",
+  "failedToClearStatus": "Error al limpiar el estado.",
+  "errorClearingStatus": "Error al limpiar el estado.",
+  "upgradeToPremium": "Actualizar a Premium",
+  "users": "Usuarios",
+  "userMenu": "Menú de Usuario",
+  "basicUser": "Usuario Básico",
+  "premiumUser": "Usuario Premium",
+  "visaAgent": "Agente de Visas",
+  "administrator": "Administrador",
+  "myAppointment": "Mi Cita",
+  "editApplicant": "Editar Solicitante",
+  "addApplicant": "Agregar Solicitante",
+  "loadingApplicant": "Cargando datos del solicitante...",
+  "authenticating": "Autenticando...",
+  "authenticate": "Autenticar",
+  "authenticationSuccess": "¡Autenticación exitosa!",
+  "authenticationFailed": "Error de autenticación. Por favor verifica tus credenciales.",
+  "autoFillNote": "Los campos ID del Sistema de Citas de Visas y Número de Solicitantes se completarán automáticamente después de la autenticación.",
+  "saveChanges": "Guardar Cambios",
+  "savingChanges": "Guardando cambios...",
+  "updatedSuccessfully": "Solicitante actualizado exitosamente",
+  "createdSuccessfully": "Solicitante creado exitosamente",
+  "failedToUpdate": "Error al actualizar el solicitante",
+  "failedToCreate": "Error al crear el solicitante",
+  "searchWillStart": "La búsqueda comenzará",
+  "from": "desde",
+  "to": "hasta",
+  "selectedCities": "Ciudades seleccionadas",
+  "selectAtLeastOneCity": "Selecciona al menos una ciudad",
+  "expirationDate": "Fecha de Expiración",
+  "concurrentApplicants": "Solicitantes Concurrentes",
+  "role": "Rol",
+  "actions": "Acciones",
+  "save": "Guardar",
+  "delete": "Eliminar",
+  "selectRole": "Selecciona un rol",
+  "noUsersFound": "No se encontraron usuarios",
+  "noUsersAvailable": "No hay usuarios disponibles en el sistema.",
+  "accessDenied": "Acceso denegado.",
+  "deleteUser": "Eliminar Usuario",
+  "deleteUserConfirm": "¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.",
+  "failedToDeleteUser": "Error al eliminar el usuario.",
+  "newApplicant": "Nuevo Solicitante",
+  "updateApplicantInfo": "Actualizar la información de este solicitante",
+  "updateAppointmentSettings": "Actualizar la configuración de búsqueda de tu cita",
+  "fillDetailsToRegister": "Completa los detalles para registrar un nuevo solicitante",
+  "updating": "Actualizando...",
+  "creating": "Creando...",
+  "updateApplicant": "Actualizar Solicitante",
+  "createApplicant": "Crear Solicitante",
+  "fullName": "Nombre Completo",
+  "enterFullName": "Ingresa el nombre completo",
+  "applicantIsActive": "El solicitante está activo",
+  "visaAppointmentSystemEmail": "Correo del Sistema de Citas de Visas",
+  "visaAppointmentSystemPassword": "Contraseña del Sistema de Citas de Visas",
+  "leaveEmptyToKeepPassword": "Dejar vacío para mantener la contraseña actual",
+  "enterVisaPassword": "Ingresa la contraseña del sistema de citas de visas",
+  "clickToVerifyCredentials": "Haz clic para verificar tus credenciales del Sistema de Citas de Visas y obtener automáticamente tu ID del Sistema de Citas de Visas",
+  "authenticationSuccessful": "Autenticación Exitosa",
+  "autoFilledAfterAuth": "Este campo se completa automáticamente después de autenticar con el Sistema de Citas de Visas",
+  "basicUserSearchSettings": "Configuración de Búsqueda para Usuario Básico:",
+  "searchWillStartIn": "Tu búsqueda de citas comenzará dentro de 4 meses a partir de hoy.",
+  "premiumUsersCanSearchTomorrow": "pueden buscar citas comenzando desde mañana.",
+  "searchAllCities": "Buscar en todas las ciudades:",
+  "searchInAllCities": "La búsqueda se realizará en todas las ciudades disponibles para este país.",
+  "premiumUsersCanSelectCities": "pueden seleccionar ciudades específicas para su búsqueda.",
+  "required": "*",
+  "visaEmailRequired": "El correo del Sistema de Citas de Visas es requerido",
+  "pleaseEnterValidEmail": "Por favor ingresa un correo electrónico válido",
+  "visaPasswordRequired": "La contraseña del Sistema de Citas de Visas es requerida",
+  "failedToAuthVisa": "Error al autenticar las credenciales del Sistema de Citas de Visas. Por favor verifica tu correo y contraseña.",
+  "authErrorOccurred": "Ocurrió un error durante la autenticación. Por favor intenta de nuevo.",
+  "passwordRequiredForNewApplicants": "La contraseña es requerida para nuevos solicitantes",
+  "failedToCreateApplicant": "Error al crear el solicitante",
+  "failedToUpdateApplicant": "Error al actualizar el solicitante",
+  "applicantDetails": "Detalles del Solicitante",
+  "viewManageApplicantInfo": "Ver y gestionar la información del solicitante",
+  "viewManageAppointmentSearch": "Ver y gestionar tu búsqueda de cita",
+  "back": "Atrás",
+  "loadingApplicantDetails": "Cargando detalles del solicitante...",
+  "applicantNotFound": "Solicitante no encontrado",
+  "backToApplicants": "Volver a Solicitantes",
+  "notSet": "No establecido",
+  "deleteApplicant": "Eliminar Solicitante",
+  "deleteApplicantConfirm": "¿Estás seguro de que deseas eliminar este solicitante?",
+  "searchInProgress": "Búsqueda en Progreso",
+  "stopSearchBeforeDeleting": "La búsqueda está en progreso. ¿Deseas detener la búsqueda antes de eliminar?",
+  "searchStopped": "Búsqueda Detenida",
+  "searchStoppedApplicantDeleted": "Búsqueda detenida. El solicitante será eliminado ahora.",
+  "applicantDeletedSuccessfully": "Solicitante eliminado exitosamente.",
+  "unexpectedResponseDeleting": "Respuesta inesperada al eliminar el solicitante.",
+  "failedToDeleteApplicant": "Error al eliminar el solicitante. Por favor intenta de nuevo.",
+  "failedToStopSearchOrDelete": "Error al detener la búsqueda o eliminar el solicitante. Por favor intenta de nuevo.",
+  "errorDeletingApplicant": "Error al eliminar el solicitante.",
+  "reservedAppointments": "Citas Reservadas",
+  "consulateAppointmentDate": "Fecha de Cita en Consulado",
+  "ascAppointmentDate": "Fecha de Cita CAS",
+  "targetStartDays": "Días de Inicio Objetivo",
+  "onlyRelevantFields": "Solo campos relevantes",
+  "showAllFields": "Mostrar todos los campos",
+  "fastVisaId": "ID de FastVisa",
+  "applicantActive": "Solicitante Activo",
+  "targetStartMode": "Modo de Inicio Objetivo",
+  "targetCityCodes": "Códigos de Ciudades Objetivo",
+  "true": "Verdadero",
+  "false": "Falso",
+  "noDataAvailable": "No hay datos disponibles",
+  "emailCopiedToClipboard": "Correo copiado al portapapeles",
+  "errorCopyingEmail": "Error al copiar el correo",
+  "concurrentLimitReached": "Has alcanzado tu límite de solicitantes concurrentes ({limit}).\nPara iniciar un nuevo solicitante, por favor detén uno de los solicitantes que están actualmente en ejecución.",
+  "basicInformation": "Información Básica",
+  "visaCredentials": "Credenciales del Sistema de Citas de Visas",
+  "visaEmail": "Correo del Sistema de Citas de Visas",
+  "scheduleId": "ID del Sistema de Citas de Visas",
+  "viewManageAppointment": "Ver y gestionar tu búsqueda de cita",
+  "loading": "Cargando...",
+  "failedToLoadUserInfo": "Error al cargar la información del usuario",
+  "upgradeSuccessful": "¡Actualización Exitosa!",
+  "welcomeToPremium": "¡Bienvenido a FastVisa Premium!",
+  "accountUpgradedSuccessfully": "Tu cuenta ha sido actualizada exitosamente.",
+  "menuUpdatedPremium": "¡Tu menú ha sido actualizado para reflejar tu nuevo estado premium!",
+  "startUsingPremiumFeatures": "Comenzar a usar funciones Premium",
+  "cancelSubscriptionAnytime": "Puedes cancelar tu suscripción en cualquier momento.",
+  "upgradeToPremiumTitle": "Actualizar a Premium",
+  "currentPlan": "Plan Actual",
+  "alreadyPremium": "¡Ya Eres Premium!",
+  "accessAllPremiumFeatures": "Tienes acceso a todas las funciones premium.",
+  "accessPremiumFeatures": "Acceder a Funciones Premium",
+  "basicPlan": "Plan Básico",
+  "premiumPlan": "Plan Premium",
+  "mostPopular": "Más popular",
+  "perWeek": "/semana",
+  "loadingRate": "Cargando...",
+  "exchangeRateError": "No se pudo obtener el tipo de cambio. El precio puede variar.",
+  "allBasicFeatures": "Todas las funciones básicas",
+  "searchStartsSixMonthsAhead": "La búsqueda comienza desde 4 meses adelante",
+  "searchCanStartTomorrow": "La búsqueda puede comenzar desde mañana",
+  "basicNotificationsEvery2Hours": "Notificaciones básicas cada 2 horas",
+  "customizableNotifications": "Notificaciones personalizables (cuándo y cómo quieras)",
+  "standardSearchQueue": "Cola de búsqueda estándar",
+  "prioritySearchQueue": "Cola de búsqueda prioritaria",
+  "customNotificationSettings": "Configuración de notificaciones personalizadas",
+  "prioritySupport": "Soporte prioritario al cliente",
+  "yourCurrentPlan": "Tu plan actual",
+  "upgradeNow": "Actualizar ahora",
+  "completeYourUpgrade": "Completa tu actualización",
+  "securePaymentPayPal": "Pago seguro con PayPal",
+  "premiumUpgradeDescription": "Actualización a FastVisa Premium",
+  "whyUpgradePremium": "¿Por qué Actualizar a Premium?",
+  "nextDaySearch": "Búsqueda desde mañana",
+  "nextDaySearchDesc": "Busca citas desde mañana en lugar de esperar 4 meses.",
+  "customNotifications": "Notificaciones Personalizadas",
+  "customNotificationsDesc": "Elige cuándo y cómo recibir notificaciones vs alertas básicas cada 2 horas",
+  "priorityQueue": "Cola de Búsqueda Prioritaria",
+  "priorityQueueDesc": "Tus búsquedas tienen prioridad sobre los usuarios Básicos para resultados más rápidos",
+  "moneyBackGuarantee30Days": "Garantía de devolución de 30 días",
+  "moneyBackGuaranteeDesc": "¿No estás satisfecho? Obtén un reembolso completo dentro de 30 días si no has realizado ninguna reservación con la aplicación.",
+  "paymentSuccessUpgradeFailed": "El pago fue exitoso pero no se pudo actualizar la cuenta. Por favor contacta a soporte.",
+  "paymentFailed": "El pago falló. Por favor intenta de nuevo.",
+  "unknown": "Desconocido",
+  "basic": "Básico",
+  "premium": "Premium",
+  "admin": "Administrador",
+  "loadingPaymentConfig": "Cargando configuración de pago...",
+  "paypalConfigNotAvailable": "Configuración de PayPal no disponible. Por favor contacta a soporte.",
+  "selectPaymentCurrency": "Selecciona la moneda de pago",
+  "usdDollars": "USD (Dólares)",
+  "mxnPesos": "MXN (Pesos)",
+  "paymentDetails": "Detalles del pago",
+  "amount": "Monto",
+  "description": "Descripción",
+  "processingPayment": "Procesando pago...",
+  "whyFullMonthSubscription": "¿Por qué una suscripción de una semana completa?",
+  "whyFullMonthSubscriptionDesc": "La búsqueda de citas de visa puede durar un par de horas, días o incluso semanas ya que depende de la disponibilidad de citas que publique la embajada de Estados Unidos.",
+  "changePassword": "Cambiar Contraseña",
+  "currentPassword": "Contraseña Actual",
+  "newPassword": "Nueva Contraseña",
+  "confirmNewPassword": "Confirmar Nueva Contraseña",
+  "changePasswordDescription": "Ingresa tu contraseña actual y elige una nueva",
+  "currentPasswordRequired": "La contraseña actual es requerida",
+  "newPasswordRequired": "La nueva contraseña es requerida",
+  "newPasswordSameAsCurrent": "La nueva contraseña debe ser diferente de la actual",
+  "passwordChangedSuccess": "Contraseña cambiada exitosamente",
+  "failedToChangePassword": "Error al cambiar la contraseña",
+  "errorChangingPassword": "Ocurrió un error al cambiar la contraseña",
+  "configured": "Configurado",
+  "verifyingEmail": "Verificando tu correo...",
+  "emailVerified": "¡Correo Verificado Exitosamente!",
+  "emailVerifiedDesc": "Tu correo ha sido verificado exitosamente. Ahora puedes iniciar sesión en tu cuenta.",
+  "emailAlreadyVerified": "Tu correo ya ha sido verificado",
+  "emailAlreadyVerifiedDesc": "Puedes proceder a iniciar sesión.",
+  "verificationFailed": "Verificación Fallida",
+  "verificationExpired": "El enlace de verificación ha expirado o es inválido",
+  "verificationExpiredDesc": "Por favor solicita un nuevo correo de verificación para completar tu registro.",
+  "requestNewVerification": "Solicitar Nuevo Correo de Verificación",
+  "proceedToLogin": "Ir a Iniciar Sesión",
+  "verificationError": "Ocurrió un error durante la verificación. Por favor intenta más tarde.",
+  "resendVerification": "Reenviar Correo de Verificación",
+  "resendSuccess": "¡Correo de verificación enviado exitosamente!",
+  "resendError": "Error al reenviar el correo de verificación.",
+  "verificationRequiredTitle": "Verificación de Email Requerida",
+  "verificationRequiredDesc": "Por favor verifica tu dirección de correo electrónico para acceder a tu cuenta. Se ha enviado un enlace de verificación a:",
+  "backToLogin": "Volver al Inicio de Sesión",
+  "registrationSuccessTitle": "¡Registro Exitoso!",
+  "registrationSuccessDesc": "Hemos enviado un correo de verificación a:",
+  "checkInbox": "Por favor revisa tu bandeja de entrada y carpeta de spam."
 }
