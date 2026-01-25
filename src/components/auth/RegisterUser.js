@@ -40,6 +40,7 @@ const UserRegistrationForm = () => {
     expiration_date: getExpirationDate(),
     country_code: "",
     role_id: "", // Will be set after fetching roles
+    concurrent_applicants: null,
   });
   const [rolesLoaded, setRolesLoaded] = useState(false);
   const [roleError, setRoleError] = useState("");
@@ -188,16 +189,20 @@ const UserRegistrationForm = () => {
     const fetchRoles = async () => {
       try {
         const roles = await getRoles();
-        const basicRole = roles.find((role) => role.name === "basic_user");
+        const basicRole = roles.find((role) => role.name === "visa_agent");
         if (basicRole) {
           if (isMounted) {
-            setFormData((prev) => ({ ...prev, role_id: basicRole.id }));
+            setFormData((prev) => ({
+              ...prev,
+              role_id: basicRole.id,
+              concurrent_applicants: 1,
+            }));
             setRolesLoaded(true);
           }
         } else {
           if (isMounted) {
             setRoleError(
-              "Could not find the 'basic_user' role. Please contact support.",
+              "Could not find the 'visa_agent' role. Please contact support.",
             );
             setRolesLoaded(false);
           }

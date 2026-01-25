@@ -3,6 +3,7 @@
   "welcomeUser": "Welcome, {{name}}!",
   "registeredSuccessfully": "You have been registered successfully",
   "loginToGetAppointment": "Log in to get your visa appointment sooner!",
+  "loggingIn": "Logging in...",
   "login": "Log In",
   "logout": "Log Out",
   "register": "Register",
