@@ -164,6 +164,7 @@
   "copyEmail": "Copiar Correo",
   "clearStatus": "Limpiar Estado",
   "edit": "Editar",
+  "view": "Ver",
   "noApplicantsFound": "No se encontraron solicitantes",
   "adjustFilters": "Intenta ajustar tus filtros o registra un nuevo solicitante para comenzar.",
   "clickToAddFirst": "Haz clic en 'Registrar Solicitante' para agregar tu primer solicitante.",
@@ -386,5 +387,7 @@
   "backToLogin": "Volver al Inicio de Sesión",
   "registrationSuccessTitle": "¡Registro Exitoso!",
   "registrationSuccessDesc": "Hemos enviado un correo de verificación a:",
-  "checkInbox": "Por favor revisa tu bandeja de entrada y carpeta de spam."
+  "checkInbox": "Por favor revisa tu bandeja de entrada y carpeta de spam.",
+  "expand": "Expandir",
+  "collapse": "Colapsar"
 }

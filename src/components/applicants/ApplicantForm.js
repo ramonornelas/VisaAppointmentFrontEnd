@@ -1,7 +1,7 @@
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../utils/AuthContext";
-import { useEffect, useMemo, useState } from "react";
 import FastVisaMetrics from "../../utils/FastVisaMetrics";
 import { permissions } from "../../utils/permissions";
 import { ALL_CITIES } from "../../utils/cities";
@@ -12,19 +12,63 @@ import {
   createApplicant,
 } from "../../services/APIFunctions";
 import HamburgerMenu from "../common/HamburgerMenu";
+import {
+  Card,
+  Button,
+  Space,
+  Form,
+  Input,
+  Select,
+  Switch,
+  Radio,
+  InputNumber,
+  Typography,
+  Alert,
+  Grid,
+  Spin,
+  message as antMessage,
+} from "antd";
+import {
+  KeyOutlined,
+  CalendarOutlined,
+  EditOutlined,
+  UserAddOutlined,
+  CloseOutlined,
+  SaveOutlined,
+  CheckOutlined,
+  EnvironmentOutlined,
+  InfoCircleOutlined,
+  ArrowDownOutlined,
+  ArrowUpOutlined,
+} from "@ant-design/icons";
 import "./ApplicantForm.css";
+
+const { useBreakpoint } = Grid;
+const { Title, Text } = Typography;
 
 const ApplicantForm = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isAuthenticated } = useAuth();
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
   // Initialize metrics tracker
   const metrics = useMemo(() => new FastVisaMetrics(), []);
 
   const applicantId = searchParams.get("id");
   const isEditMode = !!applicantId;
+
+  const btnSize = isMobile ? "large" : "middle";
+  const cardContentStyle = isMobile
+    ? { display: "flex", flexDirection: "column", gap: 16, width: "100%" }
+    : {
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+        gap: 16,
+        width: "100%",
+      };
 
   // Session data
   const fastVisaUserId = sessionStorage.getItem("fastVisa_userid");
@@ -508,7 +552,9 @@ const ApplicantForm = () => {
           timestamp: new Date().toISOString(),
         });
 
-        // Redirect based on permissions
+        antMessage.success(
+          t("applicantCreatedSuccess", "Applicant created successfully.")
+        );
         if (permissions.canManageApplicants()) {
           navigate("/applicants");
         } else {
@@ -539,1032 +585,839 @@ const ApplicantForm = () => {
     return (
       <>
         <HamburgerMenu />
-        <div className="applicant-form-container">
-          <div className="applicant-form-loading">
-            <i className="fas fa-spinner fa-spin"></i>
-            <p>{t("loadingApplicant", "Loading applicant data...")}</p>
+        <div
+          className="applicant-form-container"
+          style={{
+            width: "100%",
+            maxWidth: "100%",
+            boxSizing: "border-box",
+            overflowX: "hidden",
+          }}
+        >
+          <div style={{ padding: "4rem 2rem", textAlign: "center" }}>
+            <Spin
+              size="large"
+              tip={t("loadingApplicant", "Loading applicant data...")}
+            />
           </div>
         </div>
       </>
     );
   }
 
+  const handleCancel = () => {
+    metrics.trackButtonClick(
+      "cancel-applicant-form-header-btn",
+      "Cancel Applicant Form (Header)"
+    );
+    if (permissions.canManageApplicants()) navigate("/applicants");
+    else if (isEditMode) navigate(`/view-applicant/${applicantId}`);
+    else navigate("/");
+  };
+
   return (
     <>
       <HamburgerMenu />
-      <div className="applicant-form-container">
-        <div className="applicant-form-header">
-          <div>
-            <h1 className="applicant-form-title">
-              {!permissions.canManageApplicants() ? (
-                <>
-                  <i className="fas fa-calendar-check"></i>
-                  {t("myAppointment", "My Appointment")}
-                </>
-              ) : isEditMode ? (
-                <>
-                  <i className="fas fa-edit"></i>
-                  {t("editApplicant", "Edit Applicant")}
-                </>
-              ) : (
-                <>
-                  <i className="fas fa-user-plus"></i>
-                  {t("newApplicant", "New Applicant")}
-                </>
-              )}
-            </h1>
-            <p className="applicant-form-subtitle">
-              {isEditMode
-                ? permissions.canManageApplicants()
-                  ? t(
-                      "updateApplicantInfo",
-                      "Update the information for this applicant"
-                    )
-                  : t(
-                      "updateAppointmentSettings",
-                      "Update your appointment search settings"
-                    )
-                : t(
-                    "fillDetailsToRegister",
-                    "Fill in the details to register a new applicant"
-                  )}
-            </p>
-          </div>
-
-          {/* Top Action Buttons */}
-          <div className="applicant-form-header-actions">
-            {isEditMode && permissions.canManageApplicants() && (
-              <div
+      <div
+        className="applicant-form-container"
+        style={{
+          width: "100%",
+          maxWidth: "100%",
+          boxSizing: "border-box",
+          overflowX: "hidden",
+          fontSize: isMobile ? 16 : undefined,
+        }}
+      >
+        <div
+          style={{
+            marginBottom: 24,
+            paddingBottom: 24,
+            borderBottom: "2px solid #e3eaf3",
+          }}
+        >
+          <Space
+            direction={isMobile ? "vertical" : "horizontal"}
+            align={isMobile ? "stretch" : "start"}
+            wrap
+            style={{ width: "100%", justifyContent: "space-between" }}
+          >
+            <div>
+              <Title
+                level={2}
                 style={{
+                  margin: 0,
+                  color: "#2C6BA0",
                   display: "flex",
                   alignItems: "center",
-                  gap: "8px",
-                  marginRight: "1rem",
-                  padding: "8px 12px",
-                  backgroundColor: "#f9fafb",
-                  borderRadius: "6px",
-                  border: "1px solid #e5e7eb",
+                  gap: 8,
                 }}
               >
-                <div
-                  className="toggle-switch"
-                  data-title={
-                    formData.applicantActive
-                      ? t("clickToDeactivate", "Click to deactivate")
-                      : t("clickToActivate", "Click to activate")
-                  }
-                  onClick={() =>
-                    handleInputChange({
-                      target: {
-                        name: "applicantActive",
-                        type: "checkbox",
-                        checked: !formData.applicantActive,
-                      },
-                    })
-                  }
-                >
-                  <div
-                    className={`switch-track${
-                      formData.applicantActive ? " active" : ""
-                    }`}
-                  ></div>
-                  <div
-                    className={`switch-thumb${
-                      formData.applicantActive ? " active" : ""
-                    }`}
-                  ></div>
-                </div>
-                <label
-                  style={{
-                    fontSize: "0.9rem",
-                    fontWeight: "500",
-                    color: formData.applicantActive ? "#059669" : "#6b7280",
-                    cursor: "pointer",
-                    userSelect: "none",
-                    margin: 0,
-                  }}
-                  onClick={() =>
-                    handleInputChange({
-                      target: {
-                        name: "applicantActive",
-                        type: "checkbox",
-                        checked: !formData.applicantActive,
-                      },
-                    })
-                  }
-                >
-                  {formData.applicantActive
-                    ? t("active", "Active")
-                    : t("inactive", "Inactive")}
-                </label>
-              </div>
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                // Track cancel button click
-                metrics.trackButtonClick(
-                  "cancel-applicant-form-header-btn",
-                  "Cancel Applicant Form (Header)"
-                );
-
-                if (permissions.canManageApplicants()) {
-                  navigate("/applicants");
-                } else if (isEditMode) {
-                  navigate(`/view-applicant/${applicantId}`);
-                } else {
-                  navigate("/");
-                }
-              }}
-              className="applicant-form-btn applicant-form-btn-cancel"
-              disabled={loading}
+                {!permissions.canManageApplicants() ? (
+                  <CalendarOutlined />
+                ) : isEditMode ? (
+                  <EditOutlined />
+                ) : (
+                  <UserAddOutlined />
+                )}
+                {!permissions.canManageApplicants()
+                  ? t("myAppointment", "My Appointment")
+                  : isEditMode
+                  ? t("editApplicant", "Edit Applicant")
+                  : t("newApplicant", "New Applicant")}
+              </Title>
+              <Text type="secondary" style={{ display: "block", marginTop: 4 }}>
+                {isEditMode
+                  ? permissions.canManageApplicants()
+                    ? t(
+                        "updateApplicantInfo",
+                        "Update the information for this applicant"
+                      )
+                    : t(
+                        "updateAppointmentSettings",
+                        "Update your appointment search settings"
+                      )
+                  : t(
+                      "fillDetailsToRegister",
+                      "Fill in the details to register a new applicant"
+                    )}
+              </Text>
+            </div>
+            <Space
+              wrap
+              size={8}
+              direction={isMobile ? "vertical" : "horizontal"}
+              style={{ width: isMobile ? "100%" : undefined }}
             >
-              <i className="fas fa-times"></i>
-              {t("cancel", "Cancel")}
-            </button>
-            <button
-              type="submit"
-              form="applicant-form"
-              className="applicant-form-btn applicant-form-btn-submit"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <i className="fas fa-spinner fa-spin"></i>
-                  {isEditMode
-                    ? t("updating", "Updating...")
-                    : t("creating", "Creating...")}
-                </>
-              ) : (
-                <>
-                  <i
-                    className={isEditMode ? "fas fa-save" : "fas fa-check"}
-                  ></i>
-                  {isEditMode
-                    ? t("updateApplicant", "Update Applicant")
-                    : t("createApplicant", "Create Applicant")}
-                </>
+              {isEditMode && permissions.canManageApplicants() && (
+                <Space align="center">
+                  <Switch
+                    checked={formData.applicantActive}
+                    onChange={(checked) =>
+                      handleInputChange({
+                        target: {
+                          name: "applicantActive",
+                          type: "checkbox",
+                          checked,
+                        },
+                      })
+                    }
+                    checkedChildren={t("active", "Active")}
+                    unCheckedChildren={t("inactive", "Inactive")}
+                  />
+                </Space>
               )}
-            </button>
-          </div>
+              <Button
+                icon={<CloseOutlined />}
+                onClick={handleCancel}
+                disabled={loading}
+                size={btnSize}
+              >
+                {t("cancel", "Cancel")}
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                form="applicant-form"
+                icon={
+                  loading ? null : isEditMode ? (
+                    <SaveOutlined />
+                  ) : (
+                    <CheckOutlined />
+                  )
+                }
+                loading={loading}
+                disabled={loading}
+                size={btnSize}
+              >
+                {loading
+                  ? isEditMode
+                    ? t("updating", "Updating...")
+                    : t("creating", "Creating...")
+                  : isEditMode
+                  ? t("updateApplicant", "Update Applicant")
+                  : t("createApplicant", "Create Applicant")}
+              </Button>
+            </Space>
+          </Space>
         </div>
 
         <form
           id="applicant-form"
           onSubmit={handleSubmit}
-          className="applicant-form"
+          style={{ width: "100%" }}
         >
-          {submitError && (
-            <div className="applicant-form-error-banner">
-              <i className="fas fa-exclamation-circle"></i>
-              {submitError}
-            </div>
-          )}
-
-          {/* Visa Credentials Section */}
-          <div className="applicant-form-section">
-            <button
-              type="button"
-              className="applicant-form-section-header"
-              onClick={() => setCredentialsExpanded(!credentialsExpanded)}
-              aria-expanded={credentialsExpanded}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  flex: 1,
-                }}
-              >
-                <h2 className="applicant-form-section-title">
-                  <i className="fas fa-key"></i>
-                  {t("aisCredentials", "Visa Appointment System Credentials")}
-                </h2>
-                {!credentialsExpanded && formData.aisEmail && (
-                  <span className="credentials-status-badge">
-                    <i className="fas fa-check-circle"></i>
-                    {t("configured", "Configured")}
-                  </span>
-                )}
-              </div>
-              <i
-                className={`fas fa-chevron-${
-                  credentialsExpanded ? "up" : "down"
-                } section-toggle-icon`}
-              ></i>
-            </button>
-
-            {credentialsExpanded && (
-              <div className="applicant-form-section-content">
-                <div className="applicant-form-row">
-                  <div className="applicant-form-field">
-                    <label htmlFor="aisEmail" className="applicant-form-label">
-                      {t(
-                        "visaAppointmentSystemEmail",
-                        "Visa Appointment System Email"
-                      )}{" "}
-                      <span className="required">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      id="aisEmail"
-                      name="aisEmail"
-                      value={formData.aisEmail}
-                      onChange={(e) => {
-                        handleInputChange(e);
-                        setAisAuthSuccess(false);
-                      }}
-                      className={`applicant-form-input applicant-form-input-medium ${
-                        errors.aisEmail ? "error" : ""
-                      }`}
-                      placeholder="visa@example.com"
-                    />
-                    {errors.aisEmail && (
-                      <span className="applicant-form-error">
-                        {errors.aisEmail}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="applicant-form-field">
-                    <label
-                      htmlFor="aisPassword"
-                      className="applicant-form-label"
-                    >
-                      {t(
-                        "visaAppointmentSystemPassword",
-                        "Visa Appointment System Password"
-                      )}{" "}
-                      {!isEditMode && <span className="required">*</span>}
-                    </label>
-                    <input
-                      type="password"
-                      id="aisPassword"
-                      name="aisPassword"
-                      value={formData.aisPassword}
-                      onChange={(e) => {
-                        handleInputChange(e);
-                        setAisAuthSuccess(false);
-                      }}
-                      className={`applicant-form-input applicant-form-input-medium ${
-                        errors.aisPassword ? "error" : ""
-                      }`}
-                      placeholder={
-                        isEditMode
-                          ? t(
-                              "leaveEmptyToKeepPassword",
-                              "Leave empty to keep current password"
-                            )
-                          : t(
-                              "enterVisaPassword",
-                              "Enter Visa Appointment System password"
-                            )
-                      }
-                    />
-                    {errors.aisPassword && (
-                      <span className="applicant-form-error">
-                        {errors.aisPassword}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Button to authenticate Visa and auto-fill schedule info */}
-                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-                  <button
-                    type="button"
-                    onClick={handleAuthenticateAIS}
-                    disabled={
-                      isAuthenticating ||
-                      !formData.aisEmail ||
-                      !formData.aisPassword
-                    }
-                    style={{
-                      padding: "12px 24px",
-                      backgroundColor: aisAuthSuccess ? "#10b981" : "#2563eb",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "8px",
-                      cursor:
-                        isAuthenticating ||
-                        !formData.aisEmail ||
-                        !formData.aisPassword
-                          ? "not-allowed"
-                          : "pointer",
-                      opacity:
-                        isAuthenticating ||
-                        !formData.aisEmail ||
-                        !formData.aisPassword
-                          ? 0.6
-                          : 1,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      fontSize: "0.95rem",
-                      fontWeight: "500",
-                      transition: "all 0.2s",
-                    }}
-                  >
-                    {isAuthenticating ? (
-                      <>
-                        <i className="fas fa-spinner fa-spin"></i>
-                        {t("authenticating", "Authenticating...")}
-                      </>
-                    ) : aisAuthSuccess ? (
-                      <>
-                        <i className="fas fa-check-circle"></i>
-                        {t(
-                          "authenticationSuccessful",
-                          "Authentication Successful"
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        <i className="fas fa-key"></i>
-                        {t("authenticate", "Authenticate")}
-                      </>
-                    )}
-                  </button>
-                  <small
-                    style={{
-                      color: "#6b7280",
-                      fontSize: "0.875rem",
-                      marginTop: "8px",
-                      display: "block",
-                    }}
-                  >
-                    {t(
-                      "clickToVerifyCredentials",
-                      "Click to verify your Visa Appointment System credentials and automatically retrieve your Schedule ID"
-                    )}
-                  </small>
-                </div>
-
-                {/* Schedule ID - read-only, auto-filled */}
-                <div className="applicant-form-row">
-                  <div className="applicant-form-field">
-                    <label
-                      htmlFor="aisScheduleId"
-                      className="applicant-form-label"
-                    >
-                      {t("aisScheduleId", "Schedule ID")}{" "}
-                      <span className="required">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="aisScheduleId"
-                      name="aisScheduleId"
-                      value={formData.aisScheduleId}
-                      readOnly
-                      className="applicant-form-input applicant-form-input-medium"
-                      style={{
-                        backgroundColor: "#f3f4f6",
-                        cursor: "not-allowed",
-                        color: "#4b5563",
-                      }}
-                      placeholder={t(
-                        "autoFilledAfterAuth",
-                        "Auto-filled after authentication"
-                      )}
-                    />
-                    <small
-                      style={{
-                        color: "#6b7280",
-                        fontSize: "0.875rem",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {t(
-                        "scheduleIdAutoFilledInfo",
-                        "This field is automatically filled after authenticating with Visa Appointment System"
-                      )}
-                    </small>
-                  </div>
-
-                  <div className="applicant-form-field">
-                    <label htmlFor="name" className="applicant-form-label">
-                      {t("fullName", "Full Name")}{" "}
-                      <span className="required">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className={`applicant-form-input applicant-form-input-medium ${
-                        errors.name ? "error" : ""
-                      }`}
-                      placeholder={t(
-                        "autoFilledAfterAuth",
-                        "Auto-filled after authentication"
-                      )}
-                    />
-                    {errors.name && (
-                      <span className="applicant-form-error">
-                        {errors.name}
-                      </span>
-                    )}
-                    <small
-                      style={{
-                        color: "#6b7280",
-                        fontSize: "0.875rem",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {t(
-                        "nameAutoFilledInfo",
-                        "This field is automatically filled after authenticating with Visa Appointment System"
-                      )}
-                    </small>
-                  </div>
-                </div>
-              </div>
+          <Form layout="vertical">
+            {submitError && (
+              <Alert
+                type="error"
+                showIcon
+                message={submitError}
+                style={{ marginBottom: 16 }}
+                closable
+                onClose={() => setSubmitError("")}
+              />
             )}
-          </div>
 
-          {/* Target Dates Section */}
-          <div
-            className="applicant-form-section"
-            style={
-              cities.length === 0
-                ? {
-                    borderBottom: "none",
-                    marginBottom: "36px",
-                    paddingBottom: 0,
-                  }
-                : {}
-            }
-          >
-            <div className="target-dates-header-container">
-              <h2 className="applicant-form-section-title">
-                <i className="fas fa-calendar-alt"></i>
-                {t("targetDates", "Target Dates")}
-              </h2>
-              {showTargetDatesTooltip && (
-                <div
-                  className="target-dates-floating-tip"
-                  role="tooltip"
-                  aria-hidden="false"
-                  style={{ minWidth: "320px" }}
-                >
-                  <strong>
-                    {t(
-                      "targetDatesTooltip",
-                      "Aquí puedes configurar la fecha de inicio de búsqueda"
-                    )}
-                  </strong>
-                  <button
-                    onClick={(e) => {
+            {/* Visa Credentials Section */}
+            <Card
+              style={{ width: "100%", maxWidth: "100%", marginBottom: 24 }}
+              title={
+                <span
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setCredentialsExpanded(!credentialsExpanded)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
-                      e.stopPropagation();
-                      setShowTargetDatesTooltip(false);
-                      localStorage.setItem(
-                        "target_dates_tooltip_shown",
-                        "true"
-                      );
-                    }}
-                    className="tooltip-close-btn"
-                    style={{
-                      position: "absolute",
-                      top: "8px",
-                      right: "8px",
-                      background: "none",
-                      border: "none",
-                      color: "#1f2937",
-                      cursor: "pointer",
-                      fontSize: "1rem",
-                      padding: "0",
-                      lineHeight: 1,
-                      pointerEvents: "auto",
-                    }}
-                    title={t("close", "Close")}
-                  >
-                    <i className="fas fa-times"></i>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {!permissions.canSearchUnlimited() &&
-              formData.targetStartMode === "days" &&
-              formData.targetStartDays === "120" && (
-                <div
+                      setCredentialsExpanded(!credentialsExpanded);
+                    }
+                  }}
                   style={{
-                    backgroundColor: "#f0f9ff",
-                    border: "1px solid #bae6fd",
-                    borderRadius: "8px",
-                    padding: "1rem",
-                    marginBottom: "1.5rem",
-                    display: "flex",
-                    gap: "0.75rem",
-                    alignItems: "flex-start",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
                   }}
                 >
-                  <i
-                    className="fas fa-info-circle"
-                    style={{
-                      color: "#0284c7",
-                      marginTop: "2px",
-                      fontSize: "1.1rem",
-                    }}
-                  ></i>
-                  <div style={{ flex: 1 }}>
-                    <p
-                      style={{
-                        margin: 0,
-                        color: "#0c4a6e",
-                        fontSize: "0.95rem",
-                        lineHeight: "1.5",
-                      }}
+                  <Space>
+                    <KeyOutlined />
+                    <Typography.Title
+                      style={{ margin: 0 }}
+                      level={isMobile ? 5 : 4}
+                      strong
                     >
-                      <strong>
-                        {t(
-                          "basicUserSearchSettings",
-                          "Basic User Search Settings:"
-                        )}
-                      </strong>{" "}
                       {t(
-                        "searchWillStartIn",
-                        "Your appointment search will start 4 months from today."
+                        "aisCredentials",
+                        "Visa Appointment System Credentials"
                       )}
-                    </p>
-                    <p
+                    </Typography.Title>
+                    {!credentialsExpanded && formData.aisEmail && (
+                      <Typography.Text
+                        type="success"
+                        style={{ fontSize: "0.875rem" }}
+                      >
+                        ({t("configured", "Configured")})
+                      </Typography.Text>
+                    )}
+                  </Space>
+                </span>
+              }
+              extra={
+                <Button
+                  type="text"
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCredentialsExpanded(!credentialsExpanded);
+                  }}
+                  icon={
+                    credentialsExpanded ? (
+                      <ArrowUpOutlined />
+                    ) : (
+                      <ArrowDownOutlined />
+                    )
+                  }
+                >
+                  {credentialsExpanded
+                    ? t("collapse", "Collapse")
+                    : t("expand", "Expand")}
+                </Button>
+              }
+            >
+              {credentialsExpanded && (
+                <>
+                  <div style={cardContentStyle}>
+                    <Form.Item
+                      label={
+                        <Typography.Title
+                          type="secondary"
+                          level={5}
+                          style={{
+                            margin: 0,
+                            display: "block",
+                          }}
+                        >
+                          {t(
+                            "visaAppointmentSystemEmail",
+                            "Visa Appointment System Email"
+                          )}{" "}
+                          <Text type="danger">*</Text>
+                        </Typography.Title>
+                      }
+                      validateStatus={errors.aisEmail ? "error" : ""}
+                      help={errors.aisEmail}
+                    >
+                      <Input
+                        type="email"
+                        id="aisEmail"
+                        name="aisEmail"
+                        value={formData.aisEmail}
+                        onChange={(e) => {
+                          handleInputChange(e);
+                          setAisAuthSuccess(false);
+                        }}
+                        placeholder="visa@example.com"
+                        size={btnSize}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label={
+                        <Typography.Title
+                          type="secondary"
+                          level={5}
+                          style={{
+                            margin: 0,
+                            display: "block",
+                          }}
+                        >
+                          {" "}
+                          {t(
+                            "visaAppointmentSystemPassword",
+                            "Visa Appointment System Password"
+                          )}
+                        </Typography.Title>
+                      }
+                      validateStatus={errors.aisPassword ? "error" : ""}
+                      help={errors.aisPassword}
+                    >
+                      <Input.Password
+                        id="aisPassword"
+                        name="aisPassword"
+                        value={formData.aisPassword}
+                        onChange={(e) => {
+                          handleInputChange(e);
+                          setAisAuthSuccess(false);
+                        }}
+                        placeholder={
+                          isEditMode
+                            ? t(
+                                "leaveEmptyToKeepPassword",
+                                "Leave empty to keep current password"
+                              )
+                            : t(
+                                "enterVisaPassword",
+                                "Enter Visa Appointment System password"
+                              )
+                        }
+                        size={btnSize}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div style={{ marginBottom: "12px" }}>
+                    <Button
+                      type="button"
+                      onClick={handleAuthenticateAIS}
+                      disabled={
+                        isAuthenticating ||
+                        !formData.aisEmail ||
+                        !formData.aisPassword
+                      }
+                      loading={isAuthenticating}
+                      icon={<KeyOutlined />}
+                      size={btnSize}
+                      style={
+                        aisAuthSuccess
+                          ? {
+                              backgroundColor: "#52c41a",
+                              borderColor: "#52c41a",
+                              color: "#fff",
+                            }
+                          : undefined
+                      }
+                    >
+                      {aisAuthSuccess
+                        ? t(
+                            "authenticationSuccessful",
+                            "Authentication Successful"
+                          )
+                        : t("authenticate", "Authenticate")}
+                    </Button>
+                    <Text
+                      type="secondary"
                       style={{
-                        margin: "0.5rem 0 0 0",
-                        color: "#0369a1",
-                        fontSize: "0.9rem",
+                        display: "block",
+                        marginTop: 8,
+                        fontSize: "0.875rem",
                       }}
                     >
-                      💎{" "}
-                      <strong>
-                        {t("premiumUpgradeNote", "Premium users")}
-                      </strong>{" "}
                       {t(
-                        "premiumUsersCanSearchTomorrow",
-                        "can search for appointments starting from tomorrow."
-                      )}{" "}
-                      <a
-                        href="/premium-upgrade"
-                        style={{
-                          color: "#0284c7",
-                          textDecoration: "underline",
-                          fontWeight: "600",
-                          cursor: "pointer",
-                        }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigate("/premium-upgrade");
-                          window.scrollTo(0, 0);
-                        }}
-                      >
-                        {t("upgradeToPremium", "Upgrade to Premium")}
-                      </a>
-                    </p>
+                        "clickToVerifyCredentials",
+                        "Click to verify your Visa Appointment System credentials and automatically retrieve your Schedule ID"
+                      )}
+                    </Text>
                   </div>
-                </div>
-              )}
-
-            {permissions.canSearchUnlimited() && (
-              <div className="applicant-form-field">
-                <label
-                  htmlFor="targetStartMode"
-                  className="applicant-form-label"
-                >
-                  {t("startMode", "Start Mode")}{" "}
-                  <span className="required">*</span>
-                </label>
-                <div className="applicant-form-radio-group">
-                  <label className="applicant-form-radio-label">
-                    <input
-                      type="radio"
-                      name="targetStartMode"
-                      value="days"
-                      checked={formData.targetStartMode === "days"}
-                      onChange={handleInputChange}
-                      className="applicant-form-radio"
-                    />
-                    <span>{t("daysFromNow", "Days from Now")}</span>
-                  </label>
-                  <label className="applicant-form-radio-label">
-                    <input
-                      type="radio"
-                      name="targetStartMode"
-                      value="date"
-                      checked={formData.targetStartMode === "date"}
-                      onChange={handleInputChange}
-                      className="applicant-form-radio"
-                    />
-                    <span>{t("specificDate", "Specific Date")}</span>
-                  </label>
-                </div>
-              </div>
-            )}
-
-            <div className="applicant-form-row" style={{ marginTop: "1.5rem" }}>
-              {formData.targetStartMode === "days" && (
-                <div className="applicant-form-field">
-                  {permissions.canSearchUnlimited() ? (
-                    <>
-                      <label
-                        htmlFor="targetStartDays"
-                        className="applicant-form-label"
-                      >
-                        {t("startAfterDays", "Start After (Days)")}{" "}
-                        <span className="required">*</span>
-                      </label>
-                      <div
+                  <div style={cardContentStyle}>
+                    <Form.Item
+                      label={
+                        <Typography.Title
+                          type="secondary"
+                          level={5}
+                          style={{
+                            margin: 0,
+                            display: "block",
+                          }}
+                        >
+                          {t("aisScheduleId", "Schedule ID")}{" "}
+                        </Typography.Title>
+                      }
+                    >
+                      <Input
+                        id="aisScheduleId"
+                        value={formData.aisScheduleId}
+                        readOnly
+                        disabled
+                        placeholder={t(
+                          "autoFilledAfterAuth",
+                          "Auto-filled after authentication"
+                        )}
+                        size={btnSize}
+                      />
+                      <Text
+                        type="secondary"
                         style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "16px",
-                          flexWrap: "wrap",
+                          fontSize: "0.75rem",
+                          display: "block",
+                          marginTop: 4,
                         }}
                       >
-                        <input
-                          type="number"
-                          id="targetStartDays"
-                          name="targetStartDays"
-                          value={formData.targetStartDays}
-                          onChange={handleInputChange}
-                          min="1"
-                          className={`applicant-form-input applicant-form-input-small ${
-                            errors.targetStartDays ? "error" : ""
-                          }`}
-                          style={{ margin: 0 }}
-                        />
-                        {formData.targetStartDays && (
-                          <div
-                            style={{
-                              padding: "8px 16px",
-                              backgroundColor: "#f0f9ff",
-                              border: "1px solid #bae6fd",
-                              borderRadius: "6px",
-                              fontSize: "0.875rem",
-                              color: "#059669",
-                              fontWeight: "600",
-                              whiteSpace: "nowrap",
+                        {t(
+                          "autoFilledAfterAuth",
+                          "This field is automatically filled after authenticating with Visa Appointment System"
+                        )}
+                      </Text>
+                    </Form.Item>
+                    <Form.Item
+                      label={
+                        <Typography.Title
+                          type="secondary"
+                          level={5}
+                          style={{
+                            margin: 0,
+                            display: "block",
+                          }}
+                        >
+                          {t("fullName", "Full Name")}
+                        </Typography.Title>
+                      }
+                      validateStatus={errors.name ? "error" : ""}
+                      help={errors.name}
+                    >
+                      <Input
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder={t(
+                          "autoFilledAfterAuth",
+                          "Auto-filled after authentication"
+                        )}
+                        size={btnSize}
+                      />
+                      <Text
+                        type="secondary"
+                        style={{
+                          fontSize: "0.75rem",
+                          display: "block",
+                          marginTop: 4,
+                        }}
+                      >
+                        {t(
+                          "nameAutoFilledInfo",
+                          "This field is automatically filled after authenticating with Visa Appointment System"
+                        )}
+                      </Text>
+                    </Form.Item>
+                  </div>
+                </>
+              )}
+            </Card>
+
+            {/* Target Dates Section */}
+            <Card
+              style={{ width: "100%", maxWidth: "100%", marginBottom: 24 }}
+              title={
+                <Space>
+                  <CalendarOutlined />
+                  <Typography.Title
+                    style={{ margin: 0 }}
+                    level={isMobile ? 5 : 4}
+                    strong
+                  >
+                    {t("targetDates", "Target Dates")}
+                  </Typography.Title>
+                </Space>
+              }
+            >
+              <Space direction="vertical" size={16} style={{ width: "100%" }}>
+                {!permissions.canSearchUnlimited() &&
+                  formData.targetStartMode === "days" &&
+                  formData.targetStartDays === "120" && (
+                    <Alert
+                      type="info"
+                      showIcon
+                      icon={<InfoCircleOutlined />}
+                      message={
+                        <span>
+                          <strong>
+                            {t(
+                              "basicUserSearchSettings",
+                              "Basic User Search Settings:"
+                            )}
+                          </strong>{" "}
+                          {t(
+                            "searchWillStartIn",
+                            "Your appointment search will start 4 months from today."
+                          )}{" "}
+                          <strong>
+                            {t("premiumUpgradeNote", "Premium users")}
+                          </strong>{" "}
+                          {t(
+                            "premiumUsersCanSearchTomorrow",
+                            "can search for appointments starting from tomorrow."
+                          )}{" "}
+                          <a
+                            href="/premium-upgrade"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              navigate("/premium-upgrade");
+                              window.scrollTo(0, 0);
                             }}
                           >
-                            <i
-                              className="fas fa-calendar-day"
-                              style={{ marginRight: "6px" }}
-                            ></i>
-                            {t("startDate", "Start date")}:{" "}
-                            {formatDate(getSearchStartDate())}
-                          </div>
-                        )}
-                        {/* Explain start date when using days mode */}
-                        <div
-                          style={{
-                            backgroundColor: "#f0f9ff",
-                            border: "1px solid #bae6fd",
-                            borderRadius: "8px",
-                            padding: "1rem",
-                            marginTop: "1rem",
-                            display: "flex",
-                            gap: "0.75rem",
-                            alignItems: "flex-start",
-                          }}
-                        >
-                          <i
-                            className="fas fa-info-circle"
-                            style={{
-                              color: "#0284c7",
-                              marginTop: "2px",
-                              fontSize: "1.1rem",
-                            }}
-                          ></i>
-                          <div style={{ flex: 1 }}>
-                            <p
-                              style={{
-                                margin: 0,
-                                color: "#0c4a6e",
-                                fontSize: "0.95rem",
-                                lineHeight: "1.5",
-                              }}
-                            >
-                              {t(
-                                "targetStartDateExplanationView",
-                                "This is the earliest date the system will start searching for available appointments."
-                              )}
-                            </p>
-                            {!permissions.canSearchUnlimited() && (
-                              <p
-                                style={{
-                                  margin: "0.5rem 0 0 0",
-                                  color: "#0369a1",
-                                  fontSize: "0.9rem",
-                                }}
-                              >
-                                💎{" "}
-                                <strong>
-                                  {t("premiumUpgradeNote", "Premium users")}
-                                </strong>{" "}
-                                {t(
-                                  "premiumUsersCanSearchTomorrow",
-                                  "can search for appointments starting from tomorrow."
-                                )}{" "}
-                                <a
-                                  href="/premium-upgrade"
-                                  style={{
-                                    color: "#0284c7",
-                                    textDecoration: "underline",
-                                    fontWeight: "600",
-                                  }}
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    navigate("/premium-upgrade");
-                                    window.scrollTo(0, 0);
-                                  }}
-                                >
-                                  {t("upgradeToPremium", "Upgrade to Premium")}
-                                </a>
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      {errors.targetStartDays && (
-                        <span className="applicant-form-error">
-                          {errors.targetStartDays}
+                            {t("upgradeToPremium", "Upgrade to Premium")}
+                          </a>
                         </span>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <label className="applicant-form-label">
-                        {t("searchStartsIn", "Search Starts In")}
-                      </label>
-                      <div
+                      }
+                    />
+                  )}
+
+                {permissions.canSearchUnlimited() && (
+                  <Form.Item
+                    style={{ marginBottom: 0 }}
+                    label={
+                      <Typography.Title
+                        type="secondary"
+                        level={5}
                         style={{
-                          padding: "12px 16px",
-                          backgroundColor: "#f3f4f6",
-                          border: "1px solid #d1d5db",
-                          borderRadius: "8px",
-                          color: "#4b5563",
-                          fontSize: "1rem",
-                          fontWeight: "500",
+                          margin: 0,
+                          display: "block",
                         }}
                       >
+                        {t("startMode", "Start Mode")}{" "}
+                      </Typography.Title>
+                    }
+                  >
+                    <Radio.Group
+                      name="targetStartMode"
+                      value={formData.targetStartMode}
+                      onChange={(e) =>
+                        handleInputChange({
+                          target: {
+                            name: "targetStartMode",
+                            value: e.target.value,
+                          },
+                        })
+                      }
+                      size={btnSize}
+                    >
+                      <Radio value="days">
+                        {t("daysFromNow", "Days from Now")}
+                      </Radio>
+                      <Radio value="date">
+                        {t("specificDate", "Specific Date")}
+                      </Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                )}
+
+                <div style={cardContentStyle}>
+                  {formData.targetStartMode === "days" && (
+                    <div>
+                      {permissions.canSearchUnlimited() ? (
+                        <>
+                          <Form.Item
+                            style={{ marginBottom: 0 }}
+                            label={
+                              <Typography.Title
+                                type="secondary"
+                                level={5}
+                                style={{
+                                  margin: 0,
+                                  display: "block",
+                                }}
+                              >
+                                {t("startAfterDays", "Start After (Days)")}{" "}
+                                <Text type="danger">*</Text>
+                              </Typography.Title>
+                            }
+                            validateStatus={
+                              errors.targetStartDays ? "error" : ""
+                            }
+                            help={errors.targetStartDays}
+                          >
+                            <Space wrap>
+                              <InputNumber
+                                id="targetStartDays"
+                                min={1}
+                                value={
+                                  formData.targetStartDays
+                                    ? parseInt(formData.targetStartDays, 10)
+                                    : undefined
+                                }
+                                onChange={(val) =>
+                                  handleInputChange({
+                                    target: {
+                                      name: "targetStartDays",
+                                      value: val != null ? String(val) : "",
+                                    },
+                                  })
+                                }
+                                size={btnSize}
+                                style={{ width: 120 }}
+                              />
+                              {formData.targetStartDays && (
+                                <Typography.Text strong type="success">
+                                  {t("startDate", "Start date")}:{" "}
+                                  {formatDate(getSearchStartDate())}
+                                </Typography.Text>
+                              )}
+                            </Space>
+                          </Form.Item>
+                          <Alert
+                            type="info"
+                            showIcon
+                            icon={<InfoCircleOutlined />}
+                            message={t(
+                              "targetStartDateExplanationView",
+                              "This is the earliest date the system will start searching for available appointments."
+                            )}
+                            style={{ marginTop: 8 }}
+                          />
+                        </>
+                      ) : (
                         <div
                           style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginBottom: "4px",
+                            padding: 12,
+                            background: "#fafafa",
+                            border: "1px solid #f0f0f0",
+                            borderRadius: 8,
                           }}
                         >
-                          <i
-                            className="fas fa-clock"
-                            style={{ marginRight: "8px", color: "#6b7280" }}
-                          ></i>
-                          {t(
-                            "fourMonthsFromToday",
-                            "4 months from today (120 days)"
-                          )}
-                        </div>
-                        <div
-                          style={{
-                            marginTop: "8px",
-                            paddingTop: "8px",
-                            borderTop: "1px solid #d1d5db",
-                            fontSize: "0.95rem",
-                            color: "#059669",
-                            fontWeight: "600",
-                          }}
-                        >
-                          <i
-                            className="fas fa-calendar-day"
-                            style={{ marginRight: "6px" }}
-                          ></i>
-                          {t("startDate", "Start date")}:{" "}
-                          {formatDate(getSearchStartDate())}
-                        </div>
-                        <div
-                          style={{
-                            backgroundColor: "#f0f9ff",
-                            border: "1px solid #bae6fd",
-                            borderRadius: "8px",
-                            padding: "1rem",
-                            marginTop: "1rem",
-                            display: "flex",
-                            gap: "0.75rem",
-                            alignItems: "flex-start",
-                          }}
-                        >
-                          <i
-                            className="fas fa-info-circle"
-                            style={{
-                              color: "#0284c7",
-                              marginTop: "2px",
-                              fontSize: "1.1rem",
-                            }}
-                          ></i>
-                          <div style={{ flex: 1 }}>
-                            <p
+                          <Text strong>
+                            {t("searchStartsIn", "Search Starts In")}
+                          </Text>
+                          <div style={{ marginTop: 8 }}>
+                            <Text>
+                              {t(
+                                "fourMonthsFromToday",
+                                "4 months from today (120 days)"
+                              )}
+                            </Text>
+                            <div
                               style={{
-                                margin: 0,
-                                color: "#0c4a6e",
-                                fontSize: "0.95rem",
-                                lineHeight: "1.5",
+                                marginTop: 8,
+                                paddingTop: 8,
+                                borderTop: "1px solid #f0f0f0",
                               }}
                             >
-                              {t(
+                              <Text strong>
+                                {t("startDate", "Start date")}:{" "}
+                                {formatDate(getSearchStartDate())}
+                              </Text>
+                            </div>
+                            <Alert
+                              type="info"
+                              showIcon
+                              icon={<InfoCircleOutlined />}
+                              message={t(
                                 "targetStartDateExplanationView",
                                 "This is the earliest date the system will start searching for available appointments."
                               )}
-                            </p>
+                              style={{ marginTop: 12 }}
+                            />
                           </div>
                         </div>
-                      </div>
-                    </>
+                      )}
+                    </div>
                   )}
-                </div>
-              )}
 
-              {formData.targetStartMode === "date" && (
-                <div className="applicant-form-field">
-                  <label
-                    htmlFor="targetStartDate"
-                    className="applicant-form-label"
-                  >
-                    {t("targetStartDate", "Target Start Date")}{" "}
-                    <span className="required">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    id="targetStartDate"
-                    name="targetStartDate"
-                    value={formData.targetStartDate}
-                    onChange={handleInputChange}
-                    className={`applicant-form-input applicant-form-input-date ${
-                      errors.targetStartDate ? "error" : ""
-                    }`}
-                  />
-                  <div className="date-info-box">
-                    <i className="fas fa-info-circle date-info-icon"></i>
-                    <div style={{ flex: 1 }}>
-                      <p className="date-info-text">
-                        {t(
+                  {formData.targetStartMode === "date" && (
+                    <Form.Item
+                      label={
+                        <Typography.Title
+                          type="secondary"
+                          level={5}
+                          style={{
+                            margin: 0,
+                            display: "block",
+                          }}
+                        >
+                          {t("targetStartDate", "Target Start Date")}
+                          <Text type="danger">*</Text>
+                        </Typography.Title>
+                      }
+                      validateStatus={errors.targetStartDate ? "error" : ""}
+                      help={errors.targetStartDate}
+                    >
+                      <Input
+                        type="date"
+                        id="targetStartDate"
+                        name="targetStartDate"
+                        value={formData.targetStartDate}
+                        onChange={handleInputChange}
+                        size={btnSize}
+                        style={{ width: "100%", maxWidth: 240 }}
+                      />
+                      <Alert
+                        type="info"
+                        showIcon
+                        icon={<InfoCircleOutlined />}
+                        message={t(
                           "targetStartDateExplanationView",
                           "This is the earliest date the system will start searching for available appointments."
                         )}
-                      </p>
-                    </div>
-                  </div>
-                  {errors.targetStartDate && (
-                    <span className="applicant-form-error">
-                      {errors.targetStartDate}
-                    </span>
+                        style={{ marginTop: 8 }}
+                      />
+                    </Form.Item>
                   )}
-                </div>
-              )}
 
-              <div className="applicant-form-field">
-                <label htmlFor="targetEndDate" className="applicant-form-label">
-                  {t("targetEndDate", "Target End Date")}{" "}
-                  <span className="required">*</span>
-                </label>
-                <input
-                  type="date"
-                  id="targetEndDate"
-                  name="targetEndDate"
-                  value={formData.targetEndDate}
-                  onChange={handleInputChange}
-                  min={
-                    !permissions.canSearchUnlimited()
-                      ? getMinEndDate()
-                      : undefined
-                  }
-                  className={`applicant-form-input applicant-form-input-date ${
-                    errors.targetEndDate ? "error" : ""
-                  }`}
-                />
-                {errors.targetEndDate && (
-                  <span className="applicant-form-error">
-                    {errors.targetEndDate}
-                  </span>
-                )}
-                {/* Explanation visible for all users */}
-                <div className="date-info-box">
-                  <i className="fas fa-info-circle date-info-icon"></i>
-                  <div style={{ flex: 1 }}>
-                    <p className="date-info-text">
-                      {t(
+                  <Form.Item
+                    label={
+                      <Typography.Title
+                        type="secondary"
+                        level={5}
+                        style={{
+                          margin: 0,
+                          display: "block",
+                        }}
+                      >
+                        {t("targetEndDate", "Target End Date")}
+                        <Text type="danger">*</Text>
+                      </Typography.Title>
+                    }
+                    validateStatus={errors.targetEndDate ? "error" : ""}
+                    help={errors.targetEndDate}
+                  >
+                    <Input
+                      type="date"
+                      id="targetEndDate"
+                      name="targetEndDate"
+                      value={formData.targetEndDate}
+                      onChange={handleInputChange}
+                      min={
+                        !permissions.canSearchUnlimited()
+                          ? getMinEndDate()
+                          : undefined
+                      }
+                      size={btnSize}
+                      style={{ width: "100%", maxWidth: 240 }}
+                    />
+                    <Alert
+                      type="info"
+                      showIcon
+                      icon={<InfoCircleOutlined />}
+                      message={t(
                         "targetEndDateExplanation",
                         "This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date. Minimum: 210 days from today."
                       )}
-                    </p>
-                  </div>
+                      style={{ marginTop: 8 }}
+                    />
+                  </Form.Item>
                 </div>
-              </div>
-            </div>
-          </div>
+              </Space>
+            </Card>
 
-          {/* Target Cities Section */}
-          {cities.length > 0 && (
-            <div className="applicant-form-section">
-              <h2 className="applicant-form-section-title">
-                <i className="fas fa-map-marker-alt"></i>
-                {t("targetCities", "Target Cities")}{" "}
-                {cities.length > 1 && <span className="required">*</span>}
-              </h2>
-
-              {cities.length === 1 ? (
-                <div className="applicant-form-city-single">
-                  <i className="fas fa-check-circle"></i>
-                  <span>{cities[0].city_name}</span>
-                  <span className="applicant-form-city-code">
-                    ({cities[0].city_code})
-                  </span>
-                </div>
-              ) : (
-                <div className="applicant-form-cities-grid">
-                  {cities.map((city) => (
-                    <label
-                      key={city.city_code}
-                      className="applicant-form-city-card"
+            {/* Target Cities Section */}
+            {cities.length > 0 && (
+              <Card
+                style={{ width: "100%", maxWidth: "100%", marginBottom: 24 }}
+                title={
+                  <Space>
+                    <EnvironmentOutlined />
+                    <Typography.Title
+                      style={{ margin: 0 }}
+                      level={isMobile ? 5 : 4}
+                      strong
                     >
-                      <input
-                        type="checkbox"
-                        checked={formData.selectedCities.includes(
-                          city.city_code
-                        )}
-                        onChange={() => handleCityToggle(city.city_code)}
-                        className="applicant-form-city-checkbox"
-                      />
-                      <div className="applicant-form-city-content">
-                        <span className="applicant-form-city-name">
-                          {city.city_name}
-                        </span>
-                        <span className="applicant-form-city-code-badge">
-                          {city.city_code}
-                        </span>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              )}
-              {errors.selectedCities && (
-                <span className="applicant-form-error">
-                  {errors.selectedCities}
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* Form Actions */}
-          <div className="applicant-form-actions">
-            <button
-              type="button"
-              onClick={() => {
-                // Track cancel button click
-                metrics.trackButtonClick(
-                  "cancel-applicant-form-footer-btn",
-                  "Cancel Applicant Form (Footer)"
-                );
-
-                if (permissions.canManageApplicants()) {
-                  navigate("/applicants");
-                } else if (isEditMode) {
-                  navigate(`/view-applicant/${applicantId}`);
-                } else {
-                  navigate("/");
+                      {t("targetCities", "Target Cities")}
+                    </Typography.Title>
+                    {cities.length > 1 && <Text type="danger">*</Text>}
+                  </Space>
                 }
-              }}
-              className="applicant-form-btn applicant-form-btn-cancel"
-              disabled={loading}
-            >
-              <i className="fas fa-times"></i>
-              {t("cancel", "Cancel")}
-            </button>
-            <button
-              type="submit"
-              className="applicant-form-btn applicant-form-btn-submit"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <i className="fas fa-spinner fa-spin"></i>
-                  {isEditMode
+              >
+                {cities.length === 1 ? (
+                  <Space>
+                    <Text strong>{cities[0].city_name}</Text>
+                    <Text type="secondary">({cities[0].city_code})</Text>
+                  </Space>
+                ) : (
+                  <Form.Item
+                    validateStatus={errors.selectedCities ? "error" : ""}
+                    help={errors.selectedCities}
+                  >
+                    <Select
+                      mode="multiple"
+                      placeholder={t("selectCities", "Select cities")}
+                      value={formData.selectedCities}
+                      onChange={(vals) => {
+                        const next = vals || [];
+                        setFormData((prev) => ({
+                          ...prev,
+                          selectedCities: next,
+                        }));
+                        if (next.length > 0)
+                          setErrors((prev) => ({
+                            ...prev,
+                            selectedCities: "",
+                          }));
+                      }}
+                      size={btnSize}
+                      style={{ width: "100%" }}
+                      options={cities.map((c) => ({
+                        label: `${c.city_name} (${c.city_code})`,
+                        value: c.city_code,
+                      }))}
+                      optionFilterProp="label"
+                      allowClear
+                    />
+                  </Form.Item>
+                )}
+              </Card>
+            )}
+
+            {/* Form Actions */}
+            <Space wrap size={8} style={{ marginTop: 24, marginBottom: 24 }}>
+              <Button
+                icon={<CloseOutlined />}
+                onClick={handleCancel}
+                disabled={loading}
+                size={btnSize}
+              >
+                {t("cancel", "Cancel")}
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                form="applicant-form"
+                icon={
+                  loading ? null : isEditMode ? (
+                    <SaveOutlined />
+                  ) : (
+                    <CheckOutlined />
+                  )
+                }
+                loading={loading}
+                disabled={loading}
+                size={btnSize}
+              >
+                {loading
+                  ? isEditMode
                     ? t("updating", "Updating...")
-                    : t("creating", "Creating...")}
-                </>
-              ) : (
-                <>
-                  <i
-                    className={isEditMode ? "fas fa-save" : "fas fa-check"}
-                  ></i>
-                  {isEditMode
-                    ? t("updateApplicant", "Update Applicant")
-                    : t("createApplicant", "Create Applicant")}
-                </>
-              )}
-            </button>
-          </div>
+                    : t("creating", "Creating...")
+                  : isEditMode
+                  ? t("updateApplicant", "Update Applicant")
+                  : t("createApplicant", "Create Applicant")}
+              </Button>
+            </Space>
+          </Form>
         </form>
       </div>
     </>

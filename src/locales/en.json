@@ -164,6 +164,7 @@
   "copyEmail": "Copy Email",
   "clearStatus": "Clear Status",
   "edit": "Edit",
+  "view": "view",
   "noApplicantsFound": "No applicants found",
   "adjustFilters": "Try adjusting your filters or register a new applicant to get started.",
   "clickToAddFirst": "Click 'Register Applicant' to add your first applicant.",
@@ -386,5 +387,7 @@
   "backToLogin": "Back to Login",
   "registrationSuccessTitle": "Registration Successful!",
   "registrationSuccessDesc": "We have sent a verification email to:",
-  "checkInbox": "Please check your inbox and spam folder."
+  "checkInbox": "Please check your inbox and spam folder.",
+  "expand": "Expand",
+  "collapse": "Collapse"
 }
