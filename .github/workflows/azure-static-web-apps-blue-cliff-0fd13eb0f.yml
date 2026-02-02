@@ -19,6 +19,14 @@ jobs:
         with:
           submodules: true
           lfs: false
+      - name: Set API URL (all environments)
+        run: echo "REACT_APP_API_URL=https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com" >> $GITHUB_ENV
+      - name: Set TEST env for PR preview
+        if: github.event_name == 'pull_request'
+        run: echo "REACT_APP_ENVIRONMENT=test" >> $GITHUB_ENV
+      - name: Set PROD env for merge / main
+        if: github.event_name == 'push'
+        run: echo "REACT_APP_ENVIRONMENT=prod" >> $GITHUB_ENV    
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
