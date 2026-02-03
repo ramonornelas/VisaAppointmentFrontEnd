@@ -60,7 +60,7 @@ const QuickStartApplicant = () => {
     const expirationDate = new Date(
       now.getFullYear(),
       now.getMonth() + 1,
-      now.getDate()
+      now.getDate(),
     );
     return expirationDate.toISOString().split("T")[0];
   };
@@ -118,13 +118,13 @@ const QuickStartApplicant = () => {
           setRolesLoaded(true);
         } else if (isMounted) {
           setSubmitError(
-            "Could not find the basic_user role. Please contact support."
+            "Could not find the basic_user role. Please contact support.",
           );
         }
       } catch (err) {
         if (isMounted) {
           setSubmitError(
-            "Failed to load configuration. Please try again later."
+            "Failed to load configuration. Please try again later.",
           );
         }
       }
@@ -168,13 +168,13 @@ const QuickStartApplicant = () => {
         const codeLower = countryCode.toLowerCase();
         // 1) Direct match by full value
         let found = countries.find(
-          (c) => c.value && c.value.toLowerCase() === codeLower
+          (c) => c.value && c.value.toLowerCase() === codeLower,
         );
         // 2) Fallback: match by suffix (e.g., "es-mx" -> "mx")
         if (!found) {
           found = countries.find(
             (c) =>
-              c.value && c.value.split("-").pop().toLowerCase() === codeLower
+              c.value && c.value.split("-").pop().toLowerCase() === codeLower,
           );
         }
         if (found) {
@@ -191,14 +191,14 @@ const QuickStartApplicant = () => {
           } catch (err) {
             console.warn(
               "[QuickStart] Metrics error tracking location_detected:",
-              err
+              err,
             );
           }
         } else {
           // Don't show user any message when country is not supported; keep silent
           console.warn(
             "[QuickStart] Detected country not supported by list:",
-            countryCode
+            countryCode,
           );
           try {
             const uid = sessionStorage.getItem("fastVisa_userid");
@@ -212,7 +212,7 @@ const QuickStartApplicant = () => {
           } catch (err) {
             console.warn(
               "[QuickStart] Metrics error tracking location_detected (no match):",
-              err
+              err,
             );
           }
         }
@@ -246,7 +246,7 @@ const QuickStartApplicant = () => {
             // Ignore and fallback
             console.warn(
               "[QuickStart] Reverse geocode failed, falling back to IP geo",
-              err
+              err,
             );
           }
         }
@@ -321,7 +321,7 @@ const QuickStartApplicant = () => {
     if (!formData.country_code) {
       newErrors.country_code = t(
         "countryRequired",
-        "Country selection is required"
+        "Country selection is required",
       );
     }
 
@@ -336,7 +336,7 @@ const QuickStartApplicant = () => {
       if (!formData.aisPassword.trim()) {
         newErrors.aisPassword = t(
           "aisPasswordRequired",
-          "AIS Password is required"
+          "AIS Password is required",
         );
       }
     }
@@ -350,7 +350,7 @@ const QuickStartApplicant = () => {
     if (!formData.targetEndDate) {
       newErrors.targetEndDate = t(
         "endDateRequired",
-        "Target end date is required"
+        "Target end date is required",
       );
     } else {
       // Validar usando solo la parte de la fecha (YYYY-MM-DD) para evitar diferencias de horas
@@ -359,7 +359,7 @@ const QuickStartApplicant = () => {
       if (selectedEndDateStr < minEndDateStr) {
         newErrors.targetEndDate = t(
           "endDateMinimum",
-          "Target end date must be at least 210 days from today"
+          "Target end date must be at least 210 days from today",
         );
       }
     }
@@ -367,7 +367,7 @@ const QuickStartApplicant = () => {
     if (cities.length > 1 && formData.selectedCities.length === 0) {
       newErrors.selectedCities = t(
         "cityRequired",
-        "Please select at least one city"
+        "Please select at least one city",
       );
     }
 
@@ -381,7 +381,7 @@ const QuickStartApplicant = () => {
 
     if (!rolesLoaded || !basicRoleId) {
       setSubmitError(
-        t("loadingConfig", "Configuration is still loading. Please wait.")
+        t("loadingConfig", "Configuration is still loading. Please wait."),
       );
       return;
     }
@@ -407,7 +407,7 @@ const QuickStartApplicant = () => {
         // If country has cities, authenticate with AIS
         username = formData.aisEmail;
         console.log(
-          "[QuickStart] Country has cities, will authenticate with AIS"
+          "[QuickStart] Country has cities, will authenticate with AIS",
         );
 
         // Initialize with fallback values
@@ -437,11 +437,11 @@ const QuickStartApplicant = () => {
             numberOfApplicants = "1"; // Default to 1, update if API returns more
             console.log(
               "[QuickStart] AIS authentication successful, using AIS data:",
-              { userName, aisScheduleId }
+              { userName, aisScheduleId },
             );
           } else {
             console.warn(
-              "[QuickStart] AIS authentication returned no schedule_id, using fallback values"
+              "[QuickStart] AIS authentication returned no schedule_id, using fallback values",
             );
             // AIS authentication failed - notify admin but continue with defaults
             await notifyAdminAISFailure({
@@ -467,7 +467,7 @@ const QuickStartApplicant = () => {
         numberOfApplicants = "1";
         console.log(
           "[QuickStart] Country has no cities, using default values:",
-          { username, userName }
+          { username, userName },
         );
       }
 
@@ -502,7 +502,7 @@ const QuickStartApplicant = () => {
         console.error("[QuickStart] User creation failed:", userResult.error);
         throw new Error(
           userResult.error ||
-            t("userCreationFailed", "Failed to create user account")
+            t("userCreationFailed", "Failed to create user account"),
         );
       }
       console.log("[QuickStart] User created successfully");
@@ -556,11 +556,11 @@ const QuickStartApplicant = () => {
 
       if (!applicantData || !applicantData.id) {
         console.error(
-          "[QuickStart] Failed to create applicant - no ID returned"
+          "[QuickStart] Failed to create applicant - no ID returned",
         );
         // If we can't get the applicant ID, we can't continue to the view page
         throw new Error(
-          t("applicantCreationFailed", "Failed to create applicant")
+          t("applicantCreationFailed", "Failed to create applicant"),
         );
       }
 
@@ -574,7 +574,7 @@ const QuickStartApplicant = () => {
 
       if (!loginResult || !loginResult.success) {
         console.warn(
-          "[QuickStart] Auto-login failed, but user and applicant were created successfully"
+          "[QuickStart] Auto-login failed, but user and applicant were created successfully",
         );
         // Continue anyway - user can log in manually
       } else {
@@ -586,7 +586,6 @@ const QuickStartApplicant = () => {
       sessionStorage.setItem("fastVisa_userid", userId);
       sessionStorage.setItem("fastVisa_username", username);
       sessionStorage.setItem("country_code", formData.country_code);
-      sessionStorage.setItem("concurrent_applicants", "1"); // Basic users get 1
       sessionStorage.setItem("fastVisa_name", retrievedUserName);
 
       // Fetch and store user permissions (optional - don't fail if this errors)
@@ -597,13 +596,13 @@ const QuickStartApplicant = () => {
         if (permissionsData) {
           sessionStorage.setItem(
             "fastVisa_permissions",
-            JSON.stringify(permissionsData)
+            JSON.stringify(permissionsData),
           );
         }
       } catch (permError) {
         console.warn(
           "[QuickStart] Failed to fetch permissions, but continuing:",
-          permError
+          permError,
         );
       }
 
@@ -615,7 +614,7 @@ const QuickStartApplicant = () => {
       } catch (containerError) {
         console.warn(
           "[QuickStart] Failed to start container, but continuing:",
-          containerError
+          containerError,
         );
       }
 
@@ -630,7 +629,7 @@ const QuickStartApplicant = () => {
         name: error.name,
       });
       setSubmitError(
-        error.message || t("unexpectedError", "An unexpected error occurred")
+        error.message || t("unexpectedError", "An unexpected error occurred"),
       );
       setCurrentStep(1);
       setLoading(false);
@@ -664,7 +663,7 @@ const QuickStartApplicant = () => {
                   <p style={{ color: "#666", marginTop: "1rem" }}>
                     {t(
                       "pleaseWait",
-                      "Please wait while we set up your account"
+                      "Please wait while we set up your account",
                     )}
                   </p>
                 </>
@@ -677,7 +676,7 @@ const QuickStartApplicant = () => {
                   <p style={{ color: "#666", marginTop: "1rem" }}>
                     {t(
                       "almostDone",
-                      "Almost done! Setting up your appointment search"
+                      "Almost done! Setting up your appointment search",
                     )}
                   </p>
                 </>
@@ -708,7 +707,7 @@ const QuickStartApplicant = () => {
               <p className="applicant-form-subtitle">
                 {t(
                   "quickStartDescription",
-                  "Start using the app immediately. We'll create your account automatically."
+                  "Start using the app immediately. We'll create your account automatically.",
                 )}
               </p>
             </div>
@@ -748,7 +747,7 @@ const QuickStartApplicant = () => {
                     classNamePrefix={errors.country_code ? "error" : ""}
                     value={
                       countries.find(
-                        (c) => c.value === formData.country_code
+                        (c) => c.value === formData.country_code,
                       ) || null
                     }
                     onChange={(option) =>
@@ -843,7 +842,7 @@ const QuickStartApplicant = () => {
               >
                 {t(
                   "aisCredentialsInfo",
-                  "Enter your AIS login credentials. We will automatically retrieve your schedule ID and number of applicants from the AIS system."
+                  "Enter your AIS login credentials. We will automatically retrieve your schedule ID and number of applicants from the AIS system.",
                 )}
               </p>
 
@@ -949,7 +948,7 @@ const QuickStartApplicant = () => {
                     </strong>{" "}
                     {t(
                       "basicUserSearchDesc",
-                      "Your appointment search will start 4 months from today."
+                      "Your appointment search will start 4 months from today.",
                     )}
                   </p>
                   <p
@@ -963,7 +962,7 @@ const QuickStartApplicant = () => {
                     <strong>{t("premiumUpgradeNote", "Premium users")}</strong>{" "}
                     {t(
                       "premiumCanSearchTomorrow",
-                      "can search for appointments starting from tomorrow."
+                      "can search for appointments starting from tomorrow.",
                     )}
                   </p>
                 </div>
@@ -998,7 +997,7 @@ const QuickStartApplicant = () => {
                       ></i>
                       {t(
                         "fourMonthsFromToday",
-                        "4 months from today (120 days)"
+                        "4 months from today (120 days)",
                       )}
                     </div>
                     <div
@@ -1025,7 +1024,7 @@ const QuickStartApplicant = () => {
                         <p className="date-info-text">
                           {t(
                             "targetStartDateExplanationView",
-                            "This is the earliest date the system will start searching for available appointments."
+                            "This is the earliest date the system will start searching for available appointments.",
                           )}
                         </p>
                       </div>
@@ -1063,7 +1062,7 @@ const QuickStartApplicant = () => {
                       <p className="date-info-text">
                         {t(
                           "targetEndDateExplanation",
-                          "This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date."
+                          "This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date.",
                         )}
                       </p>
                     </div>
@@ -1106,7 +1105,7 @@ const QuickStartApplicant = () => {
                         <input
                           type="checkbox"
                           checked={formData.selectedCities.includes(
-                            city.city_code
+                            city.city_code,
                           )}
                           onChange={() => handleCityToggle(city.city_code)}
                           className="applicant-form-city-checkbox"
