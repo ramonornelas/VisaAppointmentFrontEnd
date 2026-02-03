@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import Welcome from "../home/Welcome";
 import LanguageSelector from "../common/LanguageSelector";
 import Banner from "../common/Banner";
 import Footer from "../common/Footer";
@@ -26,7 +25,7 @@ const UserRegistrationForm = () => {
     const expirationDate = new Date(
       now.getFullYear(),
       now.getMonth() + 1,
-      now.getDate()
+      now.getDate(),
     );
     return expirationDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
   };
@@ -71,13 +70,13 @@ const UserRegistrationForm = () => {
         const codeLower = countryCode.toLowerCase();
         // 1) Direct match by full value
         let found = countries.find(
-          (c) => c.value && c.value.toLowerCase() === codeLower
+          (c) => c.value && c.value.toLowerCase() === codeLower,
         );
         // 2) Fallback: match by suffix (e.g., "es-mx" -> "mx")
         if (!found) {
           found = countries.find(
             (c) =>
-              c.value && c.value.split("-").pop().toLowerCase() === codeLower
+              c.value && c.value.split("-").pop().toLowerCase() === codeLower,
           );
         }
         if (found) {
@@ -94,14 +93,14 @@ const UserRegistrationForm = () => {
           } catch (err) {
             console.warn(
               "[RegisterUser] Metrics error tracking location_detected:",
-              err
+              err,
             );
           }
         } else {
           // Don't show user any message when country is not supported; keep silent
           console.warn(
             "[RegisterUser] Detected country not supported by list:",
-            countryCode
+            countryCode,
           );
           try {
             const uid = sessionStorage.getItem("fastVisa_userid");
@@ -115,7 +114,7 @@ const UserRegistrationForm = () => {
           } catch (err) {
             console.warn(
               "[RegisterUser] Metrics error tracking location_detected (no match):",
-              err
+              err,
             );
           }
         }
@@ -149,7 +148,7 @@ const UserRegistrationForm = () => {
             // Ignore and fallback
             console.warn(
               "[RegisterUser] Reverse geocode failed, falling back to IP geo",
-              err
+              err,
             );
           }
         }
@@ -198,7 +197,7 @@ const UserRegistrationForm = () => {
         } else {
           if (isMounted) {
             setRoleError(
-              "Could not find the 'basic_user' role. Please contact support."
+              "Could not find the 'basic_user' role. Please contact support.",
             );
             setRolesLoaded(false);
           }
@@ -215,7 +214,6 @@ const UserRegistrationForm = () => {
       isMounted = false;
     };
   }, []);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const navigate = useNavigate();
@@ -323,7 +321,13 @@ const UserRegistrationForm = () => {
           if (formData.name) {
             sessionStorage.setItem("fastVisa_name", formData.name);
           }
-          setRegistrationSuccess(true);
+
+          // Redirect to verification page with success mode
+          navigate(
+            `/verify-email?mode=registration_success&email=${encodeURIComponent(
+              formData.username,
+            )}`,
+          );
 
           // Track successful registration
           metrics.trackFormSubmit("registration-form", true);
@@ -388,194 +392,176 @@ const UserRegistrationForm = () => {
               {apiError}
             </div>
           )}
-          {registrationSuccess ? (
-            <>
-              <Welcome name={formData.name} />
-              <button
-                className="registration-button"
-                style={{
-                  width: 240,
-                  maxWidth: "95vw",
-                  margin: "1.5rem auto 0 auto",
-                  display: "block",
-                }}
-                onClick={() => navigate("/")}
-              >
-                {t("login", "Log in")}
-              </button>
-            </>
-          ) : (
-            <form
-              className="registration-form"
-              onSubmit={handleSubmit}
-              autoComplete="on"
-            >
-              <div className="form-field">
-                <label htmlFor="name">
-                  {t("name", "Name")}: <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className={errors.name ? "error" : ""}
-                  required
-                />
-                {errors.name && <div className="form-error">{errors.name}</div>}
-              </div>
-              <div className="form-field">
-                <label htmlFor="username">
-                  {t("username", "E-mail")}:{" "}
-                  <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="email"
-                  id="username"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  className={errors.username ? "error" : ""}
-                  required
-                />
-                {errors.username && (
-                  <div className="form-error">{errors.username}</div>
-                )}
-              </div>
-              <div className="form-field">
-                <label htmlFor="password">
-                  {t("password", "Password")}:{" "}
-                  <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className={errors.password ? "error" : ""}
-                  required
-                />
-                {errors.password && (
-                  <div className="form-error">{errors.password}</div>
-                )}
-              </div>
-              <div className="form-field">
-                <label htmlFor="confirmPassword">
-                  {t("confirmPassword", "Confirm Password")}:{" "}
-                  <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className={errors.confirmPassword ? "error" : ""}
-                  required
-                />
-                {errors.confirmPassword && (
-                  <div className="form-error">{errors.confirmPassword}</div>
-                )}
-              </div>
-              <div className="form-field">
-                <label htmlFor="country_code">
-                  {t("country", "Country")}:{" "}
-                  <span style={{ color: "red" }}>*</span>
-                </label>
-                <Select
-                  inputId="country_code"
-                  name="country_code"
-                  classNamePrefix={errors.country_code ? "error" : ""}
-                  value={
-                    countries.find((c) => c.value === formData.country_code) ||
-                    null
-                  }
-                  onChange={(option) =>
-                    handleChange({ ...option, __isCountrySelect: true })
-                  }
-                  options={countries}
-                  placeholder={t("selectCountry", "Select a country")}
-                  isSearchable
-                  required
-                  formatOptionLabel={(option) => (
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5em",
-                      }}
-                    >
-                      <span style={{ fontSize: "1.2em" }}>{option.flag}</span>
-                      <span>{option.label}</span>
-                    </div>
-                  )}
-                  styles={{
-                    control: (base, state) => ({
-                      ...base,
-                      borderColor: errors.country_code
-                        ? "#e11d48"
-                        : base.borderColor,
-                      boxShadow: state.isFocused
-                        ? "0 0 0 1.5px #2563eb"
-                        : base.boxShadow,
-                      minHeight: "36px",
-                      width: "340px",
-                      maxWidth: "95vw",
-                    }),
-                    option: (base) => ({ ...base, fontSize: "1em" }),
-                  }}
-                />
-                {errors.country_code && (
-                  <div className="form-error">{errors.country_code}</div>
-                )}
-                {detectingLocation && (
-                  <p
+          <form
+            className="registration-form"
+            onSubmit={handleSubmit}
+            autoComplete="on"
+          >
+            <div className="form-field">
+              <label htmlFor="name">
+                {t("name", "Name")}: <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className={errors.name ? "error" : ""}
+                required
+              />
+              {errors.name && <div className="form-error">{errors.name}</div>}
+            </div>
+            <div className="form-field">
+              <label htmlFor="username">
+                {t("username", "E-mail")}:{" "}
+                <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                type="email"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className={errors.username ? "error" : ""}
+                required
+              />
+              {errors.username && (
+                <div className="form-error">{errors.username}</div>
+              )}
+            </div>
+            <div className="form-field">
+              <label htmlFor="password">
+                {t("password", "Password")}:{" "}
+                <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className={errors.password ? "error" : ""}
+                required
+              />
+              {errors.password && (
+                <div className="form-error">{errors.password}</div>
+              )}
+            </div>
+            <div className="form-field">
+              <label htmlFor="confirmPassword">
+                {t("confirmPassword", "Confirm Password")}:{" "}
+                <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className={errors.confirmPassword ? "error" : ""}
+                required
+              />
+              {errors.confirmPassword && (
+                <div className="form-error">{errors.confirmPassword}</div>
+              )}
+            </div>
+            <div className="form-field">
+              <label htmlFor="country_code">
+                {t("country", "Country")}:{" "}
+                <span style={{ color: "red" }}>*</span>
+              </label>
+              <Select
+                inputId="country_code"
+                name="country_code"
+                classNamePrefix={errors.country_code ? "error" : ""}
+                value={
+                  countries.find((c) => c.value === formData.country_code) ||
+                  null
+                }
+                onChange={(option) =>
+                  handleChange({ ...option, __isCountrySelect: true })
+                }
+                options={countries}
+                placeholder={t("selectCountry", "Select a country")}
+                isSearchable
+                required
+                formatOptionLabel={(option) => (
+                  <div
                     style={{
-                      color: "#6b7280",
-                      marginTop: "0.5rem",
-                      fontSize: "0.9rem",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5em",
                     }}
                   >
-                    <i
-                      className="fas fa-spinner fa-spin"
-                      style={{ marginRight: "8px" }}
-                    ></i>
-                    {t("detectingLocation", "Detecting your location...")}
-                  </p>
+                    <span style={{ fontSize: "1.2em" }}>{option.flag}</span>
+                    <span>{option.label}</span>
+                  </div>
                 )}
-              </div>
-              <div className="form-field">
-                <label htmlFor="phone_number">
-                  {t("phoneNumber", "Phone Number")}:
-                </label>
-                <input
-                  type="text"
-                  id="phone_number"
-                  name="phone_number"
-                  value={formData.phone_number}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="button-row">
-                <button
-                  type="button"
-                  className="cancel-button"
-                  onClick={handleCancel}
+                styles={{
+                  control: (base, state) => ({
+                    ...base,
+                    borderColor: errors.country_code
+                      ? "#e11d48"
+                      : base.borderColor,
+                    boxShadow: state.isFocused
+                      ? "0 0 0 1.5px #2563eb"
+                      : base.boxShadow,
+                    minHeight: "36px",
+                    width: "340px",
+                    maxWidth: "95vw",
+                  }),
+                  option: (base) => ({ ...base, fontSize: "1em" }),
+                }}
+              />
+              {errors.country_code && (
+                <div className="form-error">{errors.country_code}</div>
+              )}
+              {detectingLocation && (
+                <p
+                  style={{
+                    color: "#6b7280",
+                    marginTop: "0.5rem",
+                    fontSize: "0.9rem",
+                  }}
                 >
-                  {t("cancel", "Cancel")}
-                </button>
-                <button
-                  type="submit"
-                  className="registration-button"
-                  disabled={!rolesLoaded || !formData.role_id}
-                >
-                  {t("submit", "Submit")}
-                </button>
-              </div>
-            </form>
-          )}
+                  <i
+                    className="fas fa-spinner fa-spin"
+                    style={{ marginRight: "8px" }}
+                  ></i>
+                  {t("detectingLocation", "Detecting your location...")}
+                </p>
+              )}
+            </div>
+            <div className="form-field">
+              <label htmlFor="phone_number">
+                {t("phoneNumber", "Phone Number")}:
+              </label>
+              <input
+                type="text"
+                id="phone_number"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="button-row">
+              <button
+                type="button"
+                className="cancel-button"
+                onClick={handleCancel}
+              >
+                {t("cancel", "Cancel")}
+              </button>
+              <button
+                type="submit"
+                className="registration-button"
+                disabled={!rolesLoaded || !formData.role_id}
+              >
+                {t("submit", "Submit")}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
       <Footer />

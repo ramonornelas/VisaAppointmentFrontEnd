@@ -31,11 +31,13 @@
 .login-container {
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
   padding: 2rem 2.5rem;
   width: 100%;
   max-width: 400px;
   flex: 0 0 400px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Benefits Panel - Right Side (White background with brand blue border) */
@@ -56,13 +58,17 @@
 
 /* Decorative background pattern */
 .benefits-panel::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   right: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255, 71, 87, 0.03) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 71, 87, 0.03) 0%,
+    transparent 70%
+  );
   pointer-events: none;
 }
 
@@ -110,14 +116,13 @@
   flex-shrink: 0;
   width: 48px;
   height: 48px;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(10px);
 }
-
 
 .benefit-icon {
   font-size: 1.5rem;
@@ -292,7 +297,7 @@
 
 /* Arrow for tooltip */
 .info-sidebar-tooltip::after {
-  content: '';
+  content: "";
   position: absolute;
   right: -8px;
   top: 50%;
@@ -363,7 +368,6 @@
   font-weight: 600;
 }
 
-
 .login-title {
   font-size: 2rem;
   font-weight: 700;
@@ -393,7 +397,6 @@
   font-weight: 500;
 }
 
-
 .login-input {
   width: 100%;
   padding: 0.45rem 0.7rem;
@@ -413,7 +416,6 @@
   background: #fff;
 }
 
-
 .login-button {
   width: 100%;
   padding: 0.8rem 0;
@@ -426,13 +428,14 @@
   cursor: pointer;
   margin-top: 0.5rem;
   transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.08);
 }
 
-.login-button:hover, .login-button:focus {
+.login-button:hover,
+.login-button:focus {
   background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
   color: #fff;
-  box-shadow: 0 4px 16px rgba(30,64,175,0.12);
+  box-shadow: 0 4px 16px rgba(30, 64, 175, 0.12);
 }
 
 .login-error {
@@ -537,7 +540,7 @@
   .login-title {
     font-size: 1.4rem;
   }
-  
+
   .login-form {
     gap: 0.8rem;
   }
@@ -546,4 +549,3 @@
     gap: 1.25rem;
   }
 }
-

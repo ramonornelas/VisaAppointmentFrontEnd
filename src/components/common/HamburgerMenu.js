@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../utils/AuthContext";
 import { UserDetails, getRoles } from "../../services/APIFunctions";
 import "./HamburgerMenu.css";
+import EnvironmentBadge from "./EnvironmentBadge";
 
 import { permissions } from "../../utils/permissions";
 
@@ -109,6 +110,14 @@ const HamburgerMenu = () => {
     <div className="hamburger-menu-icon">
       <nav className="menu open">
         <div className="menu-items">
+          <div
+            style={{
+              padding: "12px 16px",
+              borderBottom: "1px solid rgba(255,255,255,0.1)",
+            }}
+          >
+            <EnvironmentBadge />
+          </div>
           {showUpgrade && location.pathname !== "/premium-upgrade" && (
             <div className="menu-item premium-section">
               <Link to="/premium-upgrade" className="premium-link shiny-btn">

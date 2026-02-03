@@ -250,7 +250,7 @@ const GetApplicantPassword = async (applicant_userid) => {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (response.status === 200) {
@@ -461,7 +461,7 @@ const createApplicant = async (applicantData) => {
   try {
     console.log(
       "[APIFunctions] createApplicant - Sending request to:",
-      `${BASE_URL}/applicants`
+      `${BASE_URL}/applicants`,
     );
     console.log("[APIFunctions] createApplicant - Payload:", applicantData);
 
@@ -476,7 +476,7 @@ const createApplicant = async (applicantData) => {
 
     console.log(
       "[APIFunctions] createApplicant - Response status:",
-      response.status
+      response.status,
     );
 
     // Accept both 200 and 201 as success
@@ -491,12 +491,12 @@ const createApplicant = async (applicantData) => {
         const errorData = await response.json();
         console.error(
           "[APIFunctions] createApplicant - Error response:",
-          errorData
+          errorData,
         );
         errorMessage = errorData.message || errorData.error || errorMessage;
       } catch {
         console.error(
-          "[APIFunctions] createApplicant - Could not parse error response"
+          "[APIFunctions] createApplicant - Could not parse error response",
         );
       }
       throw new Error(errorMessage);
@@ -521,6 +521,14 @@ const loginUser = async (username, password) => {
 
     if (response.status === 200) {
       return { success: true };
+    } else if (response.status === 403) {
+      const errorData = await response.json();
+      return {
+        success: false,
+        status: 403,
+        error: errorData.message || "Email not verified",
+        errorCode: errorData.error_code,
+      };
     } else {
       throw new Error("Failed to log in");
     }
@@ -552,6 +560,62 @@ const getUserPermissions = async (userId) => {
   }
 };
 
+// Verify email with token
+const verifyEmail = async (token) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/verify-email`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token }),
+    });
+
+    if (response.status === 200) {
+      return { success: true, data: await response.json() };
+    } else {
+      const errorData = await response.json();
+      return {
+        success: false,
+        error: errorData.message || "Verification failed",
+        errorCode: errorData.error_code,
+        status: response.status,
+      };
+    }
+  } catch (error) {
+    console.error("Error verifying email:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Resend verification email
+const resendVerificationEmail = async (email) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/resend-verification`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (response.status === 200) {
+      return { success: true, data: await response.json() };
+    } else {
+      const errorData = await response.json();
+      return {
+        success: false,
+        error: errorData.message || "Failed to resend email",
+      };
+    }
+  } catch (error) {
+    console.error("Error resending verification email:", error);
+    return { success: false, error: error.message };
+  }
+};
+
 export {
   UserDetails,
   ApplicantSearch,
@@ -575,4 +639,6 @@ export {
   createApplicant,
   loginUser,
   getUserPermissions,
+  verifyEmail,
+  resendVerificationEmail,
 };

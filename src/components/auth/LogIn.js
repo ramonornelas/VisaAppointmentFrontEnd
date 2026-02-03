@@ -4,6 +4,7 @@ import Banner from "../common/Banner";
 import Footer from "../common/Footer";
 import "./LogIn.css";
 import LanguageSelector from "../common/LanguageSelector";
+import EnvironmentBadge from "../common/EnvironmentBadge";
 import { permissions } from "../../utils/permissions";
 import FastVisaMetrics from "../../utils/FastVisaMetrics";
 import {
@@ -22,7 +23,7 @@ const LogIn = () => {
   const { t } = useTranslation();
   const permissionsErrorMsg = t(
     "permissionsErrorMsg",
-    "Please contact the administrator to grant you access to the system."
+    "Please contact the administrator to grant you access to the system.",
   );
 
   // Initialize metrics tracker
@@ -85,7 +86,7 @@ const LogIn = () => {
             if (permissionsData) {
               sessionStorage.setItem(
                 "fastVisa_permissions",
-                JSON.stringify(permissionsData)
+                JSON.stringify(permissionsData),
               );
             } else {
               setError(permissionsErrorMsg);
@@ -109,7 +110,7 @@ const LogIn = () => {
 
             if (userData && rolesData) {
               const currentRole = rolesData.find(
-                (role) => role.id === userData.role_id
+                (role) => role.id === userData.role_id,
               );
               const roleName = currentRole ? currentRole.name : "unknown";
 
@@ -135,14 +136,14 @@ const LogIn = () => {
                   sessionStorage.setItem("applicant_userid", firstApplicantId);
                   console.log(
                     "[LogIn] User cannot manage applicants, redirecting to:",
-                    firstApplicantId
+                    firstApplicantId,
                   );
                   window.location.href = `/view-applicant/${firstApplicantId}`;
                 } else {
                   // User has no applicants, redirect to create applicant
                   sessionStorage.removeItem("applicant_userid");
                   console.log(
-                    "[LogIn] User cannot manage applicants, redirecting to create"
+                    "[LogIn] User cannot manage applicants, redirecting to create",
                   );
                   window.location.href = "/applicant-form";
                 }
@@ -150,14 +151,14 @@ const LogIn = () => {
                 // Users who can manage applicants go to applicants list
                 sessionStorage.removeItem("applicant_userid");
                 console.log(
-                  "[LogIn] User can manage applicants, redirecting to applicants list"
+                  "[LogIn] User can manage applicants, redirecting to applicants list",
                 );
                 window.location.href = "/applicants";
               }
             } else {
               // Error fetching user details, default to applicants
               console.log(
-                "[LogIn] Error fetching user details, defaulting to applicants"
+                "[LogIn] Error fetching user details, defaulting to applicants",
               );
 
               // Track login success with unknown role
@@ -187,6 +188,14 @@ const LogIn = () => {
         } else {
           throw new Error("Failed to fetch user data");
         }
+      } else if (loginResponse.status === 403) {
+        // Handle unverified email
+        console.log(
+          "[LogIn] Email not verified, redirecting to verification reminder",
+        );
+        window.location.href = `/verify-email?mode=reminder&email=${encodeURIComponent(
+          username,
+        )}`;
       } else {
         throw new Error(loginResponse.error || "Failed to log in");
       }
@@ -216,7 +225,7 @@ const LogIn = () => {
             className="info-sidebar-item"
             data-tooltip={t(
               "securityBenefitText",
-              "Your data is encrypted and protected."
+              "Your data is encrypted and protected.",
             )}
           >
             <div className="info-sidebar-icon">🔒</div>
@@ -225,7 +234,7 @@ const LogIn = () => {
               <p>
                 {t(
                   "securityBenefitText",
-                  "Your data is encrypted and protected."
+                  "Your data is encrypted and protected.",
                 )}
               </p>
             </div>
@@ -235,7 +244,7 @@ const LogIn = () => {
             className="info-sidebar-item"
             data-tooltip={t(
               "globalCoverageText",
-              "Compatible with embassies and consulates worldwide."
+              "Compatible with embassies and consulates worldwide.",
             )}
           >
             <div className="info-sidebar-icon">🌍</div>
@@ -244,7 +253,7 @@ const LogIn = () => {
               <p>
                 {t(
                   "globalCoverageText",
-                  "Compatible with embassies and consulates worldwide."
+                  "Compatible with embassies and consulates worldwide.",
                 )}
               </p>
             </div>
@@ -254,7 +263,7 @@ const LogIn = () => {
             className="info-sidebar-item info-sidebar-warning"
             data-tooltip={t(
               "moneyBackGuarantee",
-              "We cannot guarantee finding a date as it depends on embassy availability, but if you don't get results within one month, we'll refund your money."
+              "We cannot guarantee finding a date as it depends on embassy availability, but if you don't get results within one month, we'll refund your money.",
             )}
           >
             <div className="info-sidebar-icon">⚠️</div>
@@ -263,7 +272,7 @@ const LogIn = () => {
               <p>
                 {t(
                   "moneyBackGuarantee",
-                  "We cannot guarantee finding a date as it depends on embassy availability, but if you don't get results within one month, we'll refund your money."
+                  "We cannot guarantee finding a date as it depends on embassy availability, but if you don't get results within one month, we'll refund your money.",
                 )}
               </p>
             </div>
@@ -276,6 +285,7 @@ const LogIn = () => {
             <div style={{ height: "24px" }}></div>
 
             {/* Try the app button - prominently placed before login */}
+            <EnvironmentBadge style={{ margin: "0 auto 30px auto" }} />
             <div style={{ textAlign: "center", margin: "0 0 30px 0" }}>
               <button
                 type="button"
@@ -386,7 +396,7 @@ const LogIn = () => {
                   <p>
                     {t(
                       "step1Desc",
-                      "Our system monitors 24/7 the availability of American visa appointments at the consulates and date ranges you select."
+                      "Our system monitors 24/7 the availability of American visa appointments at the consulates and date ranges you select.",
                     )}
                   </p>
                 </div>
@@ -399,7 +409,7 @@ const LogIn = () => {
                   <p>
                     {t(
                       "step2Desc",
-                      "We send you continuous notifications so you know how your search is progressing."
+                      "We send you continuous notifications so you know how your search is progressing.",
                     )}
                   </p>
                 </div>
@@ -412,7 +422,7 @@ const LogIn = () => {
                   <p>
                     {t(
                       "step3Desc",
-                      "When we find a date that matches your criteria, we automatically make the reservation so no one else can take it."
+                      "When we find a date that matches your criteria, we automatically make the reservation so no one else can take it.",
                     )}
                   </p>
                 </div>

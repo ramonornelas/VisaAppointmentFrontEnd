@@ -19,6 +19,7 @@ import PremiumUpgrade from "./components/premium/PremiumUpgrade";
 import ChangePassword from "./components/auth/ChangePassword";
 
 import Users from "./components/users/Users";
+import VerifyEmail from "./components/auth/VerifyEmail";
 
 import "./locales/i18n"; // Initialize i18n
 
@@ -44,6 +45,7 @@ root.render(
           <Route path="/premium-upgrade" element={<PremiumUpgrade />} />
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
         </Routes>
       </Router>
     </AuthProvider>
