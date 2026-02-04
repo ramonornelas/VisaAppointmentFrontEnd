@@ -26,6 +26,7 @@ import {
   Alert,
   Grid,
   Spin,
+  Popover,
   message as antMessage,
 } from "antd";
 import {
@@ -153,9 +154,12 @@ const ApplicantForm = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  // Load cities
+  // Load cities (normalize country code for lookup: keys in ALL_CITIES are e.g. 'es-mx', 'es-hn')
   useEffect(() => {
-    const availableCities = ALL_CITIES[countryCode] || [];
+    const key = countryCode?.trim();
+    const normalizedKey = key ? key.toLowerCase() : "";
+    const availableCities =
+      ALL_CITIES[key] || ALL_CITIES[normalizedKey] || [];
     setCities(availableCities);
 
     // Auto-select if only one city
@@ -194,7 +198,7 @@ const ApplicantForm = () => {
               targetStartDate: data.target_start_date || "",
               targetEndDate: data.target_end_date || "",
               selectedCities: data.target_city_codes
-                ? data.target_city_codes.split(",")
+                ? data.target_city_codes.split(",").map((s) => s.trim()).filter(Boolean)
                 : [],
             });
 
@@ -235,22 +239,6 @@ const ApplicantForm = () => {
     // Clear error for this field
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const handleCityToggle = (cityCode) => {
-    setFormData((prev) => {
-      const isSelected = prev.selectedCities.includes(cityCode);
-      return {
-        ...prev,
-        selectedCities: isSelected
-          ? prev.selectedCities.filter((c) => c !== cityCode)
-          : [...prev.selectedCities, cityCode],
-      };
-    });
-
-    if (errors.selectedCities) {
-      setErrors((prev) => ({ ...prev, selectedCities: "" }));
     }
   };
 
@@ -1044,6 +1032,27 @@ const ApplicantForm = () => {
                   >
                     {t("targetDates", "Target Dates")}
                   </Typography.Title>
+                  <Popover
+                    content={t(
+                      "targetDatesTooltip",
+                      "Here you can configure your search start date."
+                    )}
+                    open={showTargetDatesTooltip}
+                    onOpenChange={(open) => {
+                      setShowTargetDatesTooltip(open);
+                      if (!open) {
+                        localStorage.setItem(
+                          "target_dates_tooltip_shown",
+                          "true"
+                        );
+                      }
+                    }}
+                    trigger="click"
+                  >
+                    <InfoCircleOutlined
+                      style={{ cursor: "pointer", fontSize: 16 }}
+                    />
+                  </Popover>
                 </Space>
               }
             >
@@ -1326,62 +1335,74 @@ const ApplicantForm = () => {
             </Card>
 
             {/* Target Cities Section */}
-            {cities.length > 0 && (
-              <Card
-                style={{ width: "100%", maxWidth: "100%", marginBottom: 24 }}
-                title={
-                  <Space>
-                    <EnvironmentOutlined />
-                    <Typography.Title
-                      style={{ margin: 0 }}
-                      level={isMobile ? 5 : 4}
-                      strong
-                    >
-                      {t("targetCities", "Target Cities")}
-                    </Typography.Title>
-                    {cities.length > 1 && <Text type="danger">*</Text>}
-                  </Space>
-                }
-              >
-                {cities.length === 1 ? (
-                  <Space>
-                    <Text strong>{cities[0].city_name}</Text>
-                    <Text type="secondary">({cities[0].city_code})</Text>
-                  </Space>
-                ) : (
-                  <Form.Item
-                    validateStatus={errors.selectedCities ? "error" : ""}
-                    help={errors.selectedCities}
+            <Card
+              style={{ width: "100%", maxWidth: "100%", marginBottom: 24 }}
+              title={
+                <Space>
+                  <EnvironmentOutlined />
+                  <Typography.Title
+                    style={{ margin: 0 }}
+                    level={isMobile ? 5 : 4}
+                    strong
                   >
-                    <Select
-                      mode="multiple"
-                      placeholder={t("selectCities", "Select cities")}
-                      value={formData.selectedCities}
-                      onChange={(vals) => {
-                        const next = vals || [];
-                        setFormData((prev) => ({
-                          ...prev,
-                          selectedCities: next,
-                        }));
-                        if (next.length > 0)
-                          setErrors((prev) => ({
-                            ...prev,
-                            selectedCities: "",
-                          }));
-                      }}
-                      size={btnSize}
-                      style={{ width: "100%" }}
-                      options={cities.map((c) => ({
-                        label: `${c.city_name} (${c.city_code})`,
-                        value: c.city_code,
-                      }))}
-                      optionFilterProp="label"
-                      allowClear
-                    />
-                  </Form.Item>
-                )}
-              </Card>
-            )}
+                    {t("targetCities", "Target Cities")}
+                  </Typography.Title>
+                  {cities.length > 1 && <Text type="danger">*</Text>}
+                </Space>
+              }
+            >
+              {cities.length === 0 ? (
+                <Alert
+                  type="info"
+                  showIcon
+                  icon={<EnvironmentOutlined />}
+                  message={t("noCitiesForCountry", "No cities available for your country")}
+                  description={
+                    !countryCode
+                      ? t("countryCodeMissing", "Your account country is not set. Please contact support or update your profile.")
+                      : t("noCitiesForCountryDescription", "Cities are currently configured for Mexico (es-mx) and Honduras (es-hn). If your country code is different, cities may not appear.")
+                  }
+                />
+              ) : cities.length === 1 ? (
+                <Space>
+                  <Text strong>{cities[0].city_name}</Text>
+                  <Text type="secondary">({cities[0].city_code})</Text>
+                </Space>
+              ) : (
+                <Form.Item
+                  validateStatus={errors.selectedCities ? "error" : ""}
+                  help={errors.selectedCities}
+                >
+                  <Select
+                    mode="multiple"
+                    placeholder={t("selectCities", "Select cities")}
+                    value={formData.selectedCities}
+                    onChange={(vals) => {
+                      const next = vals || [];
+                      setFormData((prev) => ({
+                        ...prev,
+                        selectedCities: next,
+                      }));
+                      setErrors((prev) => ({
+                        ...prev,
+                        selectedCities:
+                          next.length > 0
+                            ? ""
+                            : t("cityRequired", "Please select at least one city"),
+                      }));
+                    }}
+                    size={btnSize}
+                    style={{ width: "100%" }}
+                    options={cities.map((c) => ({
+                      label: `${c.city_name} (${c.city_code})`,
+                      value: c.city_code,
+                    }))}
+                    optionFilterProp="label"
+                    allowClear
+                  />
+                </Form.Item>
+              )}
+            </Card>
 
             {/* Form Actions */}
             <Space wrap size={8} style={{ marginTop: 24, marginBottom: 24 }}>

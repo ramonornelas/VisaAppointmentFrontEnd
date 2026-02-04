@@ -209,8 +209,7 @@ const ApplicantView = () => {
               onCancel: () => resolve(),
             });
           });
-          return;
-        }
+        } else {
         try {
           const response = await ApplicantDelete(applicantId);
           if (response && response.success) {
@@ -222,6 +221,7 @@ const ApplicantView = () => {
         } catch (error) {
           console.error('Error deleting applicant:', error);
           antMessage.error(t('errorDeletingApplicant', 'Error deleting applicant.'));
+        }
         }
       },
     });
