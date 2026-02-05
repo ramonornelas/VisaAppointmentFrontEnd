@@ -158,8 +158,7 @@ const ApplicantForm = () => {
   useEffect(() => {
     const key = countryCode?.trim();
     const normalizedKey = key ? key.toLowerCase() : "";
-    const availableCities =
-      ALL_CITIES[key] || ALL_CITIES[normalizedKey] || [];
+    const availableCities = ALL_CITIES[key] || ALL_CITIES[normalizedKey] || [];
     setCities(availableCities);
 
     // Auto-select if only one city
@@ -198,7 +197,10 @@ const ApplicantForm = () => {
               targetStartDate: data.target_start_date || "",
               targetEndDate: data.target_end_date || "",
               selectedCities: data.target_city_codes
-                ? data.target_city_codes.split(",").map((s) => s.trim()).filter(Boolean)
+                ? data.target_city_codes
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean)
                 : [],
             });
 
@@ -574,7 +576,7 @@ const ApplicantForm = () => {
       <>
         <HamburgerMenu />
         <div
-          className="applicant-form-container"
+          className="applicant-form-container-ant"
           style={{
             width: "100%",
             maxWidth: "100%",
@@ -607,7 +609,7 @@ const ApplicantForm = () => {
     <>
       <HamburgerMenu />
       <div
-        className="applicant-form-container"
+        className="applicant-form-container-ant"
         style={{
           width: "100%",
           maxWidth: "100%",
@@ -1356,12 +1358,14 @@ const ApplicantForm = () => {
                   type="info"
                   showIcon
                   icon={<EnvironmentOutlined />}
-                  message={t("noCitiesForCountry", "No cities available for your country")}
-                  description={
-                    !countryCode
-                      ? t("countryCodeMissing", "Your account country is not set. Please contact support or update your profile.")
-                      : t("noCitiesForCountryDescription", "Cities are currently configured for Mexico (es-mx) and Honduras (es-hn). If your country code is different, cities may not appear.")
-                  }
+                  title={t(
+                    "noCitiesForCountry",
+                    "No cities available for your country"
+                  )}
+                  description={t(
+                    "noCitiesForCountryDescription",
+                    "Soon you'll be able to select specific cities. We'll notify you when it's ready."
+                  )}
                 />
               ) : cities.length === 1 ? (
                 <Space>
@@ -1388,7 +1392,10 @@ const ApplicantForm = () => {
                         selectedCities:
                           next.length > 0
                             ? ""
-                            : t("cityRequired", "Please select at least one city"),
+                            : t(
+                                "cityRequired",
+                                "Please select at least one city"
+                              ),
                       }));
                     }}
                     size={btnSize}
