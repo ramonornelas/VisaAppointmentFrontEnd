@@ -10,7 +10,6 @@ import Home from "./components/home/Home";
 import RegisterUser from "./components/auth/RegisterUser";
 import QuickStartApplicant from "./components/applicants/QuickStartApplicant";
 import Applicants from "./components/applicants/Applicants";
-import ApplicantsAntD from "./components/applicants/ApplicantsAntD";
 import ApplicantForm from "./components/applicants/ApplicantForm";
 import ApplicantView from "./components/applicants/ApplicantView";
 import DeleteApplicant from "./components/applicants/DeleteApplicant";
@@ -36,7 +35,6 @@ root.render(
           <Route path="/registeruser" element={<RegisterUser />} />
           <Route path="/quickstart" element={<QuickStartApplicant />} />
           <Route path="/applicants" element={<Applicants />} />
-          <Route path="/applicants-antd" element={<ApplicantsAntD />} />
           <Route path="/applicant-form" element={<ApplicantForm />} />
           <Route path="/viewapplicant" element={<ApplicantView />} />
           <Route path="/view-applicant/:id" element={<ApplicantView />} />

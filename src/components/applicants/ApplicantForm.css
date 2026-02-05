@@ -1,4 +1,30 @@
-/* ApplicantForm.css - Modern form styling aligned with application theme */
+/* ApplicantForm: minimal layout for container only; UI uses Ant Design (aligned with ApplicantView) */
+.applicant-form-container-ant {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  padding-top: 100px;
+  margin-bottom: 60px;
+  min-height: 100vh;
+  background: #f8fafc;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .applicant-form-container-ant {
+    padding: 1rem;
+    padding-top: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .applicant-form-container-ant {
+    padding: 0.75rem;
+    padding-top: 100px;
+  }
+}
 
 .applicant-form-container {
   margin-top: 100px;
@@ -29,7 +55,7 @@
 .applicant-form-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #2C6BA0;
+  color: #2c6ba0;
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
@@ -68,7 +94,7 @@
 .applicant-form-section-title {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #2C6BA0;
+  color: #2c6ba0;
   margin: 0 0 24px 0;
   display: flex;
   align-items: center;
@@ -76,7 +102,7 @@
 }
 
 .applicant-form-section-title i {
-  color: #2C6BA0;
+  color: #2c6ba0;
   font-size: 1.2rem;
 }
 
@@ -110,14 +136,14 @@
   margin: 0;
   font-size: 1.4rem;
   font-weight: 600;
-  color: #2C6BA0;
+  color: #2c6ba0;
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
 .applicant-form-section-header h2 i {
-  color: #2C6BA0;
+  color: #2c6ba0;
   font-size: 1.2rem;
 }
 
@@ -201,7 +227,7 @@
 
 .applicant-form-input:focus {
   outline: none;
-  border-color: #2C6BA0;
+  border-color: #2c6ba0;
   box-shadow: 0 0 0 3px rgba(44, 107, 160, 0.1);
 }
 
@@ -275,7 +301,7 @@
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #2C6BA0;
+  accent-color: #2c6ba0;
 }
 
 .applicant-form-radio-group {
@@ -304,9 +330,9 @@
 }
 
 .applicant-form-radio-label:has(input:checked) {
-  border-color: #2C6BA0;
+  border-color: #2c6ba0;
   background: #eaf4fb;
-  color: #2C6BA0;
+  color: #2c6ba0;
   font-weight: 600;
 }
 
@@ -314,7 +340,7 @@
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #2C6BA0;
+  accent-color: #2c6ba0;
 }
 
 .applicant-form-cities-grid {
@@ -344,7 +370,7 @@
 }
 
 .applicant-form-city-card:has(input:checked) {
-  border-color: #2C6BA0;
+  border-color: #2c6ba0;
   background: #eaf4fb;
   box-shadow: 0 4px 12px rgba(44, 107, 160, 0.15);
 }
@@ -353,7 +379,7 @@
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #2C6BA0;
+  accent-color: #2c6ba0;
   flex-shrink: 0;
 }
 
@@ -382,11 +408,11 @@
 }
 
 .applicant-form-city-card:has(input:checked) .applicant-form-city-name {
-  color: #2C6BA0;
+  color: #2c6ba0;
 }
 
 .applicant-form-city-card:has(input:checked) .applicant-form-city-code-badge {
-  background: #2C6BA0;
+  background: #2c6ba0;
   color: #ffffff;
 }
 
@@ -396,9 +422,9 @@
   gap: 12px;
   padding: 16px 20px;
   background: #eaf4fb;
-  border: 2px solid #2C6BA0;
+  border: 2px solid #2c6ba0;
   border-radius: 10px;
-  color: #2C6BA0;
+  color: #2c6ba0;
   font-weight: 600;
   font-size: 1.05rem;
 }
@@ -465,13 +491,13 @@
 }
 
 .applicant-form-btn-submit {
-  background: linear-gradient(90deg, #2C6BA0 0%, #4A9EFF 100%);
+  background: linear-gradient(90deg, #2c6ba0 0%, #4a9eff 100%);
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(44, 107, 160, 0.3);
 }
 
 .applicant-form-btn-submit:hover:not(:disabled) {
-  background: linear-gradient(90deg, #4A9EFF 0%, #2C6BA0 100%);
+  background: linear-gradient(90deg, #4a9eff 0%, #2c6ba0 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(44, 107, 160, 0.4);
 }
@@ -491,7 +517,7 @@
 
 .applicant-form-loading i {
   font-size: 3rem;
-  color: #2C6BA0;
+  color: #2c6ba0;
 }
 
 .applicant-form-loading p {
@@ -577,7 +603,7 @@
 }
 
 .applicant-form-section-title[data-title]:hover::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 100%;
   left: 20px;
@@ -602,7 +628,7 @@
   background: #fffde7;
   color: #1f2937;
   border: 2px solid transparent;
-  border-image: linear-gradient(135deg, #3C89CB 30%, #EB3324 100%) 1;
+  border-image: linear-gradient(135deg, #3c89cb 30%, #eb3324 100%) 1;
   border-radius: 10px;
   padding: 1rem 0.9rem 0.7rem 0.9rem;
   box-shadow: 0 10px 30px rgba(60, 137, 203, 0.25);
@@ -621,7 +647,7 @@
 }
 
 .target-dates-floating-tip::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -12px;
   left: 30px;
@@ -629,14 +655,23 @@
   height: 0;
   border-left: 12px solid transparent;
   border-right: 12px solid transparent;
-  border-top: 12px solid #3C89CB;
+  border-top: 12px solid #3c89cb;
   filter: drop-shadow(0 -1px 0 rgba(44, 107, 160, 0.04));
 }
 
 @keyframes premiumPulse {
-  0% { transform: translateX(0) translateY(-4px) scale(1); opacity: 0.95 }
-  50% { transform: translateX(0) translateY(-6px) scale(1.02); opacity: 1 }
-  100% { transform: translateX(0) translateY(-4px) scale(1); opacity: 0.95 }
+  0% {
+    transform: translateX(0) translateY(-4px) scale(1);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateX(0) translateY(-6px) scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) translateY(-4px) scale(1);
+    opacity: 0.95;
+  }
 }
 
 .tooltip-close-btn {
@@ -659,5 +694,3 @@
   background-color: rgba(255, 255, 255, 0.2);
   color: #374151;
 }
-
-/* Remove dark mode styles to keep consistent with application theme */

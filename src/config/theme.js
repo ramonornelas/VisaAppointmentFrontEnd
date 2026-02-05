@@ -19,6 +19,7 @@ const theme = {
     fontSizeHeading3: 24,
     fontSizeHeading4: 20,
     fontSizeHeading5: 16,
+    fontSizeHeading6: 14,
 
     // Border Radius
     borderRadius: 6,
@@ -69,6 +70,7 @@ const theme = {
       paddingLG: 12,
       paddingMD: 8,
       paddingSM: 8,
+    
     },
 
     Tag: {

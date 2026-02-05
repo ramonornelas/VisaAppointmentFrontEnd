@@ -4,26 +4,59 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../utils/AuthContext';
 import { permissions, refreshPermissions } from '../../utils/permissions';
 import HamburgerMenu from '../common/HamburgerMenu';
-import Modal from '../common/Modal';
-import { 
-  ApplicantDetails, 
+import {
+  Card,
+  Button,
+  Space,
+  Tag,
+  Typography,
+  Spin,
+  Empty,
+  Tooltip,
+  Alert,
+  Popover,
+  Grid,
+  message as antMessage,
+  Modal as AntModal,
+} from 'antd';
+import {
+  UserOutlined,
+  CalendarOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ArrowLeftOutlined,
+  KeyOutlined,
+  CopyOutlined,
+  PlayCircleOutlined,
+  StopOutlined,
+  EnvironmentOutlined,
+  CalendarTwoTone,
+  InfoCircleOutlined,
+  GlobalOutlined,
+} from '@ant-design/icons';
+import {
+  ApplicantDetails,
   ApplicantDelete,
   ApplicantSearch,
   StartApplicantContainer,
   StopApplicantContainer,
-  GetApplicantPassword 
+  GetApplicantPassword,
 } from '../../services/APIFunctions';
 import { ALL_CITIES } from '../../utils/cities';
 import './ApplicantView.css';
 import '../../index.css';
 
+const { useBreakpoint } = Grid;
+const { Title, Text } = Typography;
+
 const ApplicantView = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const { id } = useParams(); // Get ID from URL parameter
-  
-  // Use ID from URL parameter if available, otherwise use sessionStorage
+  const { id } = useParams();
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
+
   const applicantId = id || sessionStorage.getItem('applicant_userid');
   const fastVisaUserId = sessionStorage.getItem('fastVisa_userid');
   const countryCode = sessionStorage.getItem('country_code');
@@ -33,14 +66,7 @@ const ApplicantView = () => {
   const [cities, setCities] = useState([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [modal, setModal] = useState({
-    isOpen: false,
-    title: '',
-    message: '',
-    type: 'info',
-    onConfirm: null,
-    showCancel: false
-  });
+  const [searchActionLoading, setSearchActionLoading] = useState(false);
 
   // Format date for display
   const formatDate = (date) => {
@@ -137,174 +163,109 @@ const ApplicantView = () => {
     navigate(`/applicant-form?id=${applicantId}`);
   };
 
-  const handleDelete = async () => {
-    setModal({
-      isOpen: true,
+  const handleDelete = () => {
+    AntModal.confirm({
       title: t('deleteApplicant', 'Delete Applicant'),
-      message: t('deleteApplicantConfirm', 'Are you sure you want to delete this applicant?'),
-      type: 'confirm',
-      showCancel: true,
-      onConfirm: async () => {
-        const isSearchRunning = data && (data.search_status === 'Running');
-        
+      content: t('deleteApplicantConfirm', 'Are you sure you want to delete this applicant?'),
+      okText: t('yes', 'Yes'),
+      okType: 'danger',
+      cancelText: t('no', 'No'),
+      onOk: async () => {
+        const isSearchRunning = data && data.search_status === 'Running';
         if (isSearchRunning) {
-          setModal({
-            isOpen: true,
-            title: t('searchInProgress', 'Search in Progress'),
-            message: t('stopSearchBeforeDeleting', 'Search is in progress. Do you want to stop the search before deleting?'),
-            type: 'warning',
-            showCancel: true,
-            onConfirm: async () => {
-              try {
-                await StopApplicantContainer(applicantId);
-                setModal({
-                  isOpen: true,
-                  title: t('searchStopped', 'Search Stopped'),
-                  message: t('searchStoppedApplicantDeleted', 'Search stopped. The applicant will now be deleted.'),
-                  type: 'info',
-                  showCancel: false,
-                  onConfirm: async () => {
-                    try {
-                      const response = await ApplicantDelete(applicantId);
-                      if (response && response.success) {
-                        setModal({
-                          isOpen: true,
-                          title: t('success', 'Success'),
-                          message: t('applicantDeletedSuccessfully', 'Applicant deleted successfully.'),
-                          type: 'success',
-                          showCancel: false,
-                          onConfirm: () => navigate('/applicants')
-                        });
-                      } else {
-                        setModal({
-                          isOpen: true,
-                          title: t('error', 'Error'),
-                          message: t('unexpectedResponseDeleting', 'Unexpected response when deleting applicant.'),
-                          type: 'error',
-                          showCancel: false
-                        });
+          return new Promise((resolve) => {
+            AntModal.confirm({
+              title: t('searchInProgress', 'Search in Progress'),
+              content: t('stopSearchBeforeDeleting', 'Search is in progress. Do you want to stop the search before deleting?'),
+              okText: t('yes', 'Yes'),
+              cancelText: t('no', 'No'),
+              onOk: async () => {
+                try {
+                  await StopApplicantContainer(applicantId);
+                  AntModal.info({
+                    title: t('searchStopped', 'Search Stopped'),
+                    content: t('searchStoppedApplicantDeleted', 'Search stopped. The applicant will now be deleted.'),
+                    onOk: async () => {
+                      try {
+                        const response = await ApplicantDelete(applicantId);
+                        if (response && response.success) {
+                          antMessage.success(t('applicantDeletedSuccessfully', 'Applicant deleted successfully.'));
+                          navigate('/applicants');
+                        } else {
+                          antMessage.error(t('unexpectedResponseDeleting', 'Unexpected response when deleting applicant.'));
+                        }
+                      } catch (err) {
+                        console.error('Error deleting applicant:', err);
+                        antMessage.error(t('failedToDeleteApplicant', 'Failed to delete applicant. Please try again.'));
                       }
-                    } catch (error) {
-                      setModal({
-                        isOpen: true,
-                        title: t('error', 'Error'),
-                        message: t('failedToDeleteApplicant', 'Failed to delete applicant. Please try again.'),
-                        type: 'error',
-                        showCancel: false
-                      });
-                    }
-                  }
-                });
-              } catch (error) {
-                setModal({
-                  isOpen: true,
-                  title: t('error', 'Error'),
-                  message: t('failedToStopSearchOrDelete', 'Failed to stop search or delete applicant. Please try again.'),
-                  type: 'error',
-                  showCancel: false
-                });
-              }
-            }
+                      resolve();
+                    },
+                  });
+                } catch (err) {
+                  antMessage.error(t('failedToStopSearchOrDelete', 'Failed to stop search or delete applicant. Please try again.'));
+                  resolve();
+                }
+              },
+              onCancel: () => resolve(),
+            });
           });
-          return;
-        }
-
+        } else {
         try {
           const response = await ApplicantDelete(applicantId);
           if (response && response.success) {
-            setModal({
-              isOpen: true,
-              title: t('success', 'Success'),
-              message: t('applicantDeletedSuccessfully', 'Applicant deleted successfully.'),
-              type: 'success',
-              showCancel: false,
-              onConfirm: () => navigate('/applicants')
-            });
+            antMessage.success(t('applicantDeletedSuccessfully', 'Applicant deleted successfully.'));
+            navigate('/applicants');
           } else {
-            setModal({
-              isOpen: true,
-              title: t('error', 'Error'),
-              message: t('unexpectedResponseDeleting', 'Unexpected response when deleting applicant.'),
-              type: 'error',
-              showCancel: false
-            });
+            antMessage.error(t('unexpectedResponseDeleting', 'Unexpected response when deleting applicant.'));
           }
         } catch (error) {
           console.error('Error deleting applicant:', error);
-          setModal({
-            isOpen: true,
-            title: t('error', 'Error'),
-            message: t('errorDeletingApplicant', 'Error deleting applicant.'),
-            type: 'error',
-            showCancel: false
-          });
+          antMessage.error(t('errorDeletingApplicant', 'Error deleting applicant.'));
         }
-      }
+        }
+      },
     });
   };
 
   const handleToggleSearch = async () => {
+    setSearchActionLoading(true);
     try {
       if (data.search_status === 'Stopped') {
-        const concurrentLimit = parseInt(sessionStorage.getItem('concurrent_applicants'));
+        const concurrentLimit = parseInt(sessionStorage.getItem('concurrent_applicants'), 10);
         const applicantsResponse = await ApplicantSearch(fastVisaUserId);
-        const runningCount = applicantsResponse.filter(a => a.search_status === 'Running').length;
-        
+        const runningCount = applicantsResponse.filter((a) => a.search_status === 'Running').length;
         if (runningCount >= concurrentLimit) {
-          setModal({
-            isOpen: true,
+          AntModal.warning({
             title: t('limitReached', 'Limit Reached'),
-            message: t('concurrentLimitMessage', `You have reached your concurrent applicants limit ({limit}).\nTo start a new applicant, please end one of your currently running applicants first.`).replace('{limit}', concurrentLimit),
-            type: 'warning',
-            showCancel: false
+            content: t(
+              'concurrentLimitMessage',
+              `You have reached your concurrent applicants limit ({limit}).\nTo start a new applicant, please end one of your currently running applicants first.`
+            ).replace('{limit}', concurrentLimit),
           });
           return;
         }
-        
         await StartApplicantContainer(applicantId);
-        setModal({
-          isOpen: true,
-          title: t('success', 'Success'),
-          message: t('searchStartedSuccess', 'Search started successfully.'),
-          type: 'success',
-          showCancel: false
-        });
+        antMessage.success(t('searchStartedSuccess', 'Search started successfully.'));
       } else {
         await StopApplicantContainer(applicantId);
-        setModal({
-          isOpen: true,
-          title: t('success', 'Success'),
-          message: t('searchStoppedSuccess', 'Search stopped successfully.'),
-          type: 'success',
-          showCancel: false
-        });
+        antMessage.success(t('searchStoppedSuccess', 'Search stopped successfully.'));
       }
-      
-      setRefreshFlag(flag => !flag);
+      setRefreshFlag((flag) => !flag);
     } catch (error) {
-      setModal({
-        isOpen: true,
-        title: t('error', 'Error'),
-        message: t('errorPerformingAction', 'Error performing action.'),
-        type: 'error',
-        showCancel: false
-      });
+      antMessage.error(t('errorPerformingAction', 'Error performing action.'));
       console.error(error);
+    } finally {
+      setSearchActionLoading(false);
     }
   };
 
   const handleCopyEmail = async () => {
     try {
       await navigator.clipboard.writeText(data.ais_username);
-      setModal({
-        isOpen: true,
-        title: t('copied', 'Copied'),
-        message: t('emailCopied', 'Email copied to clipboard'),
-        type: 'success',
-        showCancel: false
-      });
+      antMessage.success(t('emailCopied', 'Email copied to clipboard'));
     } catch (error) {
       console.error('Error copying email:', error);
+      antMessage.error(t('errorCopyingEmail', 'Error copying email'));
     }
   };
 
@@ -312,61 +273,35 @@ const ApplicantView = () => {
     try {
       const response = await GetApplicantPassword(applicantId);
       await navigator.clipboard.writeText(response.password);
-      setModal({
-        isOpen: true,
-        title: t('copied', 'Copied'),
-        message: t('passwordCopied', 'Password copied to clipboard'),
-        type: 'success',
-        showCancel: false
-      });
+      antMessage.success(t('passwordCopied', 'Password copied to clipboard'));
     } catch (error) {
       console.error('Error copying password:', error);
+      antMessage.error(t('errorCopyingPassword', 'Error copying password'));
     }
   };
 
-  // Note: city name mapping is performed inline where needed; helper removed as it was unused.
-
-  const renderStatusBadge = (status) => {
-    const statusTranslations = {
-      'Running': t('running', 'Running'),
-      'Stopped': t('stopped', 'Stopped'),
-      'Error': t('error', 'Error'),
-      'Completed': t('completed', 'Completed'),
-    };
-
-    const statusStyles = {
-      'Running': { background: '#2196f3', color: '#fff' },
-      'Stopped': { background: '#ff9800', color: '#fff' },
-      'Error': { background: '#f44336', color: '#fff' },
-      'Completed': { background: '#4caf50', color: '#fff' },
-    };
-
-    const style = statusStyles[status] || { background: '#9e9e9e', color: '#fff' };
-
-    return (
-      <span className="applicant-view-badge" style={{ background: style.background, color: style.color }}>
-        {statusTranslations[status] || status}
-      </span>
-    );
+  const getSearchStatusColor = (status) => {
+    const colors = { Running: '#2196f3', Stopped: '#ff9800', Error: '#f44336', Completed: '#4caf50' };
+    return colors[status] || '#9e9e9e';
   };
 
-  const renderBooleanBadge = (value) => (
-    <span className="applicant-view-badge" style={{
-      background: value ? '#4caf50' : '#e0e0e0',
-      color: value ? '#fff' : '#888'
-    }}>
-      {value ? t('active', 'Active') : t('inactive', 'Inactive')}
-    </span>
-  );
+  const btnSize = isMobile ? 'large' : 'middle';
+
+  /* Desktop: grid of columns; mobile: single column */
+  const cardContentStyle = isMobile
+    ? { display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }
+    : { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, width: '100%' };
 
   if (loading) {
     return (
       <>
         <HamburgerMenu />
-        <div className="applicant-view-container">
-          <div className="applicant-view-loading">
-            <i className="fas fa-spinner fa-spin"></i>
-            <p>{t('loadingApplicantDetails', 'Loading applicant details...')}</p>
+        <div
+          className="applicant-view-container"
+          style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflowX: 'hidden' }}
+        >
+          <div style={{ padding: '4rem 2rem', textAlign: 'center' }}>
+            <Spin size="large" tip={t('loadingApplicantDetails', 'Loading applicant details...')} />
           </div>
         </div>
       </>
@@ -377,423 +312,329 @@ const ApplicantView = () => {
     return (
       <>
         <HamburgerMenu />
-        <div className="applicant-view-container">
-          <div className="applicant-view-error">
-            <i className="fas fa-exclamation-triangle"></i>
-            <p>{t('applicantNotFound', 'Applicant not found')}</p>
+        <div
+          className="applicant-view-container"
+          style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflowX: 'hidden' }}
+        >
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={t('applicantNotFound', 'Applicant not found')}
+          >
             {permissions.canManageApplicants() && (
-              <button onClick={() => navigate('/applicants')} className="applicant-view-btn">
+              <Button type="primary" size={btnSize} onClick={() => navigate('/applicants')}>
                 {t('backToApplicants', 'Back to Applicants')}
-              </button>
+              </Button>
             )}
-          </div>
+          </Empty>
         </div>
       </>
     );
   }
 
+  const premiumPopoverContent = (
+    <div style={{ maxWidth: 320 }}>
+      <Text strong>{t('clickEditToStartTomorrow', 'Click here to start searching from tomorrow!')}</Text>
+      <Button
+        type="link"
+        size="small"
+        style={{ marginTop: 8, padding: 0 }}
+        onClick={() => {
+          setShowTooltip(false);
+          localStorage.setItem('premium_tooltip_shown', 'true');
+        }}
+      >
+        {t('close', 'Close')}
+      </Button>
+    </div>
+  );
+
+  const editButton = (
+    <Button type="primary" icon={<EditOutlined />} onClick={handleEdit} size={btnSize}>
+      {t('edit', 'Edit')}
+    </Button>
+  );
+
   return (
     <>
       <HamburgerMenu />
-      <div className="applicant-view-container">
-        <div className="applicant-view-header">
-          <div>
-            <h1 className="applicant-view-title">
-              <i className={permissions.canManageApplicants() ? "fas fa-user-circle" : "fas fa-calendar-check"}></i>
-              {permissions.canManageApplicants() ? t('applicantDetails', 'Applicant Details') : t('myAppointment', 'My Appointment')}
-            </h1>
-            <p className="applicant-view-subtitle">
-              {permissions.canManageApplicants() ? t('viewManageApplicantInfo', 'View and manage applicant information') : t('viewManageAppointment', 'View and manage your appointment search')}
-            </p>
-          </div>
-          <div className="applicant-view-header-actions">
-            {permissions.canManageApplicants() && (
-              <button onClick={() => navigate('/applicants')} className="applicant-view-btn applicant-view-btn-secondary">
-                <i className="fas fa-arrow-left"></i>
-                {t('back', 'Back')}
-              </button>
-            )}
-            
-              <div className="edit-tooltip-container">
-                <button onClick={handleEdit} className="applicant-view-btn applicant-view-btn-primary">
-                  <i className="fas fa-edit"></i>
-                  {t('edit', 'Edit')}
-                </button>
-                {showTooltip && (
-                  <div className="edit-floating-tip" role="tooltip" aria-hidden="false">
-                    <strong>{t('clickEditToStartTomorrow', '¡Click here to start searching from tomorrow!')}</strong>
-                    <button 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowTooltip(false);
-                        localStorage.setItem('premium_tooltip_shown', 'true');
-                      }} 
-                      className="tooltip-close-btn"
-                      style={{ 
-                        position: 'absolute',
-                        top: '8px',
-                        right: '8px',
-                        background: 'none', 
-                        border: 'none', 
-                        color: '#1f2937', 
-                        cursor: 'pointer', 
-                        fontSize: '1rem', 
-                        padding: '0', 
-                        lineHeight: 1,
-                        pointerEvents: 'auto'
-                      }}
-                      title={t('close', 'Close')}
-                    >
-                      <i className="fas fa-times"></i>
-                    </button>
-                  </div>
-                )}
-              </div>
-            {permissions.canManageApplicants() && (
-              <button onClick={handleDelete} className="applicant-view-btn" style={{ background: '#f44336', color: '#fff' }}>
-                <i className="fas fa-trash-alt"></i>
-                {t('delete', 'Delete')}
-              </button>
-            )}
-            
-          </div>
+      <div
+        className="applicant-view-container"
+        style={{
+          width: '100%',
+          maxWidth: '100%',
+          boxSizing: 'border-box',
+          overflowX: 'hidden',
+          fontSize: isMobile ? 16 : undefined,
+        }}
+      >
+        <div style={{ marginBottom: 24, paddingBottom: 24, borderBottom: '2px solid #e3eaf3' }}>
+          <Space
+            orientation={isMobile ? 'vertical' : 'horizontal'}
+            align={isMobile ? 'stretch' : 'start'}
+            wrap
+            style={{ width: '100%', justifyContent: 'space-between' }}
+          >
+            <div>
+              <Title level={2} style={{ margin: 0, color: '#2C6BA0', display: 'flex', alignItems: 'center', gap: 8 }}>
+                {permissions.canManageApplicants() ? <UserOutlined /> : <CalendarOutlined />}
+                {permissions.canManageApplicants() ? t('applicantDetails', 'Applicant Details') : t('myAppointment', 'My Appointment')}
+              </Title>
+              <Text type="secondary" style={{ display: 'block', marginTop: 4 }}>
+                {permissions.canManageApplicants() ? t('viewManageApplicantInfo', 'View and manage applicant information') : t('viewManageAppointment', 'View and manage your appointment search')}
+              </Text>
+            </div>
+            <Space wrap size={8} style={{ width: isMobile ? '100%' : undefined }}>
+              {permissions.canManageApplicants() && (
+                <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/applicants')} size={btnSize}>
+                  {t('back', 'Back')}
+                </Button>
+              )}
+              {showTooltip ? (
+                <Popover
+                  content={premiumPopoverContent}
+                  trigger="click"
+                  open={showTooltip}
+                  onOpenChange={(open) => {
+                    if (!open) {
+                      setShowTooltip(false);
+                      localStorage.setItem('premium_tooltip_shown', 'true');
+                    }
+                  }}
+                >
+                  {editButton}
+                </Popover>
+              ) : (
+                editButton
+              )}
+              {permissions.canManageApplicants() && (
+                <Button danger icon={<DeleteOutlined />} onClick={handleDelete} size={btnSize}>
+                  {t('delete', 'Delete')}
+                </Button>
+              )}
+            </Space>
+          </Space>
         </div>
 
-        <div className="applicant-view-content">
-
-          {/* Basic Information Section */}
-          <div className="applicant-view-section">
-            <h2 className="applicant-view-section-title">
-              <i className="fas fa-user"></i>
-              {t('basicInformation', 'Basic Information')}
-            </h2>
-            
-            <div className="applicant-view-grid">
-              <div className="applicant-view-field">
-                <label>{t('fullName', 'Full Name')}</label>
-                <div className="applicant-view-value">{data.name || 'N/A'}</div>
+        <Space direction="vertical" size={16} style={{ width: '100%' }}>
+          {/* Basic Information */}
+          <Card
+            title={
+              <Space>
+                <UserOutlined />
+                <Typography.Title style={{ margin: 0 }} level={isMobile ? 5 : 4} strong>{t('basicInformation', 'Basic Information')}</Typography.Title>
+              </Space>
+            }
+            style={{ width: '100%', maxWidth: '100%' }}
+          >
+            <div style={cardContentStyle}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'start' }}>
+                <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('fullName', 'Full Name')}</Typography.Title>
+                <Typography.Text style={{ margin: 0, fontSize: '0.875rem' }}>{data.name || 'N/A'}</Typography.Text>
               </div>
-
               {permissions.canManageApplicants() && (
-                <div className="applicant-view-field">
-                  <label>{t('applicantStatus', 'Applicant Status')}</label>
-                  <div className="applicant-view-value">
-                    {renderBooleanBadge(data.applicant_active)}
-                  </div>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'start' }}>
+                  <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('applicantStatus', 'Applicant Status')}</Typography.Title>
+                  <Tag style={{ fontSize: '0.875rem', width: 'fit-content' }} color={data.applicant_active ? '#4caf50' : 'default'}>{data.applicant_active ? t('active', 'Active') : t('inactive', 'Inactive')}</Tag>
                 </div>
               )}
-
-              <div className="applicant-view-field">
-                <label>{t('searchStatus', 'Search Status')}</label>
-                <div className="applicant-view-value" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  {renderStatusBadge(data.search_status)}
-                  <button 
-                    onClick={handleToggleSearch} 
-                    className={`applicant-view-action-btn ${data.search_status === 'Stopped' ? 'start' : 'stop'}`}
-                    style={{ margin: 0, minWidth: '140px' }}
+              <div>
+                <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('searchStatus', 'Search Status')}</Typography.Title>
+                <Space wrap style={{ justifyContent: 'start' }}>
+                  <Tag style={{ fontSize: '0.875rem' }} color={getSearchStatusColor(data.search_status)}>
+                    {t(data.search_status ? data.search_status.toLowerCase() : 'unknown', data.search_status || 'Unknown')}
+                  </Tag>
+                  <Button
+                    type={data.search_status === 'Stopped' ? 'primary' : 'default'}
+                    icon={data.search_status === 'Stopped' ? <PlayCircleOutlined /> : <StopOutlined />}
+                    onClick={handleToggleSearch}
+                    loading={searchActionLoading}
+                    size={btnSize}
+                    style={{ height: 'auto', padding: '4px 8px' }}
                   >
-                    <i className={data.search_status === 'Stopped' ? 'fas fa-play-circle' : 'fas fa-stop-circle'}></i>
                     {data.search_status === 'Stopped' ? t('startSearch', 'Start Search') : t('stopSearch', 'Stop Search')}
-                  </button>
-                </div>
-                </div>
-              </div>
-          </div>
-
-          {/* Visa Appointment System Credentials Section */}
-          <div className="applicant-view-section">
-            <h2 className="applicant-view-section-title">
-              <i className="fas fa-key"></i>
-              {t('visaCredentials', 'Visa Appointment System Credentials')}
-            </h2>
-            
-            <div className="applicant-view-grid">
-              <div className="applicant-view-field">
-                <label>{t('visaEmail', 'Visa Appointment System Email')}</label>
-                <div className="applicant-view-value applicant-view-value-code" style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                  <span>{data.ais_username || 'N/A'}</span>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={handleCopyEmail} className="applicant-view-action-btn" style={{ margin: 0, padding: '6px 12px', fontSize: '0.9rem' }} title={t('copyEmail', 'Copy Email')}>
-                      <i className="fas fa-copy"></i>
-                    </button>
-                    <button onClick={handleCopyPassword} className="applicant-view-action-btn" style={{ margin: 0, padding: '6px 12px', fontSize: '0.9rem' }} title={t('copyPassword', 'Copy Password')}>
-                      <i className="fas fa-key"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="applicant-view-field">
-                <label>{t('scheduleId', 'Schedule ID')}</label>
-                <div className="applicant-view-value applicant-view-value-code">
-                  {data.ais_schedule_id || 'N/A'}
-                </div>
+                  </Button>
+                </Space>
               </div>
             </div>
-          </div>
+          </Card>
 
-          {/* Target Dates Section */}
-          <div className="applicant-view-section">
-            <h2 className="applicant-view-section-title">
-              <i className="fas fa-calendar-alt"></i>
-              {t('targetDates', 'Target Dates')}
-            </h2>
-            
-            {!permissions.canSearchUnlimited() && data.target_start_mode === 'days' && data.target_start_days === '120' && (
-              <div style={{
-                backgroundColor: '#f0f9ff',
-                border: '1px solid #bae6fd',
-                borderRadius: '8px',
-                padding: '1rem',
-                marginBottom: '1.5rem',
-                display: 'flex',
-                gap: '0.75rem',
-                alignItems: 'flex-start'
-              }}>
-                <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
-                <div style={{ flex: 1 }}>
-                  <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                    <strong>{t('basicUserSearchSettings', 'Basic User Search Settings:')}</strong> {t('searchWillStartIn', 'Your appointment search will start 4 months from today.')}
-                  </p>
-                  <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
-                    💎 <strong>{t('premiumUpgradeNote', 'Premium users')}</strong> {t('premiumUsersCanSearchTomorrow', 'can search for appointments starting from tomorrow.')}{' '}
-                    <a 
-                      href="/premium-upgrade" 
-                      style={{ 
-                        color: '#0284c7', 
-                        textDecoration: 'underline',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                      }}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate('/premium-upgrade');
-                        window.scrollTo(0, 0);
-                      }}
-                    >
-                      {t('upgradeToPremium', 'Upgrade to Premium')}
-                    </a>
-                  </p>
-                </div>
+          {/* Visa Credentials */}
+          <Card
+            title={
+              <Space>
+                <KeyOutlined />
+                <Typography.Title style={{ margin: 0, textWrap: 'wrap' }} level={isMobile ? 5 : 4} strong>{t('visaCredentials', 'Visa Appointment System Credentials')}</Typography.Title>
+              </Space>
+            }
+            style={{ width: '100%', maxWidth: '100%' }}
+          >
+            <div style={cardContentStyle}>
+              <div>
+                <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('visaEmail', 'Visa Appointment System Email')}</Typography.Title>
+                <Space wrap style={{ width: '100%' }}>
+                  <Typography.Text code ellipsis style={{  maxWidth: '100%', wordBreak: 'break-all' }}>{data.ais_username || 'N/A'}</Typography.Text>
+                  <Space size={4}>
+                    <Tooltip title={t('copyEmail', 'Copy Email')}>
+                      <Button size='small' type="text" icon={<CopyOutlined />} onClick={handleCopyEmail}  aria-label={t('copyEmail', 'Copy Email')} />
+                    </Tooltip>
+                    <Tooltip title={t('copyPassword', 'Copy Password')}>
+                      <Button size='small' type="text" icon={<KeyOutlined />} onClick={handleCopyPassword}  aria-label={t('copyPassword', 'Copy Password')} />
+                    </Tooltip>
+                  </Space>
+                </Space>
               </div>
-            )}
-            
-            <div className="applicant-view-grid">
-              {data.target_start_mode === 'date' && (
-                <div className="applicant-view-field">
-                  <label>{t('targetStartDate', 'Target Start Date')}</label>
-                  <div className="applicant-view-value">
-                          <i className="fas fa-calendar-check" style={{ marginRight: '8px', color: '#6b7280' }}></i>
-                    {formatEndDate(data.target_start_date) || 'N/A'}</div>
-                  <div className="date-info-box">
-                    <i className="fas fa-info-circle date-info-icon"></i>
-                    <div style={{ flex: 1 }}>
-                      <p className="date-info-text">{t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')}</p>
-                    </div>
-                  </div>
-                </div>
+              <div>
+                <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('scheduleId', 'Schedule ID')}</Typography.Title>
+                <Typography.Text code style={{ wordBreak: 'break-all' }}>{data.ais_schedule_id || 'N/A'}</Typography.Text>
+              </div>
+            </div>
+          </Card>
+
+          {/* Target Dates */}
+          <Card
+            title={
+              <Space>
+                <CalendarOutlined />
+                <Typography.Title style={{ margin: 0, textWrap: 'wrap' }} level={isMobile ? 5 : 4} strong>{t('targetDates', 'Target Dates')}</Typography.Title>
+              </Space>
+            }
+            style={{ width: '100%', maxWidth: '100%' }}
+          >
+            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+              {!permissions.canSearchUnlimited() && data.target_start_mode === 'days' && data.target_start_days === '120' && (
+                <Alert
+                  type="info"
+                  showIcon
+                  icon={<InfoCircleOutlined />}
+                  message={
+                    <span>
+                      <strong>{t('basicUserSearchSettings', 'Basic User Search Settings:')}</strong> {t('searchWillStartIn', 'Your appointment search will start 4 months from today.')}
+                      {' '}
+                      <strong>{t('premiumUpgradeNote', 'Premium users')}</strong> {t('premiumUsersCanSearchTomorrow', 'can search for appointments starting from tomorrow.')}{' '}
+                      <a href="/premium-upgrade" onClick={(e) => { e.preventDefault(); navigate('/premium-upgrade'); window.scrollTo(0, 0); }}>{t('upgradeToPremium', 'Upgrade to Premium')}</a>
+                    </span>
+                  }
+                />
               )}
-
-              {data.target_start_mode === 'days' && (
-                <div className="applicant-view-field">
-                  {permissions.canManageApplicants() || data.target_start_days !== '120' ? (
-                    <>
-                      <label>{t('targetStartDays', 'Target Start Days')}</label>
-                      <div className="applicant-view-value" style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-                        <span>{data.target_start_days || 'N/A'} {t('days', 'days')}</span>
-                        {data.target_start_days && (
-                          <div style={{
-                            padding: '8px 16px',
-                            backgroundColor: '#f0f9ff',
-                            border: '1px solid #bae6fd',
-                            borderRadius: '6px',
-                            fontSize: '0.875rem',
-                            color: '#059669',
-                            fontWeight: '600',
-                            whiteSpace: 'nowrap'
-                          }}>
-                            <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
-                            {t('startDate', 'Start date')}: {formatDate(getSearchStartDate(data.target_start_days))}
-                          </div>
-                        )}
-
-                        {/* Explanation box for start date (days mode) - same style as Target End Date explanation */}
-                        <div className="date-info-box">
-                          <i className="fas fa-info-circle date-info-icon"></i>
-                          <div style={{ flex: 1 }}>
-                            <p className="date-info-text">{t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')}</p>
-                          </div>
-                        </div>
+              <div style={cardContentStyle}>
+                {data.target_start_mode === 'date' && (
+                  <div style={{ backgroundColor: '#fafafa', padding: 12, border: '1px solid #f0f0f0', borderRadius: 8, display: 'flex', flexDirection: 'column', justifyContent: 'start' }}>
+                    <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('targetStartDate', 'Target Start Date')}</Typography.Title>
+                    <Typography.Text>{data.target_start_date || 'N/A'}</Typography.Text>
+                    <Alert type="info" showIcon icon={<InfoCircleOutlined />} message={t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')} style={{ marginTop: 8 }} />
+                  </div>
+                )}
+                {data.target_start_mode === 'days' && (
+                  <div>
+                    {permissions.canManageApplicants() || data.target_start_days !== '120' ? (
+                      <div style={{ backgroundColor: '#fafafa', padding: 12, border: '1px solid #f0f0f0', borderRadius: 8, display: 'flex', flexDirection: 'column', justifyContent: 'start' }}>
+                        <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('targetStartDays', 'Target Start Days')}</Typography.Title>
+                        <Space wrap>
+                          <Text>{data.target_start_days || 'N/A'} {t('days', 'days')}</Text>
+                          {data.target_start_days && (
+                            <Tag color="success">
+                              <CalendarTwoTone /> {t('startDate', 'Start date')}: {formatDate(getSearchStartDate(data.target_start_days))}
+                            </Tag>
+                          )}
+                        </Space>
+                        <Alert type="info" showIcon icon={<InfoCircleOutlined />} message={t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')} style={{ marginTop: 8 }} />
                       </div>
+                    ) : (
+                      <>
+                        <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('searchStartsIn', 'Search Starts In')}</Typography.Title>
+                        <div style={{ padding: 12, background: '#fafafa', border: '1px solid #f0f0f0', borderRadius: 8 }}>
+                          <Typography.Text>{t('fourMonthsFromToday', '4 months from today (120 days)')}</Typography.Text>
+                          <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid #f0f0f0' }}>
+                            <Typography.Text strong>{t('startDate', 'Start date')}: {formatDate(getSearchStartDate(data.target_start_days))}</Typography.Text>
+                          </div>
+                          <Alert type="info" showIcon icon={<InfoCircleOutlined />} message={t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')} style={{ marginTop: 12 }} />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+                <div style={{ backgroundColor: '#fafafa', padding: 12, border: '1px solid #f0f0f0', borderRadius: 8, display: 'flex', flexDirection: 'column', justifyContent: 'start' }}>
+                  <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('targetEndDate', 'Target End Date')}</Typography.Title>
+                  {data.target_end_date ? (
+                    <>
+                      <Typography.Text>{formatEndDate(data.target_end_date)}</Typography.Text>
+                      <Alert type="info" showIcon icon={<InfoCircleOutlined />} message={t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date.')} style={{ marginTop: 8 }} />
                     </>
                   ) : (
-                    <>
-                      <label>{t('searchStartsIn', 'Search Starts In')}</label>
-                      <div style={{
-                        padding: '12px 16px',
-                        backgroundColor: '#f3f4f6',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '8px',
-                        color: '#4b5563',
-                        fontSize: '1rem',
-                        fontWeight: '500'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
-                          <i className="fas fa-clock" style={{ marginRight: '8px', color: '#6b7280' }}></i>
-                          {t('fourMonthsFromToday', '4 months from today (120 days)')}
-                        </div>
-                        <div style={{
-                          marginTop: '8px',
-                          paddingTop: '8px',
-                          borderTop: '1px solid #d1d5db',
-                          fontSize: '0.95rem',
-                          color: '#059669',
-                          fontWeight: '600'
-                        }}>
-                          <i className="fas fa-calendar-day" style={{ marginRight: '6px' }}></i>
-                          {t('startDate', 'Start date')}: {formatDate(getSearchStartDate(data.target_start_days))}
-                        </div>
-                        <div style={{
-                          backgroundColor: '#f0f9ff',
-                          border: '1px solid #bae6fd',
-                          borderRadius: '8px',
-                          padding: '1rem',
-                          marginTop: '1rem',
-                          display: 'flex',
-                          gap: '0.75rem',
-                          alignItems: 'flex-start'
-                        }}>
-                          <i className="fas fa-info-circle" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
-                          <div style={{ flex: 1 }}>
-                            <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                              {t('targetStartDateExplanationView', 'Esta es la fecha más temprana en que comenzarás a buscar citas disponibles. La búsqueda iniciará 4 meses desde hoy.')}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </>
+                    <Typography.Text>{data.target_end_date || 'N/A'}</Typography.Text>
                   )}
                 </div>
-              )}
-
-              <div className="applicant-view-field">
-                <label>{t('targetEndDate', 'Target End Date')}</label>
-                {data.target_end_date ? (
-                  <>
-                    <div style={{
-                      padding: '12px 16px',
-                      backgroundColor: '#f3f4f6',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '8px',
-                      color: '#4b5563',
-                      fontSize: '1rem',
-                      fontWeight: '500'
-                    }}>
-                      <br />
-                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
-                        <i className="fas fa-calendar-check" style={{ marginRight: '8px', color: '#6b7280' }}></i>
-                        {formatEndDate(data.target_end_date)}
-                      </div>
-                      <br />
-                        <div className="date-info-box">
-                          <i className="fas fa-info-circle date-info-icon"></i>
-                          <div style={{ flex: 1 }}>
-                            <p className="date-info-text">{t('targetEndDateExplanation', 'This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date.')}</p>
-                          </div>
-                        </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="applicant-view-value">{data.target_end_date || 'N/A'}</div>
-                )}
               </div>
-            </div>
-          </div>
+            </Space>
+          </Card>
 
-          {/* Target Cities Section */}
+          {/* Target Cities */}
           {cities.length > 0 && (
-            <div className="applicant-view-section">
-              <h2 className="applicant-view-section-title">
-                <i className="fas fa-map-marker-alt"></i>
-                {t('targetCities', 'Target Cities')}
-              </h2>
-              
-              <div className="applicant-view-cities">
-                {data.target_city_codes && data.target_city_codes.split(',').filter(Boolean).length > 0 ? (
-                  data.target_city_codes.split(',').filter(Boolean).map(code => {
-                    const city = cities.find(c => c.city_code === code);
+            <Card
+              title={
+                <Space>
+                  <EnvironmentOutlined />
+                  <Typography.Title style={{ margin: 0, textWrap: 'wrap' }} level={isMobile ? 5 : 4} strong>{t('targetCities', 'Target Cities')}</Typography.Title>
+                </Space>
+              }
+              style={{ width: '100%', maxWidth: '100%' }}
+            >
+              {data.target_city_codes && data.target_city_codes.split(',').filter(Boolean).length > 0 ? (
+                <Space wrap size={[8, 8]}>
+                  {data.target_city_codes.split(',').filter(Boolean).map((code) => {
+                    const city = cities.find((c) => c.city_code === code);
                     return (
-                      <div key={code} className="applicant-view-city-tag">
-                        <span className="city-name">{city ? city.city_name : code}</span>
-                        <span className="city-code">{code}</span>
-                      </div>
+                      <Tag key={code} color="blue">
+                        {city ? city.city_name : code} ({code})
+                      </Tag>
                     );
-                  })
-                ) : (
-                  <div style={{
-                    backgroundColor: '#f0f9ff',
-                    border: '1px solid #bae6fd',
-                    borderRadius: '8px',
-                    padding: '1rem',
-                    display: 'flex',
-                    gap: '0.75rem',
-                    alignItems: 'flex-start'
-                  }}>
-                    <i className="fas fa-globe" style={{ color: '#0284c7', marginTop: '2px', fontSize: '1.1rem' }}></i>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                        <strong>{t('searchAllCities', 'Search in all cities:')}</strong> {t('searchPerformedAllCities', 'The search will be performed in all available cities for this country.')}
-                      </p>
+                  })}
+                </Space>
+              ) : (
+                <Alert
+                  type="info"
+                  showIcon
+                  icon={<GlobalOutlined />}
+                  message={
+                    <span>
+                      <strong>{t('searchAllCities', 'Search in all cities:')}</strong> {t('searchPerformedAllCities', 'The search will be performed in all available cities for this country.')}
                       {!permissions.canManageApplicants() && (
-                        <p style={{ margin: '0.5rem 0 0 0', color: '#0369a1', fontSize: '0.9rem' }}>
-                          💎 <strong>{t('premiumUsers', 'Premium users')}</strong> {t('canSelectSpecificCities', 'can select specific cities for their search.')}
-                        </p>
+                        <span style={{ display: 'block', marginTop: 8 }}>
+                          <strong>{t('premiumUsers', 'Premium users')}</strong> {t('canSelectSpecificCities', 'can select specific cities for their search.')}
+                        </span>
                       )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+                    </span>
+                  }
+                />
+              )}
+            </Card>
           )}
 
-          {/* Reserved Appointments Section */}
+          {/* Reserved Appointments */}
           {(data.consul_appointment_date || data.asc_appointment_date) && (
-            <div className="applicant-view-section">
-              <h2 className="applicant-view-section-title">
-                <i className="fas fa-calendar-check"></i>
-                {t('reservedAppointments', 'Reserved Appointments')}
-              </h2>
-              
-              <div className="applicant-view-grid">
-                <div className="applicant-view-field">
-                  <label>{t('consulateAppointmentDate', 'Consulate Appointment Date')}</label>
-                  <div className="applicant-view-value">
-                          <i className="fas fa-calendar-check" style={{ marginRight: '8px', color: '#6b7280' }}></i>
-                    {formatEndDate(data.consul_appointment_date) || t('notSet', 'Not set')}</div>
+            <Card
+              title={
+                <Space>
+                  <CalendarTwoTone />
+                  <Typography.Title style={{ margin: 0, textWrap: 'wrap' }} level={isMobile ? 5 : 4} strong>{t('reservedAppointments', 'Reserved Appointments')}</Typography.Title>
+                </Space>
+              }
+              style={{ width: '100%', maxWidth: '100%' }}
+            >
+              <div style={cardContentStyle}>
+                <div>
+                  <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('consulateAppointmentDate', 'Consulate Appointment Date')}</Typography.Title>
+                  <Text>{data.consul_appointment_date || t('notSet', 'Not set')}</Text>
                 </div>
-
-                <div className="applicant-view-field">
-                  <label>{t('ascAppointmentDate', 'ASC Appointment Date')}</label>
-                  <div className="applicant-view-value">
-                          <i className="fas fa-calendar-check" style={{ marginRight: '8px', color: '#6b7280' }}></i>
-                    {formatEndDate(data.asc_appointment_date) || t('notSet', 'Not set')}</div>
+                <div>
+                  <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('ascAppointmentDate', 'ASC Appointment Date')}</Typography.Title>
+                  <Text>{data.asc_appointment_date || t('notSet', 'Not set')}</Text>
                 </div>
               </div>
-            </div>
+            </Card>
           )}
-        </div>
+        </Space>
       </div>
-
-      <Modal
-        isOpen={modal.isOpen}
-        onClose={() => setModal({ ...modal, isOpen: false })}
-        onConfirm={modal.onConfirm}
-        title={modal.title}
-        message={modal.message}
-        type={modal.type}
-        showCancel={modal.showCancel}
-      />
     </>
   );
 };
