@@ -818,33 +818,33 @@ const Applicants = () => {
 
       <Divider style={{ margin: "12px 0" }} />
 
-      {/* Primary actions: View, Edit, Delete */}
+      {/* Primary actions: View, Edit, Delete - icons only on mobile */}
       <Space size={8} wrap style={{ width: "100%", justifyContent: "center" }}>
-        <Button
-          type="primary"
-          icon={<EyeOutlined />}
-          onClick={() => handleView(record.id)}
-          size="middle"
-        >
-          {t("view", "View")}
-        </Button>
-        <Button
-          type="default"
-          icon={<EditOutlined />}
-          onClick={() => handleEditApplicant(record.id)}
-          size="middle"
-        >
-          {t("edit", "Edit")}
-        </Button>
-        <Button
-          type="default"
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => handleDeleteApplicant(record.id)}
-          size="middle"
-        >
-          {t("delete", "Delete")}
-        </Button>
+        <Tooltip title={t("view", "View")}>
+          <Button
+            type="primary"
+            icon={<EyeOutlined />}
+            onClick={() => handleView(record.id)}
+            size="middle"
+          />
+        </Tooltip>
+        <Tooltip title={t("edit", "Edit")}>
+          <Button
+            type="default"
+            icon={<EditOutlined />}
+            onClick={() => handleEditApplicant(record.id)}
+            size="middle"
+          />
+        </Tooltip>
+        <Tooltip title={t("deleteApplicant", "Delete Applicant")}>
+          <Button
+            type="default"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => handleDeleteApplicant(record.id)}
+            size="middle"
+          />
+        </Tooltip>
       </Space>
     </Card>
   );
@@ -916,17 +916,31 @@ const Applicants = () => {
             direction={isMobile ? "vertical" : "horizontal"}
           >
             <Space>
-              <span style={{ fontWeight: 500 }}>
-                {t("onlyActive", "Only Active")}:
-              </span>
+              {!isMobile && (
+                <span style={{ fontWeight: 500 }}>
+                  {t("onlyActive", "Only Active")}:
+                </span>
+              )}
               <Switch checked={filterActive} onChange={setFilterActive} />
+              {isMobile && (
+                <span style={{ fontWeight: 500 }}>
+                  {t("onlyActive", "Only Active")}
+                </span>
+              )}
             </Space>
 
             <Space>
-              <span style={{ fontWeight: 500 }}>
-                {t("onlyRunning", "Only Running")}:
-              </span>
+              {!isMobile && (
+                <span style={{ fontWeight: 500 }}>
+                  {t("onlyRunning", "Only Running")}:
+                </span>
+              )}
               <Switch checked={filterRunning} onChange={setFilterRunning} />
+              {isMobile && (
+                <span style={{ fontWeight: 500 }}>
+                  {t("onlyRunning", "Only Running")}
+                </span>
+              )}
             </Space>
 
             {canViewAllApplicants && allRegisteredUsers.length > 0 && (

@@ -102,6 +102,8 @@ const ApplicantForm = () => {
   const [cities, setCities] = useState([]);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [aisAuthSuccess, setAisAuthSuccess] = useState(false);
+  const [applicantsList, setApplicantsList] = useState([]);
+  const [selectedApplicant, setSelectedApplicant] = useState(null);
   const [showTargetDatesTooltip, setShowTargetDatesTooltip] = useState(false);
   const [credentialsExpanded, setCredentialsExpanded] = useState(true);
 
@@ -288,20 +290,27 @@ const ApplicantForm = () => {
 
     setIsAuthenticating(true);
     setAisAuthSuccess(false);
+    setApplicantsList([]);
+    setSelectedApplicant(null);
 
     try {
-      const aisUserInfo = await authenticateAIS({
+      const result = await authenticateAIS({
         username: formData.aisEmail,
         password: formData.aisPassword,
-        country_code: countryCode,
+        //  country_code: countryCode,
       });
 
-      if (!aisUserInfo || !aisUserInfo.schedule_id) {
+      if (
+        !result ||
+        !result.applicants ||
+        result.applicants.length === 0 ||
+        result.error === "invalid_credentials"
+      ) {
         setErrors({
           ...errors,
           aisEmail: t(
-            "failedToAuthVisa",
-            "Failed to authenticate Visa Appointment System credentials. Please check your email and password."
+            "invalidCredentials",
+            "Credenciales inválidas. Verifica tu correo y contraseña."
           ),
         });
         setFormData((prev) => ({
@@ -310,7 +319,6 @@ const ApplicantForm = () => {
           numberOfApplicants: "1",
         }));
 
-        // Track authentication failure
         metrics.trackCustomEvent("ais_authentication_failed", {
           error: "invalid_credentials",
           timestamp: new Date().toISOString(),
@@ -319,22 +327,31 @@ const ApplicantForm = () => {
         return;
       }
 
-      // Successfully authenticated - update fields
-      setFormData((prev) => ({
-        ...prev,
-        name: aisUserInfo.applicant_name || prev.name, // Auto-fill name from AIS
-        aisScheduleId: aisUserInfo.schedule_id,
-        numberOfApplicants: "1", // Default to 1 until API provides this info
-      }));
-      setAisAuthSuccess(true);
+      const applicants = result.applicants;
+      setApplicantsList(applicants);
 
-      // Clear any existing errors
+      if (applicants.length === 1) {
+        setSelectedApplicant(applicants[0]);
+        setFormData((prev) => ({
+          ...prev,
+          name: applicants[0].applicant_name || prev.name,
+          aisScheduleId: applicants[0].schedule_id,
+          numberOfApplicants: "1",
+        }));
+      } else {
+        setSelectedApplicant(null);
+        setFormData((prev) => ({
+          ...prev,
+          aisScheduleId: "",
+          numberOfApplicants: "1",
+        }));
+      }
+
+      setAisAuthSuccess(true);
       setErrors({});
 
-      // Track successful authentication
       metrics.trackCustomEvent("ais_authentication_success", {
-        scheduleId: aisUserInfo.schedule_id,
-        applicantName: aisUserInfo.applicant_name,
+        applicantsCount: applicants.length,
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
@@ -342,8 +359,8 @@ const ApplicantForm = () => {
       setErrors({
         ...errors,
         aisEmail: t(
-          "authErrorOccurred",
-          "An error occurred while authenticating. Please try again."
+          "invalidCredentials",
+          "Credenciales inválidas. Verifica tu correo y contraseña."
         ),
       });
       setFormData((prev) => ({
@@ -352,7 +369,6 @@ const ApplicantForm = () => {
         numberOfApplicants: "1",
       }));
 
-      // Track authentication error
       metrics.trackCustomEvent("ais_authentication_error", {
         error: error.message,
         timestamp: new Date().toISOString(),
@@ -360,6 +376,21 @@ const ApplicantForm = () => {
     } finally {
       setIsAuthenticating(false);
     }
+  };
+
+  const handleSelectApplicant = (applicant) => {
+    setSelectedApplicant(applicant);
+    setFormData((prev) => ({
+      ...prev,
+      name: applicant.applicant_name || prev.name,
+      aisScheduleId: applicant.schedule_id,
+      numberOfApplicants: "1",
+    }));
+  };
+
+  const formatApplicantDate = (dateVal) => {
+    if (dateVal == null || dateVal === "") return "N/A";
+    return dateVal;
   };
 
   // Validation
@@ -413,6 +444,16 @@ const ApplicantForm = () => {
       );
     }
 
+    if (
+      (!isEditMode && !selectedApplicant) ||
+      (applicantsList.length > 0 && !selectedApplicant)
+    ) {
+      newErrors.selectedApplicant = t(
+        "selectApplicant",
+        "Please select an applicant from the list"
+      );
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -448,6 +489,7 @@ const ApplicantForm = () => {
 
     setLoading(true);
 
+    const selected = selectedApplicant;
     const payload = {
       ais_schedule_id: formData.aisScheduleId,
       ais_username: formData.aisEmail,
@@ -464,6 +506,15 @@ const ApplicantForm = () => {
       target_country_code: countryCode,
     };
 
+    if (selected) {
+      payload.ais_schedule_id = selected.schedule_id;
+      payload.name = selected.applicant_name || formData.name;
+      payload.passport = selected.passport || "";
+      payload.ds_160_id = selected.ds_160_id || "";
+      payload.consul_appointment_date = selected.consul_appointment_date ?? "";
+      payload.asc_appointment_date = selected.asc_appointment_date ?? "";
+    }
+
     // Add password if provided (optional in edit mode, required for create)
     if (formData.aisPassword.trim()) {
       payload.ais_password = formData.aisPassword;
@@ -471,10 +522,8 @@ const ApplicantForm = () => {
 
     try {
       if (isEditMode) {
-        // Update existing applicant
         await ApplicantUpdate(applicantId, payload);
 
-        // Track successful update
         metrics.trackFormSubmit("applicant-form", true);
         metrics.trackCustomEvent("applicant_updated", {
           applicantId: applicantId,
@@ -484,7 +533,9 @@ const ApplicantForm = () => {
           timestamp: new Date().toISOString(),
         });
 
-        // Redirect based on permissions
+        antMessage.success(
+          t("updatedSuccessfully", "Solicitante actualizado exitosamente")
+        );
         if (permissions.canManageApplicants()) {
           navigate("/applicants");
         } else {
@@ -516,8 +567,10 @@ const ApplicantForm = () => {
           ais_password: formData.aisPassword,
           fastVisa_userid: fastVisaUserId,
           fastVisa_username: fastVisaUsername,
-          consul_appointment_date: "",
-          asc_appointment_date: "",
+          passport: selected?.passport ?? "",
+          ds_160_id: selected?.ds_160_id ?? "",
+          consul_appointment_date: selected?.consul_appointment_date ?? "",
+          asc_appointment_date: selected?.asc_appointment_date ?? "",
           container_id: "",
           container_start_datetime: "",
           container_stop_datetime: "",
@@ -716,7 +769,11 @@ const ApplicantForm = () => {
                   )
                 }
                 loading={loading}
-                disabled={loading}
+                disabled={
+                  loading ||
+                  (!isEditMode && !selectedApplicant) ||
+                  (applicantsList.length > 0 && !selectedApplicant)
+                }
                 size={btnSize}
               >
                 {loading
@@ -844,7 +901,10 @@ const ApplicantForm = () => {
                         onChange={(e) => {
                           handleInputChange(e);
                           setAisAuthSuccess(false);
+                          setApplicantsList([]);
+                          setSelectedApplicant(null);
                         }}
+                        disabled={isAuthenticating}
                         placeholder="visa@example.com"
                         size={btnSize}
                       />
@@ -876,7 +936,10 @@ const ApplicantForm = () => {
                         onChange={(e) => {
                           handleInputChange(e);
                           setAisAuthSuccess(false);
+                          setApplicantsList([]);
+                          setSelectedApplicant(null);
                         }}
+                        disabled={isAuthenticating}
                         placeholder={
                           isEditMode
                             ? t(
@@ -894,7 +957,7 @@ const ApplicantForm = () => {
                   </div>
                   <div style={{ marginBottom: "12px" }}>
                     <Button
-                      type="button"
+                      type="primary"
                       onClick={handleAuthenticateAIS}
                       disabled={
                         isAuthenticating ||
@@ -1017,6 +1080,175 @@ const ApplicantForm = () => {
                       </Text>
                     </Form.Item>
                   </div>
+                  {/* Applicant list (after AIS auth) */}
+
+                  {applicantsList.length > 0 && (
+                    <div>
+                      <Typography.Title
+                        type="secondary"
+                        level={5}
+                        style={{
+                          margin: 0,
+                          display: "block",
+                          marginBottom: 8,
+                        }}
+                      >
+                        {t("selectApplicant", "Select an applicant")}
+                      </Typography.Title>
+                      {applicantsList.length === 1 && (
+                        <Alert
+                          type="info"
+                          showIcon
+                          message={t(
+                            "oneApplicantFound",
+                            "Se encontró 1 solicitante asociado a esta cuenta"
+                          )}
+                          style={{ marginBottom: 16 }}
+                        />
+                      )}
+                      {errors.selectedApplicant && (
+                        <Alert
+                          type="error"
+                          showIcon
+                          message={errors.selectedApplicant}
+                          style={{ marginBottom: 16 }}
+                        />
+                      )}
+                      <div
+                        style={{
+                          maxHeight: 320,
+                          overflowY: "auto",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 12,
+                        }}
+                      >
+                        <Radio.Group
+                          value={
+                            selectedApplicant
+                              ? selectedApplicant.schedule_id
+                              : undefined
+                          }
+                          style={{ width: "100%" }}
+                          onChange={(e) => {
+                            const app = applicantsList.find(
+                              (a) => a.schedule_id === e.target.value
+                            );
+                            if (app) handleSelectApplicant(app);
+                          }}
+                        >
+                          <Space
+                            direction="vertical"
+                            size={12}
+                            style={{ width: "100%" }}
+                          >
+                            {applicantsList.map((app) => (
+                              <Card
+                                key={app.schedule_id}
+                                size="small"
+                                hoverable
+                                onClick={() => handleSelectApplicant(app)}
+                                style={{
+                                  cursor: "pointer",
+                                  borderColor:
+                                    selectedApplicant?.schedule_id ===
+                                    app.schedule_id
+                                      ? "#1890ff"
+                                      : "#d9d9d9",
+                                  borderWidth:
+                                    selectedApplicant?.schedule_id ===
+                                    app.schedule_id
+                                      ? 2
+                                      : 1,
+                                  backgroundColor:
+                                    selectedApplicant?.schedule_id ===
+                                    app.schedule_id
+                                      ? "#e6f7ff"
+                                      : undefined,
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    gap: 12,
+                                  }}
+                                >
+                                  <Radio
+                                    value={app.schedule_id}
+                                    style={{ marginTop: 4 }}
+                                  />
+                                  <Space
+                                    direction="vertical"
+                                    size={4}
+                                    style={{ flex: 1 }}
+                                  >
+                                    <Text strong>
+                                      {t("applicantName", "Applicant name")}:{" "}
+                                      {app.applicant_name || "—"}
+                                    </Text>
+                                    <Text type="secondary">
+                                      {t("passport", "Passport")}:{" "}
+                                      {app.passport || "—"}
+                                    </Text>
+                                    <Text type="secondary">
+                                      {t(
+                                        "ds160Confirmation",
+                                        "DS-160 confirmation"
+                                      )}
+                                      : {app.ds_160_id || "—"}
+                                    </Text>
+                                    <Text type="secondary">
+                                      {t(
+                                        "consulAppointmentDate",
+                                        "Consul appointment date"
+                                      )}
+                                      :{" "}
+                                      {formatApplicantDate(
+                                        app.consul_appointment_date
+                                      )}
+                                    </Text>
+                                    <Text type="secondary">
+                                      {t(
+                                        "ascAppointmentDate",
+                                        "ASC appointment date"
+                                      )}
+                                      :{" "}
+                                      {formatApplicantDate(
+                                        app.asc_appointment_date
+                                      )}
+                                    </Text>
+                                  </Space>
+                                </div>
+                              </Card>
+                            ))}
+                          </Space>
+                        </Radio.Group>
+                      </div>
+                      {selectedApplicant && (
+                        <Alert
+                          type="success"
+                          showIcon
+                          message={t(
+                            "selectedApplicantSummary",
+                            "Selected applicant"
+                          )}
+                          description={
+                            <Space direction="vertical" size={0}>
+                              <Text>
+                                {selectedApplicant.applicant_name} •{" "}
+                                {t("passport", "Passport")}:{" "}
+                                {selectedApplicant.passport} •{" "}
+                                {t("ds160Confirmation", "DS-160")}:{" "}
+                                {selectedApplicant.ds_160_id}
+                              </Text>
+                            </Space>
+                          }
+                          style={{ marginTop: 16 }}
+                        />
+                      )}
+                    </div>
+                  )}
                 </>
               )}
             </Card>

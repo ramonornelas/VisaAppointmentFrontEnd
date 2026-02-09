@@ -185,6 +185,7 @@ const ApplicantView = () => {
                   AntModal.info({
                     title: t('searchStopped', 'Search Stopped'),
                     content: t('searchStoppedApplicantDeleted', 'Search stopped. The applicant will now be deleted.'),
+                    okText: t('ok', 'OK'),
                     onOk: async () => {
                       try {
                         const response = await ApplicantDelete(applicantId);

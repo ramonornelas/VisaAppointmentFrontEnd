@@ -304,26 +304,33 @@ const getUSDMXNExchangeRate = async () => {
     return null;
   }
 };
-// Authenticate AIS credentials and get user info
+// Authenticate AIS credentials and get list of applicants.
+// Request: { username, password } (optionally country_code if backend accepts).
+// Success (200): { applicants: [...], username, country_code }; each applicant has
+// schedule_id, applicant_name, passport, ds_160_id, consul_appointment_date, asc_appointment_date.
+// Failure (non-2xx): returns { applicants: null, error: 'invalid_credentials' } for UI message.
 const authenticateAIS = async ({ username, password, country_code }) => {
   try {
+    const body = country_code
+      ? { username, password, country_code }
+      : { username, password };
     const response = await fetch(`${BASE_URL}/ais/auth`, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, password, country_code }),
+      body: JSON.stringify(body),
     });
     if (response.status === 200) {
-      // Expected output: { schedule_id, username, country_code }
-      return await response.json();
+      const data = await response.json();
+      return data;
     } else {
-      throw new Error("Failed to authenticate AIS credentials");
+      return { applicants: null, error: "invalid_credentials" };
     }
   } catch (error) {
     console.error("AIS Auth Error:", error);
-    return null;
+    return { applicants: null, error: "invalid_credentials" };
   }
 };
 
