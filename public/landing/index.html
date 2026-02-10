@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="es"><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Es HORA DE TU PRÓXIMA AVENTURA, ¿Cómo funcio​na FastVisa?​, Adelanta tu cita de entrevista&nbsp; &nbsp;¡Ahora!, ¿Ya tienes cuenta?​">
+    <meta name="description" content="">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="nicepage.css" media="screen">
+<link rel="stylesheet" href="index.css" media="screen">
+    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <meta name="generator" content="Nicepage 8.2.5, nicepage.com">
+    <link rel="icon" href="images/favicon.png">
+    
+    
+    
+    
+    
+    
+    
+    
+    <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800">
+    <script type="application/ld+json">{
+		"@context": "http://schema.org",
+		"@type": "Organization",
+		"name": "FastVisa",
+		"logo": "images/logo1.png",
+		"sameAs": [
+				"https://www.facebook.com/fastvisa.latam",
+				"https://www.instagram.com/fastvisa.latam",
+				"https://www.tiktok.com/@fastvisa.latam"
+		]
+}</script>
+    <meta name="theme-color" content="#3a50f9">
+    <meta property="og:title" content="Inicio">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+  <meta name="referrer" content="origin"><script>
+    window.recaptchaRenderedV2 = false;
+    window.recaptchaFallback = false;
+    window.recaptchaSiteKeyV2 = '6LdfeIwrAAAAAMnDkaIExdHsV0Nsj8y-CU9AyTjZ';
+
+    function gdprConfirmed() {
+        return true;
+    }
+
+    function dynamicLoadScript() {
+        var script = document.createElement('script');
+        script.src = 'https://www.google.com/recaptcha/api.js?render=6LdoP2QsAAAAABICedo2eGflMLBt-lUpCWVK0GNf';
+        script.async = true;
+        script.onload = function () {
+            var event = new CustomEvent("recaptchaLoaded");
+            document.dispatchEvent(event);
+        };
+        document.body.appendChild(script);
+    }
+
+    function showRecaptchaError(error) {
+        error = error || '';
+        var formError = document.querySelector('.u-form-send-error');
+
+        if (formError) {
+            formError.innerText = 'Error de propietario del Sitio: ' + error.replace(/:[\s\S]*/, '');
+            formError.style.display = 'block';
+        }
+
+        console.error('Error in grecaptcha: ', error);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var confirmButtons = document.querySelectorAll('.u-cookies-consent .u-button-confirm');
+        confirmButtons.forEach(function (button) {
+            button.onclick = dynamicLoadScript;
+        });
+    });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            if (!gdprConfirmed()) {
+                return;
+            }
+            dynamicLoadScript();
+        });
+    </script>
+
+    <script>
+        document.addEventListener("recaptchaLoaded", function() {
+            if (!gdprConfirmed()) {
+                return;
+            }
+
+            (function (grecaptcha, sitekey, actions) {
+                var recaptcha = {
+                    execute: function (action, submitFormCb) {
+                        if (typeof grecaptcha === 'undefined' || typeof grecaptcha.execute !== 'function') {
+                            showRecaptchaError('reCAPTCHA script failed to load.');
+                            return;
+                        }
+
+                        try {
+                            grecaptcha.execute(sitekey, {action: action}).then((token) => {
+                                if (!token) {
+                                    throw new Error('Empty token received from reCAPTCHA');
+                                }
+
+                                var forms = document.getElementsByTagName('form');
+
+                                for (var i = 0; i < forms.length; i++) {
+                                    var response = forms[i].querySelector('[name="recaptchaResponse"]');
+
+                                    if (!response) {
+                                        response = document.createElement('input');
+                                        response.setAttribute('type', 'hidden');
+                                        response.setAttribute('name', 'recaptchaResponse');
+                                        forms[i].appendChild(response);
+                                    }
+
+                                    response.value = token;
+                                }
+
+                                submitFormCb();
+                            }).catch((e) => {
+                                showRecaptchaError(e.message);
+                            });
+                        } catch (e) {
+                            showRecaptchaError(e.message);
+                        }
+                    },
+
+                    executeContact: function (submitFormCb) {
+                        recaptcha.execute(actions['contact'], submitFormCb);
+                    }
+                };
+
+                window.recaptchaObject = recaptcha;
+                window.grecaptchaObject = grecaptcha;
+            })(
+                grecaptcha,
+                
+                '6LdoP2QsAAAAABICedo2eGflMLBt-lUpCWVK0GNf',
+                {'contact': 'contact'}
+            );
+        });
+    </script>
+
+    <script>
+    window.showRecaptchaV2 = function (form) {
+        if (!form || !form.length) {
+            return;
+        }
+        if (typeof window.grecaptchaObject === 'undefined' || !window.grecaptchaObject) {
+            return;
+        }
+
+        const formEl = form[0];
+
+        let container = document.getElementById('recaptcha-v2-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'recaptcha-v2-container';
+            formEl.parentElement.appendChild(container);
+        }
+
+        let tokenReceived = false;
+        let timeoutHandle;
+
+        if (window.recaptchaRenderedV2 === false || typeof window.recaptchaRenderedV2 === 'undefined') {
+            window.recaptchaRenderedV2 = window.grecaptchaObject.render('recaptcha-v2-container', {
+                'sitekey': window.recaptchaSiteKeyV2,
+                'size': 'invisible',
+                'callback': function (token) {
+                    clearTimeout(timeoutHandle);
+
+                    if (!token) {
+                        showRecaptchaError('reCAPTCHA v2 token was empty. Please try again.');
+                        return;
+                    }
+
+                    tokenReceived = true;
+
+                    let recaptchaResponseV2 = formEl.querySelector('input[name="recaptchaResponseV2"]');
+
+                    if (!recaptchaResponseV2) {
+                        recaptchaResponseV2 = document.createElement('input');
+                        recaptchaResponseV2.type = 'hidden';
+                        recaptchaResponseV2.name = 'recaptchaResponseV2';
+                        formEl.appendChild(recaptchaResponseV2);
+                    }
+
+                    recaptchaResponseV2.value = token;
+
+                    if (window.recaptchaSiteKeyV2) {
+                        let siteKeyInput = formEl.querySelector('input[name="siteKey"]');
+
+                        if (siteKeyInput) {
+                            siteKeyInput.value = window.recaptchaSiteKeyV2;
+                        }
+                    }
+
+                    document.querySelectorAll('.u-form-send-error').forEach(el => {
+                        el.style.display = 'none';
+                    });
+
+                    const event = new CustomEvent('submit', {
+                        detail: { recaptchaPassed: true },
+                        bubbles: true,
+                        cancelable: true,
+                    });
+
+                    formEl.dispatchEvent(event);
+                },
+                'error-callback': function () {
+                    clearTimeout(timeoutHandle);
+                    showRecaptchaError('reCAPTCHA v2 error. Please try again.');
+                },
+                'expired-callback': function () {
+                    clearTimeout(timeoutHandle);
+                }
+            });
+
+            window.grecaptchaObject.reset(window.recaptchaRenderedV2);
+
+            setTimeout(() => {
+                window.grecaptchaObject.execute(window.recaptchaRenderedV2);
+            }, 300);
+
+            timeoutHandle = setTimeout(function () {
+                if (!tokenReceived) {
+                    showRecaptchaError('The Contact Form could not be submitted because Google reCAPTCHA v3 detected unusual activity from your connection. Please try again later, or complete the reCAPTCHA v2 challenge if it appears.');
+                }
+            }, 120000);
+        } else {
+            window.grecaptchaObject.reset(window.recaptchaRenderedV2);
+
+            setTimeout(() => {
+                window.grecaptchaObject.execute(window.recaptchaRenderedV2);
+            }, 300);
+        }
+    };
+    </script>
+<meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
+  <body data-home-page="Inicio.html" data-home-page-title="Inicio" data-path-to-root="./" data-include-products="false" class="u-body u-clearfix u-stick-footer u-xl-mode" data-lang="es"><header class="u-clearfix u-header u-sticky u-sticky-9848 u-white u-header" id="sec-d497" data-animation-name="" data-animation-duration="0" data-animation-delay="0" data-animation-direction=""><div class="u-clearfix u-sheet u-sheet-1">
+        <nav class="u-menu u-menu-one-level u-offcanvas u-menu-1" data-responsive-from="MD" role="navigation" data-position="Menú">
+          <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px; font-weight: 700;">
+            <a class="u-button-style u-custom-active-border-color u-custom-border u-custom-border-color u-custom-borders u-custom-hover-border-color u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-color u-custom-text-decoration u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-hamburger-link u-nav-link u-text-active-black u-text-hover-black u-text-palette-1-base u-hamburger-link-1" href="#" tabindex="-1" aria-label="Open menu" aria-controls="3d5b">
+              <svg class="u-svg-link" viewBox="0 0 24 24"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#menu-hamburger"></use></svg>
+              <svg class="u-svg-content" version="1.1" id="menu-hamburger" viewBox="0 0 16 16" x="0px" y="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><g><rect y="1" width="16" height="2"></rect><rect y="7" width="16" height="2"></rect><rect y="13" width="16" height="2"></rect>
+</g></svg>
+            </a>
+          </div>
+          <div class="u-custom-menu u-nav-container">
+            <ul class="u-nav u-unstyled u-nav-1" role="menubar"><li role="none" class="u-nav-item"><a role="menuitem" class="u-border-2 u-border-active-grey-30 u-border-grey-30 u-border-hover-grey-30 u-border-no-bottom u-border-no-left u-border-no-top u-button-style u-nav-link u-text-active-palette-1-base u-text-grey-90 u-text-hover-palette-1-base" href="./" style="padding: 0px 20px;">Inicio</a>
+</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-border-2 u-border-active-grey-30 u-border-grey-30 u-border-hover-grey-30 u-border-no-bottom u-border-no-left u-border-no-top u-button-style u-nav-link u-text-active-palette-1-base u-text-grey-90 u-text-hover-palette-1-base" href="Nosotros.html" style="padding: 0px 20px;">Nosotros</a>
+</li><li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem" class="u-border-2 u-border-active-grey-30 u-border-grey-30 u-border-hover-grey-30 u-border-no-bottom u-border-no-left u-border-no-top u-button-style u-nav-link u-text-active-palette-1-base u-text-grey-90 u-text-hover-palette-1-base" href="./#block-9" data-page-id="849314360" style="padding: 0px 10px 0px 20px;">Contáctanos</a>
+</li></ul>
+          </div>
+          <div class="u-custom-menu u-nav-container-collapse" id="3d5b" role="region" aria-label="Menu panel">
+            <div class="u-black u-container-style u-inner-container-layout u-opacity u-opacity-95 u-sidenav">
+              <div class="u-inner-container-layout u-sidenav-overflow">
+                <div class="u-menu-close" tabindex="-1" aria-label="Close menu"></div>
+                <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2" role="menubar"><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link" href="./">Inicio</a>
+</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link" href="Nosotros.html">Nosotros</a>
+</li><li role="none" class="u-nav-item"><a tabindex="-1" role="menuitem" class="u-button-style u-nav-link" href="./#block-9" data-page-id="849314360">Contáctanos</a>
+</li></ul>
+              </div>
+            </div>
+            <div class="u-black u-menu-overlay u-opacity u-opacity-70"></div>
+          </div>
+          <style class="menu-style">@media (max-width: 939px) {
+                    [data-responsive-from="MD"] .u-nav-container {
+                        display: none;
+                    }
+                    [data-responsive-from="MD"] .menu-collapse {
+                        display: block;
+                    }
+                }</style>
+        </nav>
+        <a href="https://fastvisa.orionscaled.com/registeruser" class="u-align-center u-border-none u-btn u-btn-round u-button-style u-enable-responsive u-hover-color-var u-radius-50 u-text-active-white u-text-hover-black u-btn-1" target="_blank" title="Registro">CREAR CUENTA </a>
+        <a href="./#block-1" data-page-id="849314360" class="u-image u-logo u-image-1" data-image-width="500" data-image-height="500">
+          <img src="images/logo1.png" class="u-logo-image u-logo-image-1">
+        </a>
+        <a href="https://fastvisa.orionscaled.com/login" class="u-align-center u-border-none u-btn u-btn-round u-button-style u-enable-responsive u-hover-color-var u-radius-50 u-text-active-white u-text-hover-black u-btn-2" target="_blank" title="Iniciar sesión">INICIAR SESIÓN </a>
+      </div><style class="u-sticky-style" data-style-id="9848">.u-sticky-fixed.u-sticky-9848, .u-body.u-sticky-fixed .u-sticky-9848 {
+background-color: #ffffff !important; background-image: none !important
+}.u-sticky-fixed.u-sticky-9848:before, .u-body.u-sticky-fixed .u-sticky-9848:before {
+borders: top right bottom left !important; background-color: unset !important
+} .u-sticky-fixed.u-sticky-9848 .u-background-video, .u-body.u-sticky-fixed .u-sticky-9848 .u-background-video {
+display: none !important
+}</style></header> 
+    <section class="u-align-center u-clearfix u-container-align-center u-image u-shading u-section-1" data-image-width="2048" data-image-height="1338" id="block-1">
+      <div class="u-clearfix u-sheet u-sheet-1">
+        <h1 class="u-text u-text-1" data-animation-name="flipIn" data-animation-duration="1500" data-animation-direction="X" data-animation-delay="500">Es HORA DE TU PRÓXIMA AVENTURA</h1>
+        <p class="u-text u-text-2" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500">Hazlo posible con FastVisa </p>
+        <a href="./#block-9" data-page-id="849314360" class="u-active-palette-1-base u-border-none u-btn u-btn-round u-button-style u-hover-palette-3-base u-radius-50 u-text-active-white u-text-black u-text-hover-black u-white u-btn-1" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="750">Contáctanos</a>
+      </div>
+    </section>
+    <section class="u-align-center u-clearfix u-container-align-center u-section-2" id="block-2">
+      <div class="u-clearfix u-sheet u-valign-middle-sm u-valign-middle-xl u-valign-middle-xs u-sheet-1">
+        <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-0 u-layout-wrap u-layout-wrap-1">
+          <div class="u-layout" style="">
+            <div class="u-layout-row" style="">
+              <div class="u-container-style u-layout-cell u-left-cell u-size-30 u-layout-cell-1">
+                <div class="u-container-layout u-container-layout-1">
+                  <div class="u-shape u-shape-svg u-text-palette-1-base u-shape-1" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="250">
+                    <svg class="u-svg-link" preserveAspectRatio="none" viewBox="0 0 160 160" style=""><use xlink:href="#svg-a0bf"></use></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xml:space="preserve" class="u-svg-content" viewBox="0 0 160 160" x="0px" y="0px" id="svg-a0bf" style="enable-background:new 0 0 160 160;"><path d="M80,30c27.6,0,50,22.4,50,50s-22.4,50-50,50s-50-22.4-50-50S52.4,30,80,30 M80,0C35.8,0,0,35.8,0,80s35.8,80,80,80
+	s80-35.8,80-80S124.2,0,80,0L80,0z"></path></svg>
+                  </div>
+                  <div class="u-image u-image-circle u-image-1" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500" data-image-width="1213" data-image-height="832"></div>
+                  <div alt="" class="u-align-left u-border-18 u-border-palette-3-base u-image u-image-circle u-image-2" data-image-width="474" data-image-height="321" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="250"></div>
+                  <div class="u-color-var u-shape u-shape-circle u-shape-2" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="750"></div>
+                </div>
+              </div>
+              <div class="u-container-style u-layout-cell u-right-cell u-size-30 u-layout-cell-2" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500">
+                <div class="u-container-layout u-container-layout-2">
+                  <h5 class="u-align-left u-text u-text-1">conócenos </h5>
+                  <h3 class="u-align-left u-text u-text-2">¿Qué hacemos en FastVisa?<br style="">
+                  </h3>
+                  <p class="u-align-justify u-text u-text-3">En FastVisa te ayudamos a agilizar tu cita para entrevista en la Embajada Americana y así poder obtener la VISA en un tiempo récord.</p>
+                  <a href="Nosotros.html" data-page-id="523713247" class="u-active-black u-align-left u-border-none u-btn u-btn-round u-button-style u-color-var u-hover-palette-1-base u-radius-50 u-text-black u-text-hover-white u-btn-1" title="Nosotros">leer más</a>
+                  <a href="https://wa.me/+525645451289" class="u-active-none u-btn u-button-style u-hover-none u-none u-text-black u-text-hover-palette-1-dark-1 u-btn-2" target="_blank"><span class="u-icon u-icon-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xml:space="preserve" class="u-svg-content" viewBox="0 0 512 512" x="0px" y="0px" style="width: 1em; height: 1em;"><path style="fill:currentColor;" d="M256,0C114.617,0,0,114.617,0,256c0,52.03,15.563,100.414,42.231,140.818L0,512l119.128-39.706  C158.72,497.399,205.639,512,256,512c141.383,0,256-114.617,256-256S397.383,0,256,0z"></path><path style="fill:#FFFFFF;" d="M397.233,335.078V377.6c0.062,15.66-12.606,28.398-28.292,28.469c-0.892,0-1.783-0.035-2.675-0.115  c-43.705-4.74-85.689-19.641-122.571-43.52c-34.313-21.76-63.409-50.803-85.222-85.054c-24.002-36.979-38.938-79.086-43.599-122.898  c-1.412-15.59,10.108-29.378,25.732-30.791c0.847-0.062,1.686-0.106,2.534-0.106h42.611c14.257-0.141,26.412,10.293,28.407,24.382  c1.801,13.612,5.138,26.968,9.94,39.83c3.902,10.364,1.404,22.042-6.391,29.908l-18.035,17.999  c20.215,35.487,49.664,64.874,85.221,85.054l18.035-17.999c7.883-7.786,19.588-10.275,29.97-6.382  c12.888,4.802,26.271,8.13,39.91,9.922C387.09,308.312,397.594,320.689,397.233,335.078z"></path></svg></span>&nbsp;Chatear ahora
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="u-clearfix u-image u-valign-bottom-xl u-section-3" data-image-width="1980" data-image-height="1320" id="block-7">
+      <div class="data-layout-selected u-clearfix u-gutter-0 u-layout-wrap u-layout-wrap-1">
+        <div class="u-gutter-0 u-layout" style="">
+          <div class="u-layout-row" style="">
+            <div class="u-container-style u-image u-layout-cell u-size-31-md u-size-31-sm u-size-31-xs u-size-34-xl u-size-35-lg u-image-1" data-image-width="1200" data-image-height="1302">
+              <div class="u-container-layout u-container-layout-1"></div>
+            </div>
+            <div class="u-container-style u-layout-cell u-shape-rectangle u-size-25-lg u-size-26-xl u-size-29-md u-size-29-sm u-size-29-xs u-layout-cell-2">
+              <div class="u-container-layout u-container-layout-2">
+                <h5 class="u-align-left u-text u-text-1">Te Explicamos </h5>
+                <h4 class="u-align-left u-text u-text-2">¿Cómo funcio​na FastVisa? <br>
+                </h4>
+                <p class="u-align-justify u-custom-font u-heading-font u-text u-text-3"><span class="u-text-custom-color-4" style="font-weight: 700; font-size: 1.5rem;"><span style="font-size: 3.75rem;" class="u-text-black">1<span style="font-size: 1.125rem;"> &nbsp;</span></span><span class="u-text-palette-1-base">Monitoreo Continu​o</span></span>
+                  <br>Nuestro sistema monitorea 24/7 la disponibilidad de citas de visa americana en los consulados y rango de fechas que selecciones. <br><span class="u-text-custom-color-4" style="font-weight: 700;"><span class="u-text-black" style="font-size: 3.75rem;">2<span style="font-size: 1.125rem;"> &nbsp;</span></span><span class="u-text-palette-1-base" style="font-size: 1.5rem;">Actualizaciones&nbsp;</span></span>
+                  <br>Te enviamos notificaciones continuas para que sepas cómo va tu búsqueda.<br><span style="font-weight: 700;" class="u-text-custom-color-4"><span class="u-text-black" style="font-size: 3.75rem;">3<span style="font-size: 1.125rem;"> &nbsp;</span></span><span class="u-text-palette-1-base" style="font-size: 1.5rem;">Reservación Automática</span></span>
+                  <br>Cuando encontramos una fecha que coincide con tus criterios, hacemos la reservación automáticamente para que nadie más la tome y te notificamos inmediatamente.<br>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="u-align-center u-clearfix u-container-align-center u-section-4" id="block-3">
+      <div class="u-clearfix u-sheet u-sheet-1">
+        <h2 class="u-align-center u-text u-text-palette-1-base u-text-1" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500">Adelanta tu cita de entrevista&nbsp;&nbsp;<br>¡Ahora!
+        </h2>
+        <div class="u-expanded-width u-list u-list-1">
+          <div class="u-repeater u-repeater-1">
+            <div class="u-container-style u-list-item u-radius-50 u-repeater-item u-shape-round u-white u-list-item-1" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500">
+              <div class="u-container-layout u-similar-container u-container-layout-1">
+                <div alt="" class="u-image u-image-circle u-image-1" data-image-width="1217" data-image-height="694"></div>
+                <h3 class="u-align-center-lg u-align-center-md u-align-center-sm u-align-center-xs u-align-left-xl u-custom-font u-font-raleway u-text u-text-black u-text-2">REGISTRO GESTOR</h3>
+                <p class="u-align-justify u-text u-text-3">Soy un gestor que trabaja con varios solicitantes y necesito una cuenta. </p>
+                <a href="https://fastvisa.orionscaled.com/registeruser" class="u-border-none u-btn u-button-style u-hover-palette-1-base u-palette-3-base u-text-black u-text-hover-white u-btn-1" title="Registro" target="_blank">REGISTRARME </a>
+              </div>
+            </div>
+            <div class="u-container-style u-custom-item u-list-item u-repeater-item u-shape-rectangle u-list-item-2" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500">
+              <div class="u-container-layout u-similar-container u-container-layout-2">
+                <div alt="" class="u-image u-image-circle u-image-2" data-image-width="1024" data-image-height="683"></div>
+                <h3 class="u-align-center-lg u-align-center-md u-align-center-sm u-align-center-xs u-align-left-xl u-custom-font u-font-raleway u-text u-text-black u-text-4">PLAN INDIVIDUAL </h3>
+                <p class="u-align-justify u-text u-text-5">Soy un solicitante que busca adelantar mi propia cita de visa. <br>
+                  <br>
+                </p>
+                <a href="https://fastvisa.orionscaled.com/quickstart" class="u-border-none u-btn u-button-style u-hover-palette-1-base u-palette-3-base u-text-black u-text-hover-white u-btn-2" title="Registro" target="_blank">prueba gratis </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="u-align-center u-clearfix u-container-align-center u-container-align-center-xl u-gradient u-image u-section-5" id="block-4" data-image-width="7001" data-image-height="4001">
+      <div class="u-clearfix u-sheet u-valign-middle-sm u-sheet-1">
+        <div class="u-border-14 u-border-palette-3-base u-image u-image-circle u-image-1" alt="" data-image-width="768" data-image-height="512" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500"></div>
+        <h2 class="u-align-center u-text u-text-default u-text-white u-text-1" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500">¿Ya tienes cuenta? </h2>
+        <a href="https://fastvisa.orionscaled.com/login" class="u-btn u-button-style u-hover-palette-4-base u-palette-3-base u-btn-1" title="Inicia sesión" target="_blank"> INICIA SESIÓN</a>
+      </div>
+    </section>
+    <section class="u-align-center u-clearfix u-container-align-center u-section-6" id="block-9">
+      <div class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-sheet-1">
+        <div class="data-layout-selected u-clearfix u-expanded-width-sm u-expanded-width-xs u-gutter-0 u-layout-wrap u-layout-wrap-1">
+          <div class="u-layout">
+            <div class="u-layout-row">
+              <div class="u-align-center u-container-align-center u-container-align-center-lg u-container-align-center-md u-container-align-center-sm u-container-align-center-xl u-container-style u-layout-cell u-right-cell u-size-33 u-layout-cell-1" data-animation-name="customAnimationIn" data-animation-duration="1250" data-animation-delay="500">
+                <div class="u-container-layout u-valign-top-lg u-valign-top-md u-valign-top-sm u-valign-top-xl u-container-layout-1">
+                  <h6 class="u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-1"><span style="font-size: 1.5rem;">Tienes dudas</span>
+                    <br>&nbsp;Contáctanos
+                  </h6>
+                  <div class="u-expanded-width u-form u-form-1">
+                    <form action="https://service.nicepagesrv.com/form/v4/form-process" class="u-clearfix u-form-spacing-15 u-form-vertical u-inner-form" style="padding: 0;" source="email" name="form">
+                      <div class="u-form-group u-form-name">
+                        <label for="name-daf4" class="u-label">Nombre</label>
+                        <input type="text" placeholder="Ingresa tu nombre" id="name-daf4" name="name" class="u-border-2 u-border-black u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="">
+                      </div>
+                      <div class="u-form-email u-form-group">
+                        <label for="email-daf4" class="u-label">Email</label>
+                        <input type="email" placeholder="Ingresa una dirección de correo " id="email-daf4" name="email" class="u-border-2 u-border-black u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="">
+                      </div>
+                      <div class="u-form-group u-form-message">
+                        <label for="message-daf4" class="u-label">Mensaje</label>
+                        <textarea placeholder="" rows="4" cols="50" id="message-daf4" name="message" class="u-border-2 u-border-black u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required=""></textarea>
+                      </div>
+                      <div class="u-form-agree u-form-group u-form-group-4">
+                        <label class="u-block-e527-42 u-field-label" style=""></label>
+                        <input type="checkbox" id="agree-f183" name="agree" class="u-agree-checkbox u-field-input" required="">
+                        <label for="agree-f183" class="u-block-e527-42 u-field-label" style="">Acepto los términos y condiciones del servicio</label>
+                      </div>
+                      <div class="u-align-left u-form-group u-form-submit">
+                        <a href="#" class="u-active-palette-1-light-2 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius-50 u-btn-1">EnVIAr</a>
+                        <input type="submit" value="submit" class="u-form-control-hidden">
+                      </div>
+                      <div class="u-form-send-message u-form-send-success">Gracias! Tu mensaje ha sido enviado.</div>
+                      <div class="u-form-send-error u-form-send-message">No se puede enviar su mensaje. Por favor, corrija los errores y vuelva a intentarlo.</div>
+                      <input type="hidden" value="" name="recaptchaResponse">
+                      <input type="hidden" name="formServices" value="b968e719-494e-438d-9991-e0edfe93bee4">
+                      <input type="hidden" name="siteKey" value="6LdoP2QsAAAAABICedo2eGflMLBt-lUpCWVK0GNf">
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="u-align-center u-container-align-center u-container-align-center-lg u-container-align-center-xl u-container-style u-layout-cell u-size-27 u-white u-layout-cell-2" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500">
+                <div class="u-container-layout u-valign-bottom-sm u-valign-middle-lg u-container-layout-2">
+                  <img class="u-image u-image-contain u-image-default u-preserve-proportions u-image-1" src="images/whatsapp-icon-logo-png_seeklogo-306465.png" alt="" data-image-width="600" data-image-height="600">
+                  <a href="https://wa.me/+525645451289" class="u-active-none u-btn u-button-style u-hover-none u-none u-text-black u-text-hover-palette-1-dark-1 u-btn-2" target="_blank"><span class="u-icon u-icon-1"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xml:space="preserve" class="u-svg-content" viewBox="0 0 512 512" x="0px" y="0px" style="width: 1em; height: 1em;"><path style="fill:currentColor;" d="M256,0C114.617,0,0,114.617,0,256c0,52.03,15.563,100.414,42.231,140.818L0,512l119.128-39.706  C158.72,497.399,205.639,512,256,512c141.383,0,256-114.617,256-256S397.383,0,256,0z"></path><path style="fill:#FFFFFF;" d="M397.233,335.078V377.6c0.062,15.66-12.606,28.398-28.292,28.469c-0.892,0-1.783-0.035-2.675-0.115  c-43.705-4.74-85.689-19.641-122.571-43.52c-34.313-21.76-63.409-50.803-85.222-85.054c-24.002-36.979-38.938-79.086-43.599-122.898  c-1.412-15.59,10.108-29.378,25.732-30.791c0.847-0.062,1.686-0.106,2.534-0.106h42.611c14.257-0.141,26.412,10.293,28.407,24.382  c1.801,13.612,5.138,26.968,9.94,39.83c3.902,10.364,1.404,22.042-6.391,29.908l-18.035,17.999  c20.215,35.487,49.664,64.874,85.221,85.054l18.035-17.999c7.883-7.786,19.588-10.275,29.97-6.382  c12.888,4.802,26.271,8.13,39.91,9.922C387.09,308.312,397.594,320.689,397.233,335.078z"></path></svg></span>&nbsp;Chatear ahora
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    
+    
+    <footer class="u-align-center u-clearfix u-container-align-center u-container-align-center-lg u-container-align-center-md u-container-align-center-sm u-container-align-center-xl u-footer u-white u-footer" id="sec-7512"><div class="u-clearfix u-sheet u-sheet-1">
+        <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-0 u-layout-wrap u-layout-wrap-1">
+          <div class="u-layout">
+            <div class="u-layout-row">
+              <div class="u-container-align-center-lg u-container-align-center-md u-container-align-center-xl u-container-style u-layout-cell u-size-12-md u-size-12-sm u-size-12-xs u-size-17-lg u-size-17-xl u-layout-cell-1">
+                <div class="u-container-layout u-container-layout-1">
+                  <img class="u-image u-image-contain u-image-default u-preserve-proportions u-image-1" src="images/logo1.png" alt="" data-image-width="500" data-image-height="500" data-href="./#block-1" data-page-id="849314360">
+                </div>
+              </div>
+              <div class="u-align-center-md u-align-center-sm u-align-center-xs u-container-style u-layout-cell u-shape-rectangle u-size-23-md u-size-23-sm u-size-23-xs u-size-24-lg u-size-24-xl u-layout-cell-2">
+                <div class="u-container-layout u-valign-top-xs u-container-layout-2">
+                  <p class="u-text u-text-default-xl u-text-palette-1-dark-1 u-text-1"> Síguenos en nuestras redes sociales</p>
+                  <div class="u-social-icons u-social-icons-1">
+                    <a class="u-social-url" title="facebook" target="_blank" href="https://www.facebook.com/fastvisa.latam"><span class="u-icon u-social-facebook u-social-icon u-icon-1"><svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 112 112" style=""><use xlink:href="#svg-05a6"></use></svg><svg class="u-svg-content" viewBox="0 0 112 112" x="0" y="0" id="svg-05a6"><circle fill="currentColor" cx="56.1" cy="56.1" r="55"></circle><path fill="#FFFFFF" d="M73.5,31.6h-9.1c-1.4,0-3.6,0.8-3.6,3.9v8.5h12.6L72,58.3H60.8v40.8H43.9V58.3h-8V43.9h8v-9.2
+c0-6.7,3.1-17,17-17h12.5v13.9H73.5z"></path></svg></span>
+                    </a>
+                    <a class="u-social-url" title="instagram" target="_blank" href="https://www.instagram.com/fastvisa.latam"><span class="u-icon u-social-icon u-social-instagram u-icon-2"><svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 112 112" style=""><use xlink:href="#svg-969e"></use></svg><svg class="u-svg-content" viewBox="0 0 112 112" x="0" y="0" id="svg-969e"><circle fill="currentColor" cx="56.1" cy="56.1" r="55"></circle><path fill="#FFFFFF" d="M55.9,38.2c-9.9,0-17.9,8-17.9,17.9C38,66,46,74,55.9,74c9.9,0,17.9-8,17.9-17.9C73.8,46.2,65.8,38.2,55.9,38.2
+z M55.9,66.4c-5.7,0-10.3-4.6-10.3-10.3c-0.1-5.7,4.6-10.3,10.3-10.3c5.7,0,10.3,4.6,10.3,10.3C66.2,61.8,61.6,66.4,55.9,66.4z"></path><path fill="#FFFFFF" d="M74.3,33.5c-2.3,0-4.2,1.9-4.2,4.2s1.9,4.2,4.2,4.2s4.2-1.9,4.2-4.2S76.6,33.5,74.3,33.5z"></path><path fill="#FFFFFF" d="M73.1,21.3H38.6c-9.7,0-17.5,7.9-17.5,17.5v34.5c0,9.7,7.9,17.6,17.5,17.6h34.5c9.7,0,17.5-7.9,17.5-17.5V38.8
+C90.6,29.1,82.7,21.3,73.1,21.3z M83,73.3c0,5.5-4.5,9.9-9.9,9.9H38.6c-5.5,0-9.9-4.5-9.9-9.9V38.8c0-5.5,4.5-9.9,9.9-9.9h34.5
+c5.5,0,9.9,4.5,9.9,9.9V73.3z"></path></svg></span>
+                    </a>
+                    <a class="u-social-url" target="_blank" data-type="Custom" title="Custom" href="https://www.tiktok.com/@fastvisa.latam"><span class="u-file-icon u-icon u-social-custom u-social-icon u-icon-3"><img src="images/tiktok.png" alt=""></span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="u-align-center-lg u-align-center-md u-align-center-sm u-align-center-xs u-container-style u-layout-cell u-shape-rectangle u-size-19-lg u-size-19-xl u-size-25-md u-size-25-sm u-size-25-xs u-layout-cell-3">
+                <div class="u-container-layout u-container-layout-3">
+                  <h4 class="u-text u-text-palette-1-base u-text-2">Contacto </h4>
+                  <a href="mailto:info.fastvisa@orionscaled.com" class="u-active-none u-border-1 u-border-active-black u-border-hover-black u-border-no-left u-border-no-right u-border-no-top u-border-white u-btn u-button-link u-button-style u-hover-none u-none u-text-palette-1-base u-btn-1" data-animation-name="" data-animation-duration="0" data-animation-delay="0" data-animation-direction="">info.fastvisa@orionscaled.com</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></footer><span style="height: 64px; width: 64px; margin-left: 0px; margin-right: auto; margin-top: 0px; background-image: none; right: 300px; bottom: 5px; padding: 15px;" class="u-back-to-top u-icon u-icon-circle u-opacity u-opacity-85 u-palette-1-base u-spacing-15" data-href="#"><svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 551.13 551.13"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-1d98"></use></svg><svg class="u-svg-content" enable-background="new 0 0 551.13 551.13" viewBox="0 0 551.13 551.13" xmlns="http://www.w3.org/2000/svg" id="svg-1d98"><path d="m275.565 189.451 223.897 223.897h51.668l-275.565-275.565-275.565 275.565h51.668z"></path></svg></span>
+  
+</body></html>

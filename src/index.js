@@ -1,12 +1,11 @@
-import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ConfigProvider } from "antd";
 import { AuthProvider } from "./utils/AuthContext";
 import theme from "./config/theme";
 import "./index.css";
+import "./locales/i18n"; // Initialize i18n
 import LogIn from "./components/auth/LogIn";
-import Home from "./components/home/Home";
 import RegisterUser from "./components/auth/RegisterUser";
 import QuickStartApplicant from "./components/applicants/QuickStartApplicant";
 import Applicants from "./components/applicants/Applicants";
@@ -16,11 +15,9 @@ import DeleteApplicant from "./components/applicants/DeleteApplicant";
 import LogOut from "./components/auth/LogOut";
 import PremiumUpgrade from "./components/premium/PremiumUpgrade";
 import ChangePassword from "./components/auth/ChangePassword";
-
 import Users from "./components/users/Users";
 import VerifyEmail from "./components/auth/VerifyEmail";
-
-import "./locales/i18n"; // Initialize i18n
+import Landing from "./components/home/Landing";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -30,8 +27,8 @@ root.render(
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<LogIn />} />
-          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<LogIn />} />
           <Route path="/registeruser" element={<RegisterUser />} />
           <Route path="/quickstart" element={<QuickStartApplicant />} />
           <Route path="/applicants" element={<Applicants />} />
