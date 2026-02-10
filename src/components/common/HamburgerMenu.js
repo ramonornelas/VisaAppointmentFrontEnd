@@ -129,7 +129,7 @@ const HamburgerMenu = () => {
             </div>
           )}
           <div className="regular-menu-items">
-            {permissions.canManageApplicants() ? (
+            {permissions.canManageApplicants() && permissions.canManageUsers() ? (
               <Link
                 to="/applicants"
                 className={showUpgrade ? "first-after-premium" : ""}
@@ -137,19 +137,18 @@ const HamburgerMenu = () => {
               >
                 <i className="fas fa-users"></i>
               </Link>
-            ) : (
-              sessionStorage.getItem("applicant_userid") && (
-                <Link
-                  to={`/view-applicant/${sessionStorage.getItem(
-                    "applicant_userid"
-                  )}`}
-                  className={showUpgrade ? "first-after-premium" : ""}
-                  title={t("myAppointment", "My Appointment")}
-                >
-                  <i className="fas fa-calendar-check"></i>
-                </Link>
-              )
-            )}
+            ) : !permissions.canManageApplicants() &&
+              sessionStorage.getItem("applicant_userid") ? (
+              <Link
+                to={`/view-applicant/${sessionStorage.getItem(
+                  "applicant_userid"
+                )}`}
+                className={showUpgrade ? "first-after-premium" : ""}
+                title={t("myAppointment", "My Appointment")}
+              >
+                <i className="fas fa-calendar-check"></i>
+              </Link>
+            ) : null}
             {permissions.canManageUsers() && (
               <Link to="/users" title={t("users", "Users")}>
                 <i className="fas fa-user-cog"></i>

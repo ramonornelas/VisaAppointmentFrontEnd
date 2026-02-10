@@ -284,11 +284,23 @@ body {
 
 /* Responsive design for mobile */
 @media (max-width: 768px) {
+  .menu {
+    min-height: 70px;
+    height: auto;
+  }
+
   .menu-items {
     flex-direction: row;
     gap: 10px;
     padding: 15px 10px;
     justify-content: flex-end;
+    min-width: 0;
+  }
+
+  .regular-menu-items {
+    flex-wrap: wrap;
+    min-width: 0;
+    gap: 10px;
   }
   
   .menu-items a:not(.premium-link) {
@@ -335,6 +347,38 @@ body {
   
   body.menu-open .page-container {
     padding-top: 100px;
+  }
+}
+
+/* Very small screens - prevent header overflow */
+@media (max-width: 480px) {
+  .menu-items {
+    padding: 12px 12px;
+    gap: 8px;
+  }
+
+  .regular-menu-items {
+    gap: 8px;
+  }
+
+  .menu-items a:not(.premium-link) {
+    padding: 10px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .menu-items a i {
+    font-size: 18px;
+  }
+
+  .menu-items a.premium-link .menu-text {
+    font-size: 10px;
+  }
+
+  .user-initial {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
   }
 }
 

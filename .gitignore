@@ -29,3 +29,4 @@ yarn-error.log*
 /user_stories
 
 /context
+/.cursor
