@@ -1,0 +1,353 @@
+/* Réplica del footer del landing (nicepage u-footer) */
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap");
+
+.prelogin-footer {
+  background-color: #ffffff;
+  background-image: none;
+  margin-top: auto;
+  width: 100%;
+  font-family: "Raleway", "Open Sans", sans-serif;
+  text-align: center;
+}
+
+/* u-sheet-1: min-height 200px; u-layout-wrap margin 0 0 20px */
+.prelogin-footer__sheet {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto 20px;
+  padding: 0 24px;
+  min-height: 200px;
+}
+
+/* Tres celdas como landing: u-size-17, u-size-24, u-size-19 (≈ 28%, 40%, 32%) */
+/* u-container-layout-1: padding 6px 30px 6px 0 */
+.prelogin-footer__logo-wrap {
+  flex: 0 0 28.333%;
+  max-width: 28.333%;
+  min-height: 181px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 6px 30px 6px 0;
+}
+
+.prelogin-footer__logo {
+  display: inline-block;
+  text-decoration: none;
+}
+
+/* u-image-1: width 147px, height 146px, margin 22px auto 0 */
+.prelogin-footer__logo-img {
+  width: 147px;
+  height: 146px;
+  margin: 22px auto 0;
+  display: block;
+  object-fit: contain;
+}
+
+/* Celda 2: u-layout-cell-2, u-container-layout-2 padding 27px 25px */
+.prelogin-footer__social {
+  flex: 0 0 40%;
+  max-width: 40%;
+  min-height: 181px;
+  padding: 27px 25px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+/* u-text-1: font-size 1rem, margin 2px auto 0 62px, u-text-palette-1-dark-1 = #4d59b7 */
+.prelogin-footer__social-title {
+  text-align: center;
+  font-size: 1rem;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  font-weight: 400;
+  color: #4d59b7;
+}
+
+/* u-social-icons-1: height 55px, width 165px, margin 21px auto 0 */
+.prelogin-footer__social-icons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 165px;
+  height: 55px;
+  margin: 21px auto 0;
+}
+
+/* u-icon-1 Facebook rgb(59, 89, 152); u-icon-2 Instagram rgb(197, 54, 164) */
+.prelogin-footer__social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  transition: opacity 0.2s;
+  flex: 0 0 auto;
+}
+
+.prelogin-footer__social-link:hover {
+  opacity: 0.85;
+}
+
+.prelogin-footer__social-link:nth-child(1) {
+  color: rgb(59, 89, 152);
+}
+
+.prelogin-footer__social-link:nth-child(2) {
+  color: rgb(197, 54, 164);
+}
+
+.prelogin-footer__social-link:nth-child(3) {
+  color: #1a1a1a;
+}
+
+/* Iconos circulares como en landing (viewBox 112) */
+.prelogin-footer__icon {
+  width: 55px;
+  height: 55px;
+}
+
+/* Celda 3: u-container-layout-3 padding 30px 0 30px 11px */
+.prelogin-footer__contact {
+  flex: 0 0 31.667%;
+  max-width: 31.667%;
+  min-height: 181px;
+  padding: 30px 0 30px 11px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+/* u-text-2 (Contacto): u-text-palette-1-base = #3a50f9, margin 0 */
+.prelogin-footer__contact-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 auto;
+  text-align: center;
+  margin-bottom: 10px;
+  color: #3a50f9;
+}
+
+/* u-btn-1 (email): border solid, font-size 1.125rem, letter-spacing 0, margin 18px 0 0, padding 0 */
+.prelogin-footer__contact-email {
+  color: #3a50f9;
+  text-decoration: none;
+  font-size: 1.125rem;
+  letter-spacing: 0;
+  margin: 18px 0 0;
+  padding: 0;
+  display: inline-block;
+  word-break: break-all;
+  transition: opacity 0.2s;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-weight: 700;
+}
+
+.prelogin-footer__contact-email:hover {
+  opacity: 0.9;
+  text-decoration: none;
+}
+
+.prelogin-footer__bottom {
+  padding: 16px 24px;
+  border-top: 1px solid #eee;
+  text-align: center;
+  width: 100%;
+}
+
+.prelogin-footer__copyright {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+/* @media (max-width: 1199px) - landing */
+@media (max-width: 1199px) {
+  .prelogin-footer__sheet {
+    min-height: 192px;
+  }
+
+  .prelogin-footer__logo-wrap,
+  .prelogin-footer__social,
+  .prelogin-footer__contact {
+    min-height: 195px;
+  }
+
+  .prelogin-footer__social-title {
+    margin-left: 31px;
+    margin-right: 0;
+  }
+
+  .prelogin-footer__social-icons {
+    margin-top: 18px;
+  }
+}
+
+/* @media (max-width: 991px) - landing: logo 75x74, text margin-left 18px */
+@media (max-width: 991px) {
+  .prelogin-footer__sheet {
+    min-height: 120px;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .prelogin-footer__logo-wrap {
+    flex: 0 0 25%;
+    max-width: 25%;
+    min-height: 192px;
+  }
+
+  .prelogin-footer__logo-img {
+    width: 75px;
+    height: 74px;
+  }
+
+  .prelogin-footer__social {
+    flex: 0 0 40%;
+    max-width: 40%;
+    min-height: 192px;
+  }
+
+  .prelogin-footer__social-title {
+    margin-left: 18px;
+  }
+
+  .prelogin-footer__contact {
+    flex: 0 0 35%;
+    max-width: 35%;
+    min-height: 192px;
+  }
+}
+
+/* @media (max-width: 767px) - landing: columna, centrado */
+@media (max-width: 767px) {
+  .prelogin-footer__sheet {
+    flex-direction: column;
+    align-items: center;
+    padding: 0 10px;
+    min-height: 509px;
+    margin-bottom: 0;
+  }
+
+  .prelogin-footer__logo-wrap {
+    flex: none;
+    max-width: none;
+    width: 100%;
+    min-height: 180px;
+    order: 1;
+  }
+
+  .prelogin-footer__logo-wrap {
+    padding: 0;
+  }
+
+  .prelogin-footer__logo-img {
+    width: 115px;
+    height: 113px;
+    margin-top: 33px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .prelogin-footer__social {
+    flex: none;
+    max-width: none;
+    width: 100%;
+    min-height: 185px;
+    padding: 0 10px;
+    text-align: center;
+    order: 2;
+  }
+
+  .prelogin-footer__social-title {
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .prelogin-footer__social-icons {
+    margin: 21px auto 0;
+    justify-content: center;
+  }
+
+  .prelogin-footer__contact {
+    flex: none;
+    max-width: none;
+    width: 100%;
+    min-height: 160px;
+    padding: 0 10px;
+    text-align: center;
+    order: 3;
+  }
+
+  .prelogin-footer__contact-email {
+    margin-top: 11px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* @media (max-width: 575px) - landing: orden logo(1), social(0), contact(2) */
+@media (max-width: 575px) {
+  .prelogin-footer__sheet {
+    min-height: 541px;
+    margin-top: -17px;
+    margin-bottom: 60px;
+  }
+
+  .prelogin-footer__logo-wrap {
+    min-height: 179px;
+    order: 1;
+  }
+
+  .prelogin-footer__logo-wrap {
+    padding: 0;
+  }
+
+  .prelogin-footer__logo-img {
+    width: 98px;
+    height: 96px;
+    margin-top: 117px;
+    margin-bottom: -34px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .prelogin-footer__social {
+    min-height: 198px;
+    order: 0;
+    padding-top: 9px;
+  }
+
+  .prelogin-footer__social-title {
+    margin-top: 15px;
+    margin-left: 31px;
+    margin-right: 31px;
+  }
+
+  .prelogin-footer__social-icons {
+    margin-top: 19px;
+  }
+
+  .prelogin-footer__contact {
+    min-height: 103px;
+    order: 2;
+    padding-right: 8px;
+    padding-left: 5px;
+  }
+
+  .prelogin-footer__contact-title {
+    margin-top: -140px;
+  }
+
+  .prelogin-footer__contact-email {
+    margin-top: 0;
+    margin-right: 20px;
+  }
+}

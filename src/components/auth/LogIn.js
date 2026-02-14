@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import Banner from "../common/Banner";
-import Footer from "../common/Footer";
+import PreLoginHeader from "../common/PreLoginHeader";
+import PreLoginFooter from "../common/PreLoginFooter";
 import "./LogIn.css";
 import LanguageSelector from "../common/LanguageSelector";
 import EnvironmentBadge from "../common/EnvironmentBadge";
@@ -15,17 +15,32 @@ import {
   getRoles,
   ApplicantSearch,
 } from "../../services/APIFunctions";
-import { Spin } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Alert,
+  Spin,
+  Grid,
+  Card,
+  Typography,
+  Space,
+  Steps,
+} from "antd";
+
+const { useBreakpoint } = Grid;
+const { Title, Text } = Typography;
 
 const LogIn = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
+  const btnSize = isMobile ? "large" : "middle";
   const permissionsErrorMsg = t(
     "permissionsErrorMsg",
-    "Please contact the administrator to grant you access to the system.",
+    "Please contact the administrator to grant you access to the system."
   );
 
   // Initialize metrics tracker
@@ -40,16 +55,9 @@ const LogIn = () => {
     });
   }, [metrics]);
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values) => {
+    const username = values.username;
+    const password = values.password;
     setError(null);
     setLoading(true);
     await metrics.trackCustomEvent("login_attempt", {
@@ -101,12 +109,12 @@ const LogIn = () => {
 
           sessionStorage.setItem(
             "fastVisa_permissions",
-            JSON.stringify(permissionsData),
+            JSON.stringify(permissionsData)
           );
 
           if (userData && rolesData) {
             const currentRole = rolesData.find(
-              (role) => role.id === userData.role_id,
+              (role) => role.id === userData.role_id
             );
             const roleName = currentRole ? currentRole.name : "unknown";
             await metrics.trackCustomEvent("login_success", {
@@ -152,7 +160,7 @@ const LogIn = () => {
       } else if (loginResponse.status === 403) {
         setLoading(false);
         window.location.href = `/verify-email?mode=reminder&email=${encodeURIComponent(
-          username,
+          username
         )}`;
       } else {
         setLoading(false);
@@ -175,9 +183,9 @@ const LogIn = () => {
 
   return (
     <div className="login-root">
-      <LanguageSelector />
+      <PreLoginHeader />
       <div className="content-wrap">
-        <Banner />
+        <LanguageSelector />
 
         {/* Info Sidebar - Right side */}
         <div className="info-sidebar">
@@ -185,7 +193,7 @@ const LogIn = () => {
             className="info-sidebar-item"
             data-tooltip={t(
               "securityBenefitText",
-              "Your data is encrypted and protected.",
+              "Your data is encrypted and protected."
             )}
           >
             <div className="info-sidebar-icon">🔒</div>
@@ -194,7 +202,7 @@ const LogIn = () => {
               <p>
                 {t(
                   "securityBenefitText",
-                  "Your data is encrypted and protected.",
+                  "Your data is encrypted and protected."
                 )}
               </p>
             </div>
@@ -204,7 +212,7 @@ const LogIn = () => {
             className="info-sidebar-item"
             data-tooltip={t(
               "globalCoverageText",
-              "Compatible with embassies and consulates worldwide.",
+              "Compatible with embassies and consulates worldwide."
             )}
           >
             <div className="info-sidebar-icon">🌍</div>
@@ -213,7 +221,7 @@ const LogIn = () => {
               <p>
                 {t(
                   "globalCoverageText",
-                  "Compatible with embassies and consulates worldwide.",
+                  "Compatible with embassies and consulates worldwide."
                 )}
               </p>
             </div>
@@ -223,7 +231,7 @@ const LogIn = () => {
             className="info-sidebar-item info-sidebar-warning"
             data-tooltip={t(
               "moneyBackGuarantee",
-              "We cannot guarantee finding a date as it depends on embassy availability, but if you don't get results within one month, we'll refund your money.",
+              "We cannot guarantee finding a date as it depends on embassy availability, but if you don't get results within one month, we'll refund your money."
             )}
           >
             <div className="info-sidebar-icon">⚠️</div>
@@ -232,170 +240,210 @@ const LogIn = () => {
               <p>
                 {t(
                   "moneyBackGuarantee",
-                  "We cannot guarantee finding a date as it depends on embassy availability, but if you don't get results within one month, we'll refund your money.",
+                  "We cannot guarantee finding a date as it depends on embassy availability, but if you don't get results within one month, we'll refund your money."
                 )}
               </p>
             </div>
           </div>
         </div>
         <div className="login-page-layout">
-          <div className="login-container">
-            <div style={{ height: "24px" }}></div>
-            <EnvironmentBadge style={{ margin: "0 auto 30px auto" }} />
-            <div style={{ textAlign: "center", margin: "0 0 30px 0" }}>
-              <button
-                type="button"
-                className="quick-start-button"
-                onClick={() => (window.location.href = "/quickstart")}
-                style={{
-                  width: "100%",
-                  maxWidth: "340px",
-                  padding: "14px 24px",
-                  backgroundColor: "#10b981",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontSize: "17px",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                  boxShadow: "0 4px 6px rgba(16, 185, 129, 0.3)",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = "#059669";
-                  e.target.style.transform = "translateY(-2px)";
-                  e.target.style.boxShadow =
-                    "0 6px 12px rgba(16, 185, 129, 0.4)";
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = "#10b981";
-                  e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow =
-                    "0 4px 6px rgba(16, 185, 129, 0.3)";
-                }}
+          <Card className="login-container" bordered={false}>
+            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+              <div style={{ textAlign: "center" }}>
+                <EnvironmentBadge />
+              </div>
+              <Space
+                direction="vertical"
+                size="small"
+                style={{ width: "100%", textAlign: "center" }}
               >
-                ⚡ {t("tryAppNow", "Try the app now")}
-              </button>
-              <p
-                style={{
-                  color: "#666",
-                  fontSize: "14px",
-                  marginTop: "8px",
-                  marginBottom: "0",
-                }}
-              >
-                {t("noRegistrationRequired", "No registration required")}
-              </p>
-              <p style={{ color: "#999", fontSize: "14px", marginBottom: "0" }}>
-                {t("orLoginBelow", "Or login to access all features")}
-              </p>
-            </div>
-            <Spin spinning={loading} tip={t("loggingIn", "Logging in...")}>
-              <form
-                className="login-form"
-                onSubmit={handleSubmit}
-                autoComplete="on"
-              >
-                <div className="input-group">
-                  <label htmlFor="username" className="login-label">
-                    {t("username", "E-mail")}
-                  </label>
-                  <input
-                    type="text"
-                    id="username"
-                    className="login-input"
-                    value={username}
-                    onChange={handleUsernameChange}
-                    autoComplete="username"
-                    required
-                    disabled={loading}
-                  />
+                <div style={{ width: "100%", maxWidth: 340, margin: "0 auto" }}>
+                  <Button
+                    type="primary"
+                    size={btnSize}
+                    block
+                    onClick={() => (window.location.href = "/quickstart")}
+                    style={{
+                      height: 48,
+                      fontSize: 16,
+                      fontWeight: 600,
+                      backgroundColor: "#10b981",
+                      borderColor: "#10b981",
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = "#059669";
+                      e.currentTarget.style.borderColor = "#059669";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = "#10b981";
+                      e.currentTarget.style.borderColor = "#10b981";
+                    }}
+                  >
+                    ⚡ {t("tryAppNow", "Try the app now")}
+                  </Button>
                 </div>
-                <div className="input-group">
-                  <label htmlFor="password" className="login-label">
-                    {t("password", "Password")}
-                  </label>
-                  <input
-                    type="password"
-                    id="password"
-                    className="login-input"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    autoComplete="current-password"
-                    required
-                    disabled={loading}
-                  />
-                </div>
-                {error && <p className="login-error">{error}</p>}
-                <button
-                  type="submit"
-                  className="login-button"
-                  disabled={loading}
-                  style={loading ? { opacity: 0.7, pointerEvents: "none" } : {}}
+                <Text
+                  type="secondary"
+                  style={{ display: "block", fontSize: 14 }}
                 >
-                  {loading
-                    ? t("loggingIn", "Logging in...")
-                    : t("login", "Log In")}
-                </button>
-              </form>
-            </Spin>
-            <p className="register-link">
-              {t("noAccount", "Don't have an account?")}{" "}
-              <a href="/registeruser">{t("register", "Register here")}</a>
-            </p>
-          </div>
-          <div className="benefits-panel">
-            <h2 className="benefits-title">
+                  {t("noRegistrationRequired", "No registration required")}
+                </Text>
+                <Text
+                  type="secondary"
+                  style={{ display: "block", fontSize: 14 }}
+                >
+                  {t("orLoginBelow", "Or login to access all features")}
+                </Text>
+              </Space>
+              <Spin spinning={loading} tip={t("loggingIn", "Logging in...")}>
+                <Form
+                  name="login"
+                  layout="vertical"
+                  onFinish={handleSubmit}
+                  autoComplete="on"
+                  validateTrigger={["onChange", "onBlur"]}
+                  style={{ maxWidth: 400, margin: "0 auto" }}
+                >
+                  <Form.Item
+                    name="username"
+                    label={t("username", "E-mail")}
+                    rules={[
+                      {
+                        required: true,
+                        message: t("usernameRequired", "Email is required"),
+                      },
+                    ]}
+                  >
+                    <Input
+                      size={btnSize}
+                      disabled={loading}
+                      autoComplete="username"
+                      placeholder={t("username", "E-mail")}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="password"
+                    label={t("password", "Password")}
+                    rules={[
+                      {
+                        required: true,
+                        message: t("passwordRequired", "Password is required"),
+                      },
+                    ]}
+                  >
+                    <Input.Password
+                      size={btnSize}
+                      disabled={loading}
+                      autoComplete="current-password"
+                      placeholder={t("password", "Password")}
+                    />
+                  </Form.Item>
+                  {/*  <div
+                    style={{
+                      marginTop: -8,
+                      marginBottom: 16,
+                      textAlign: "right",
+                    }}
+                  >
+                    <a href="/forgot-password">
+                      {t("forgotPassword", "Forgot password?")}
+                    </a>
+                  </div> */}
+                  {error && (
+                    <Alert
+                      type="error"
+                      showIcon
+                      message={error}
+                      closable
+                      onClose={() => setError(null)}
+                      style={{ marginBottom: 16 }}
+                    />
+                  )}
+                  <Form.Item style={{ marginBottom: 0, marginTop: 8 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      loading={loading}
+                      disabled={loading}
+                      size={btnSize}
+                      block
+                    >
+                      {loading
+                        ? t("loggingIn", "Logging in...")
+                        : t("login", "Log In")}
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Spin>
+              <div className="register-link" style={{ textAlign: "center" }}>
+                <Text type="secondary">
+                  {t("noAccount", "Don't have an account?")}{" "}
+                  <a href="/registeruser">{t("register", "Register here")}</a>
+                </Text>
+              </div>
+            </Space>
+          </Card>
+
+          <Card
+            className="benefits-panel"
+            bordered={false}
+            style={{
+              border: "4px solid transparent",
+              borderImage:
+                "linear-gradient(135deg, #0387cf 0%, #ff0204 50%, #0387cf 100%) 1",
+            }}
+          >
+            <Title
+              level={3}
+              style={{
+                marginBottom: 24,
+                paddingBottom: 16,
+                borderBottom: "2px solid #e2e8f0",
+                color: "#5070a0",
+                fontSize: "1.65rem",
+                fontWeight: 700,
+              }}
+            >
               {t("howItWorks", "How does it work?")}
-            </h2>
-            <div className="benefits-list">
-              <div className="benefit-item">
-                <div className="benefit-number">1</div>
-                <div className="benefit-content">
-                  <h3>{t("step1Title", "Continuous Monitoring")}</h3>
-                  <p>
-                    {t(
-                      "step1Desc",
-                      "Our system monitors 24/7 the availability of American visa appointments at the consulates and date ranges you select.",
-                    )}
-                  </p>
-                </div>
-              </div>
-
-              <div className="benefit-item">
-                <div className="benefit-number">2</div>
-                <div className="benefit-content">
-                  <h3>{t("step2Title", "Regular Updates")}</h3>
-                  <p>
-                    {t(
-                      "step2Desc",
-                      "We send you continuous notifications so you know how your search is progressing.",
-                    )}
-                  </p>
-                </div>
-              </div>
-
-              <div className="benefit-item">
-                <div className="benefit-number">3</div>
-                <div className="benefit-content">
-                  <h3>{t("step3Title", "Automatic Reservation")}</h3>
-                  <p>
-                    {t(
-                      "step3Desc",
-                      "When we find a date that matches your criteria, we automatically make the reservation so no one else can take it.",
-                    )}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+            </Title>
+            <Steps
+              orientation="vertical"
+              size="small"
+              current={-1}
+              type="default"
+              classNames={{
+                itemTitle: "benefits-step-item-title",
+                itemDescription: "benefits-step-item-description",
+                itemContent: "benefits-step-item-content",
+              }}
+              items={[
+                {
+                  title: t("step1Title", "Continuous Monitoring"),
+                  description: t(
+                    "step1Desc",
+                    "Our system monitors 24/7 the availability of American visa appointments at the consulates and date ranges you select."
+                  ),
+                },
+                {
+                  title: t("step2Title", "Regular Updates"),
+                  description: t(
+                    "step2Desc",
+                    "We send you continuous notifications so you know how your search is progressing."
+                  ),
+                },
+                {
+                  title: t("step3Title", "Automatic Reservation"),
+                  description: t(
+                    "step3Desc",
+                    "When we find a date that matches your criteria, we automatically make the reservation so no one else can take it."
+                  ),
+                },
+              ]}
+            />
+          </Card>
         </div>
       </div>
-      <Footer />
+      <PreLoginFooter />
     </div>
   );
 };
