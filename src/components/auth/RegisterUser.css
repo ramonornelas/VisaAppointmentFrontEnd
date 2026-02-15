@@ -34,12 +34,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .registration-container {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   padding: 1rem 2rem 1.5rem 2rem;
   max-width: 400px;
   width: 100%;
@@ -82,7 +83,6 @@
   text-align: left;
 }
 
-
 .form-field input,
 .form-field select {
   width: 340px;
@@ -107,8 +107,6 @@
   margin-right: auto;
 }
 
-
-
 .form-field input:focus,
 .form-field select:focus {
   border: 1.5px solid #2563eb;
@@ -123,7 +121,6 @@
   text-align: left;
 }
 
-
 .registration-button,
 .cancel-button {
   width: 100%;
@@ -137,7 +134,7 @@
   cursor: pointer;
   margin-top: 0.5rem;
   transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.08);
 }
 
 .cancel-button {
@@ -146,14 +143,15 @@
   margin-top: 0.5rem;
 }
 
-
-.registration-button:hover, .registration-button:focus {
+.registration-button:hover,
+.registration-button:focus {
   background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
   color: #fff;
-  box-shadow: 0 4px 16px rgba(30,64,175,0.12);
+  box-shadow: 0 4px 16px rgba(30, 64, 175, 0.12);
 }
 
-.cancel-button:hover, .cancel-button:focus {
+.cancel-button:hover,
+.cancel-button:focus {
   background: #dc2626;
   color: #fff;
 }

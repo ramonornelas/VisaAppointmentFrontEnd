@@ -11,8 +11,8 @@ const LogOut = () => {
     document.body.classList.remove('menu-open');
     // Update authentication status
     logout();
-    // Redirect to login page
-    navigate('/');
+    // Redirect to Login screen
+    navigate('/login');
   }, [navigate, logout]);
 
   return (

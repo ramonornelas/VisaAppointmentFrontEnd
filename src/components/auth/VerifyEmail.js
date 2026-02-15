@@ -49,7 +49,7 @@ const VerifyEmail = () => {
           .map(function (c) {
             return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
           })
-          .join(""),
+          .join("")
       );
       console.log(JSON.parse(jsonPayload).email);
       return JSON.parse(jsonPayload).email;
@@ -130,7 +130,7 @@ const VerifyEmail = () => {
   }, [searchParams]);
 
   const handleLogin = () => {
-    navigate("/");
+    navigate("/login");
   };
 
   const handleResendEmail = async () => {
