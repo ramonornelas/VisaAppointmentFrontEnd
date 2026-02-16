@@ -1,4 +1,4 @@
-/* LanguageSelector.css - AWS Console style */
+/* LanguageSelector.css - Consistent with app theme */
 
 .language-selector-container {
   position: absolute;
@@ -14,47 +14,24 @@
   background: transparent;
 }
 
-.language-label {
-  font-size: 0.875rem;
-  color: #545b64;
-  font-weight: 400;
-  display: none; /* Hidden by default like AWS */
+/* Ant Design Select - font and padding aligned with app theme */
+.language-select-antd.ant-select {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
 }
 
-.language-select {
-  appearance: none;
-  background-color: #fff;
-  border: 1px solid #aab7b8;
-  border-radius: 2px;
-  padding: 0.375rem 1.75rem 0.375rem 0.625rem;
-  font-size: 0.875rem;
-  color: #16191f;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23545b64' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.5rem center;
-  background-size: 10px;
-  min-width: 100px;
-  box-shadow: 0 1px 1px 0 rgba(0,28,36,.3), 1px 1px 1px 0 rgba(0,28,36,.15), -1px 1px 1px 0 rgba(0,28,36,.15);
+.language-select-antd .ant-select-selector {
+  font-family: inherit;
+  font-size: 14px;
+  padding-inline-start: 12px !important;
+  padding-inline-end: 28px !important;
+  padding-block: 6px 6px !important;
+  min-height: 36px;
+  align-items: center;
 }
 
-.language-select:hover {
-  background-color: #fafafa;
-  border-color: #545b64;
-}
-
-.language-select:focus {
-  outline: none;
-  border-color: #0972d3;
-  box-shadow: 0 0 0 2px rgba(9, 114, 211, 0.25);
-}
-
-.language-select option {
-  padding: 0.5rem;
-  background: #fff;
-  color: #16191f;
+.language-select-antd.ant-select-single .ant-select-selection-item {
+  line-height: 22px;
 }
 
 /* Responsive */
@@ -64,9 +41,11 @@
     right: 0.5rem;
   }
 
-  .language-select {
-    font-size: 0.8rem;
-    padding: 0.3rem 1.5rem 0.3rem 0.5rem;
-    min-width: 85px;
+  .language-select-antd .ant-select-selector {
+    font-size: 13px;
+    padding-inline-start: 10px !important;
+    padding-inline-end: 24px !important;
+    padding-block: 5px 5px !important;
+    min-height: 32px;
   }
 }

@@ -24,7 +24,7 @@
   justify-content: center;
   width: 100%;
   max-width: 1200px;
-  margin: 1.2rem auto 2rem auto;
+  margin: 1.65rem auto 2rem auto;
 }
 
 /* Login Container - Left Panel */
@@ -70,6 +70,26 @@
     transparent 70%
   );
   pointer-events: none;
+}
+
+.benefits-step-item-title {
+  font-size: 1.25rem !important;
+  font-weight: 700;
+  color: #5070a0 !important;
+}
+
+.benefits-step-item-description {
+  font-size: 1rem !important;
+  color: #0000008e !important;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.benefits-step-item-content {
+  font-size: 0.875rem !important;
+  color: #0000008e !important;
+  line-height: 1.35 !important;
+  font-weight: 400 !important;
 }
 
 .benefits-title {

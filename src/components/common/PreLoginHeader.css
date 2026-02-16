@@ -1,0 +1,372 @@
+/* Replica of landing header (nicepage) - Raleway, palette-1 #3a50f9 */
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap");
+
+.prelogin-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #ffffff;
+  width: 100%;
+  font-family: "Raleway", "Open Sans", sans-serif;
+}
+
+.prelogin-header__sheet {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 6px 0;
+  min-height: 115px;
+  position: relative;
+}
+
+/* Tres bloques en desktop: Logo | Nav | Botones */
+.prelogin-header__block {
+  display: flex;
+  align-items: center;
+}
+
+.prelogin-header__block--logo {
+  flex-shrink: 0;
+}
+
+.prelogin-header__block--ctas {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.prelogin-header__hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 0;
+  transition: background 0.2s;
+}
+
+.prelogin-header__hamburger:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.prelogin-header__hamburger-line {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #1a1a1a;
+  border-radius: 0;
+  margin: 0 auto;
+}
+
+/* Bloque 2: Nav - en desktop solo enlaces; nav-ctas solo en drawer móvil */
+.prelogin-header__nav {
+  display: flex;
+  align-items: center;
+}
+
+/* Botón X solo en drawer móvil; oculto en desktop */
+.prelogin-header__drawer-close {
+  display: none;
+}
+
+.prelogin-header__nav-list .prelogin-header__nav-ctas {
+  display: none;
+}
+
+.prelogin-header__nav-list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+}
+
+.prelogin-header__nav-link {
+  padding: 0 20px;
+  color: #1a1a1a;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 0;
+  transition: color 0.2s;
+  border-right: 1px solid #b3b3b3;
+  background: transparent;
+}
+
+@media (max-width: 939px) {
+  .prelogin-header__nav-link {
+    border-right: none;
+  }
+}
+
+.prelogin-header__nav-link:hover {
+  color: #3a50f9;
+  background: transparent;
+}
+
+/* Logo: landing u-image-1 = 103px x 103px */
+.prelogin-header__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.prelogin-header__logo-img {
+  width: 103px;
+  height: 103px;
+  object-fit: contain;
+}
+
+/* Buttons: landing u-btn-round u-radius-50, palette-1-base #3a50f9, hover #f7ca09f2 */
+.prelogin-header__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 27px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.prelogin-header__btn--primary,
+.prelogin-header__btn--secondary {
+  background-color: #3a50f9;
+  color: #ffffff;
+}
+
+.prelogin-header__btn--primary:hover,
+.prelogin-header__btn--secondary:hover {
+  background-color: #1c36f8;
+  color: #ffffff;
+}
+
+/* Landing uses --hover-color-var: #f7ca09f2 for yellow hover; optional */
+.prelogin-header__btn--primary:hover {
+  background-color: rgba(247, 202, 9, 0.95);
+  color: #111111;
+}
+
+.prelogin-header__btn--secondary:hover {
+  background-color: rgba(247, 202, 9, 0.95);
+  color: #111111;
+}
+
+.prelogin-header__overlay {
+  display: none;
+}
+
+
+
+/* Mobile: hamburger + drawer (landing breakpoint ~939px for MD) */
+@media (max-width: 939px) {
+  .prelogin-header__hamburger {
+    display: flex;
+    order: -1;
+  }
+
+  /* Botones visibles en la barra como en el landing */
+  .prelogin-header__block--ctas {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    order: 1;
+  }
+
+  /* Drawer: como landing u-nav-container-collapse + u-sidenav (u-black u-opacity-95) */
+  .prelogin-header__nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 85vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.95);
+    z-index: 1002;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .prelogin-header__nav--open {
+    transform: translateX(0);
+  }
+
+  .prelogin-header__drawer-inner {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    padding-top: 60px;
+    width: 100%;
+  }
+
+  .prelogin-header__drawer-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #ffffff;
+  }
+
+  .prelogin-header__drawer-close:hover {
+    color: #eeeeee;
+  }
+
+  .prelogin-header__drawer-close-x {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: block;
+  }
+
+  /* u-popupmenu-items: margin 20px auto 0; u-align-center; u-nav-link padding 8px 0 */
+  .prelogin-header__nav-list {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px 20px 20px;
+    margin: 0 auto;
+    gap: 0;
+    list-style: none;
+    text-align: center;
+  }
+
+  .prelogin-header__nav-list li {
+    display: block;
+    margin: 0;
+    border: none;
+  }
+
+  /* Drawer solo enlaces (landing no pone botones en el menú) */
+  .prelogin-header__nav-list .prelogin-header__nav-ctas {
+    display: none;
+  }
+
+  .prelogin-header__nav-link {
+    display: block;
+    padding: 8px 0;
+    font-size: 1rem;
+    color: #ffffff;
+    background: transparent;
+    white-space: normal;
+    text-decoration: none;
+    border: none;
+    border-right: none;
+  }
+
+  .prelogin-header__nav-link:hover {
+    color: #3a50f9;
+    background: transparent;
+  }
+
+  .prelogin-header__hamburger {
+    font-size: calc(1em + 13px);
+    padding: 7px 11px;
+  }
+
+  .prelogin-header__sheet {
+    padding: 12px 16px;
+    min-height: 109px;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+
+  .prelogin-header__block--logo {
+    order: 0;
+  }
+
+  .prelogin-header__logo-img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .prelogin-header__btn {
+    padding: 10px 14px;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+
+  .prelogin-header__overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1001;
+  }
+}
+
+@media (max-width: 767px) {
+  .prelogin-header__sheet {
+    min-height: 101px;
+  }
+
+  .prelogin-header__hamburger {
+    font-size: calc(1em + 20px);
+    padding: 10px 14px;
+  }
+
+  .prelogin-header__logo-img {
+    width: 89px;
+    height: 89px;
+  }
+
+  .prelogin-header__btn {
+    padding: 10px 12px;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .prelogin-header__sheet {
+    min-height: 108px;
+    padding: 10px 12px;
+  }
+
+  .prelogin-header__hamburger {
+    font-size: calc(1em + 19px);
+    padding: 10px 11px;
+  }
+
+  .prelogin-header__logo-img {
+    width: 89px;
+    height: 89px;
+  }
+
+  .prelogin-header__btn {
+    padding: 8px 10px;
+    font-size: 0.65rem;
+  }
+}
