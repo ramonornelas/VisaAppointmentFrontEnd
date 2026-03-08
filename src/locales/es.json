@@ -415,5 +415,16 @@
   "registrationSuccessDesc": "Hemos enviado un correo de verificación a:",
   "checkInbox": "Por favor revisa tu bandeja de entrada y carpeta de spam.",
   "expand": "Expandir",
-  "collapse": "Colapsar"
+  "collapse": "Colapsar",
+  "dateRangeWhenICanAttend": "Rango de fechas en que puedo asistir a mi cita",
+  "advancedOptions": "Opciones avanzadas",
+  "prepDaysPart1": "Necesito al menos",
+  "prepDaysPart2": "días de preparación antes de la cita",
+  "importantAppointments": "Importante: Acerca de tus citas",
+  "consularExplanation": "Las fechas que selecciones aplican para tu cita consular (entrevista de visa).",
+  "ascExplanation": "Tu cita CAS/ASC (biométricos) será programada automáticamente antes de tu cita consular.",
+  "ascNote": "Nota: La fecha de CAS/ASC puede quedar antes de tu fecha inicial.",
+  "endDate": "Fecha de fin",
+  "prepAdjustment": "La fecha de inicio será ajustada",
+  "prepAdjustmentDetail": "Para cumplir con los días de preparación, la búsqueda comenzará a partir de"
 }

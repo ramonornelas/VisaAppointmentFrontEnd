@@ -4,7 +4,7 @@ import { ConfigProvider } from "antd";
 import { AuthProvider } from "./utils/AuthContext";
 import theme from "./config/theme";
 import "./index.css";
-import "./locales/i18n"; // Initialize i18n
+import "./locales/i18n";
 import LogIn from "./components/auth/LogIn";
 import RegisterUser from "./components/auth/RegisterUser";
 import QuickStartApplicant from "./components/applicants/QuickStartApplicant";

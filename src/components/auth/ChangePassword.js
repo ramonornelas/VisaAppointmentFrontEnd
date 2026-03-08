@@ -287,7 +287,7 @@ const ChangePassword = () => {
 
               <Space
                 size={8}
-                direction={isMobile ? "vertical" : "horizontal"}
+                orientation={isMobile ? "vertical" : "horizontal"}
                 style={{ width: isMobile ? "100%" : undefined, marginTop: 24 }}
               >
                 <Button

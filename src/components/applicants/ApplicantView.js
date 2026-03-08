@@ -290,7 +290,7 @@ const ApplicantView = () => {
 
   /* Desktop: grid of columns; mobile: single column */
   const cardContentStyle = isMobile
-    ? { display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }
+    ? { display: 'flex', flexorientation: 'column', gap: 16, width: '100%' }
     : { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, width: '100%' };
 
   if (loading) {
@@ -416,7 +416,7 @@ const ApplicantView = () => {
           </Space>
         </div>
 
-        <Space direction="vertical" size={16} style={{ width: '100%' }}>
+        <Space orientation="vertical" size={16} style={{ width: '100%' }}>
           {/* Basic Information */}
           <Card
             title={
@@ -428,12 +428,12 @@ const ApplicantView = () => {
             style={{ width: '100%', maxWidth: '100%' }}
           >
             <div style={cardContentStyle}>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'start' }}>
+              <div style={{ display: 'flex', flexorientation: 'column', justifyContent: 'start' }}>
                 <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('fullName', 'Full Name')}</Typography.Title>
                 <Typography.Text style={{ margin: 0, fontSize: '0.875rem' }}>{data.name || 'N/A'}</Typography.Text>
               </div>
               {permissions.canManageApplicants() && (
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'start' }}>
+                <div style={{ display: 'flex', flexorientation: 'column', justifyContent: 'start' }}>
                   <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('applicantStatus', 'Applicant Status')}</Typography.Title>
                   <Tag style={{ fontSize: '0.875rem', width: 'fit-content' }} color={data.applicant_active ? '#4caf50' : 'default'}>{data.applicant_active ? t('active', 'Active') : t('inactive', 'Inactive')}</Tag>
                 </div>
@@ -501,7 +501,7 @@ const ApplicantView = () => {
             }
             style={{ width: '100%', maxWidth: '100%' }}
           >
-            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+            <Space orientation="vertical" size={16} style={{ width: '100%' }}>
               {!permissions.canSearchUnlimited() && data.target_start_mode === 'days' && data.target_start_days === '120' && (
                 <Alert
                   type="info"
@@ -519,7 +519,7 @@ const ApplicantView = () => {
               )}
               <div style={cardContentStyle}>
                 {data.target_start_mode === 'date' && (
-                  <div style={{ backgroundColor: '#fafafa', padding: 12, border: '1px solid #f0f0f0', borderRadius: 8, display: 'flex', flexDirection: 'column', justifyContent: 'start' }}>
+                  <div style={{ backgroundColor: '#fafafa', padding: 12, border: '1px solid #f0f0f0', borderRadius: 8, display: 'flex', flexorientation: 'column', justifyContent: 'start' }}>
                     <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('targetStartDate', 'Target Start Date')}</Typography.Title>
                     <Typography.Text>{data.target_start_date || 'N/A'}</Typography.Text>
                     <Alert type="info" showIcon icon={<InfoCircleOutlined />} message={t('targetStartDateExplanationView', 'This is the earliest date the system will start searching for available appointments.')} style={{ marginTop: 8 }} />
@@ -528,7 +528,7 @@ const ApplicantView = () => {
                 {data.target_start_mode === 'days' && (
                   <div>
                     {permissions.canManageApplicants() || data.target_start_days !== '120' ? (
-                      <div style={{ backgroundColor: '#fafafa', padding: 12, border: '1px solid #f0f0f0', borderRadius: 8, display: 'flex', flexDirection: 'column', justifyContent: 'start' }}>
+                      <div style={{ backgroundColor: '#fafafa', padding: 12, border: '1px solid #f0f0f0', borderRadius: 8, display: 'flex', flexorientation: 'column', justifyContent: 'start' }}>
                         <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('targetStartDays', 'Target Start Days')}</Typography.Title>
                         <Space wrap>
                           <Text>{data.target_start_days || 'N/A'} {t('days', 'days')}</Text>
@@ -554,7 +554,7 @@ const ApplicantView = () => {
                     )}
                   </div>
                 )}
-                <div style={{ backgroundColor: '#fafafa', padding: 12, border: '1px solid #f0f0f0', borderRadius: 8, display: 'flex', flexDirection: 'column', justifyContent: 'start' }}>
+                <div style={{ backgroundColor: '#fafafa', padding: 12, border: '1px solid #f0f0f0', borderRadius: 8, display: 'flex', flexorientation: 'column', justifyContent: 'start' }}>
                   <Typography.Title type='secondary' level={5} style={{ margin: 0, display: 'block', marginBottom: 4 }}>{t('targetEndDate', 'Target End Date')}</Typography.Title>
                   {data.target_end_date ? (
                     <>

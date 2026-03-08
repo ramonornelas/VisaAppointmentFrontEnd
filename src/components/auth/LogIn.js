@@ -248,12 +248,12 @@ const LogIn = () => {
         </div>
         <div className="login-page-layout">
           <Card className="login-container" bordered={false}>
-            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+            <Space orientation="vertical" size="middle" style={{ width: "100%" }}>
               <div style={{ textAlign: "center" }}>
                 <EnvironmentBadge />
               </div>
               <Space
-                direction="vertical"
+                orientation="vertical"
                 size="small"
                 style={{ width: "100%", textAlign: "center" }}
               >
