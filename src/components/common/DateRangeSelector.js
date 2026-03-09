@@ -43,21 +43,6 @@ const DateRangeSelector = ({ formData, setFormData, errors, formatDate }) => {
     }));
   };
 
-  const getEffectiveMinDate = () => {
-    const prepDays = parseInt(formData.targetStartDays || 0);
-    return dayjs(formData.targetStartDate).add(prepDays, "day");
-  };
-
-  const shouldAdjustStartDate = () => {
-    if (!usePreparationDays) return false;
-    if (!formData.targetStartDate) return false;
-
-    const effectiveMin = getEffectiveMinDate();
-    const selectedStart = dayjs(formData.targetStartDate);
-
-    return effectiveMin.isAfter(selectedStart);
-  };
-
   return (
     <Card
       style={{ width: "100%", marginBottom: 24 }}
@@ -76,12 +61,20 @@ const DateRangeSelector = ({ formData, setFormData, errors, formatDate }) => {
       <Space orientation="vertical" size={16} style={{ width: "100%" }}>
         {/* Calendar */}
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: isMobile ? "stretch" : "flex-start",
-          }}
-        >
+        <div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: isMobile ? "100%" : 340,
+              marginBottom: 6,
+              fontSize: "0.8rem",
+              color: "#8c8c8c",
+            }}
+          >
+            <span>{t("startDate", "Start date")}</span>
+            <span>{t("endDate", "End date")}</span>
+          </div>
           <RangePicker
             style={{ width: isMobile ? "100%" : 340 }}
             value={
@@ -148,22 +141,6 @@ const DateRangeSelector = ({ formData, setFormData, errors, formatDate }) => {
 
               <Text>{t("prepDaysPart2")}</Text>
             </Space>
-
-            {shouldAdjustStartDate() && (
-              <Alert
-                type="warning"
-                showIcon
-                style={{ marginTop: 12 }}
-                title={t(
-                  "prepAdjustment",
-                  "Your target start date will be automatically adjusted",
-                )}
-                description={`${t(
-                  "prepAdjustmentDetail",
-                  "to meet the preparation requirement",
-                )}: ${formatDate(getEffectiveMinDate().toDate())}`}
-              />
-            )}
 
             {/* Appointment explanation */}
 

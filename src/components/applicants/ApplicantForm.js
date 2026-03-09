@@ -560,22 +560,11 @@ const ApplicantForm = () => {
     return (
       <>
         <HamburgerMenu />
-        <div
-          className="applicant-form-container-ant"
-          style={{
-            width: "100%",
-            maxWidth: "100%",
-            boxSizing: "border-box",
-            overflowX: "hidden",
-          }}
-        >
-          <div style={{ padding: "4rem 2rem", textAlign: "center" }}>
-            <Spin
-              size="large"
-              tip={t("loadingApplicant", "Loading applicant data...")}
-            />
-          </div>
-        </div>
+        <Spin
+          size="large"
+          fullscreen
+          tip={t("loadingApplicantDetails", "Loading applicant details...")}
+        />
       </>
     );
   }

@@ -422,9 +422,8 @@
   "prepDaysPart2": "days of preparation before the appointment",
   "importantAppointments": "Important: About Your Appointments",
   "consularExplanation": "The dates you select apply to your consular appointment (visa interview).",
-  "ascExplanation": "Your CAS/ASC appointment (biometrics) will be automatically scheduled before your consular appointment.",
-  "ascNote": "Note: The CAS/ASC date may fall before your selected start date.",
+  "ascExplanation": "Your ASC appointment (biometrics) will be automatically scheduled before your consular appointment.",
+  "ascNote": "Note: The ASC date may fall before your selected start date.",
   "endDate": "End date",
-  "prepAdjustment": "Start date will be adjusted",
-  "prepAdjustmentDetail": "To meet the preparation days requirement, the search will start from"
+  "prepAdjustment": "Start date will be adjusted"
 }
