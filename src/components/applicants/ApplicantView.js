@@ -31,7 +31,6 @@ import {
   StopOutlined,
   EnvironmentOutlined,
   CalendarTwoTone,
-  InfoCircleOutlined,
   GlobalOutlined,
 } from "@ant-design/icons";
 import {
@@ -45,12 +44,13 @@ import {
 import { ALL_CITIES } from "../../utils/cities";
 import "./ApplicantView.css";
 import "../../index.css";
+import DateRangeSelector from "../common/DateRangeSelector";
 
 const { useBreakpoint } = Grid;
 const { Title, Text } = Typography;
 
 const ApplicantView = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { id } = useParams();
@@ -67,30 +67,6 @@ const ApplicantView = () => {
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [searchActionLoading, setSearchActionLoading] = useState(false);
-
-  // Format date for display
-  const formatDate = (date) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return date.toLocaleDateString(i18n.language, options);
-  };
-
-  // Calculate search start date based on days
-  const getSearchStartDate = (days) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to midnight to avoid timezone issues
-    const startDate = new Date(today);
-    const daysToAdd = parseInt(days) || 3;
-    startDate.setDate(startDate.getDate() + daysToAdd);
-    return startDate;
-  };
-
-  // Format end date for display
-  const formatEndDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const [year, month, day] = dateString.split("-");
-    const date = new Date(year, month - 1, day);
-    return formatDate(date);
-  };
 
   // Refresh permissions on component mount
   useEffect(() => {
@@ -701,105 +677,15 @@ const ApplicantView = () => {
           </Card>
 
           {/* Target Dates */}
-          <Card
-            title={
-              <Space>
-                <CalendarOutlined />
-                <Typography.Title
-                  style={{ margin: 0, textWrap: "wrap" }}
-                  level={isMobile ? 5 : 4}
-                  strong
-                >
-                  {t("targetDates", "Target Dates")}
-                </Typography.Title>
-              </Space>
-            }
-            style={{ width: "100%", maxWidth: "100%" }}
-          >
-            <div style={cardContentStyle}>
-              {/* Start Date */}
-              <div
-                style={{
-                  backgroundColor: "#fafafa",
-                  padding: 12,
-                  border: "1px solid #f0f0f0",
-                  borderRadius: 8,
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography.Title
-                  type="secondary"
-                  level={5}
-                  style={{ margin: 0, marginBottom: 4 }}
-                >
-                  {t("targetStartDate", "Target Start Date")}
-                </Typography.Title>
-
-                {data.target_start_days ? (
-                  <>
-                    <Typography.Text>
-                      {formatDate(getSearchStartDate(data.target_start_days))}
-                    </Typography.Text>
-
-                    <Alert
-                      type="info"
-                      showIcon
-                      icon={<InfoCircleOutlined />}
-                      message={t(
-                        "targetStartDateExplanationView",
-                        "This is the earliest date the system will start searching for available appointments.",
-                      )}
-                      style={{ marginTop: 8 }}
-                    />
-                  </>
-                ) : (
-                  <Typography.Text>N/A</Typography.Text>
-                )}
-              </div>
-
-              {/* End Date */}
-              <div
-                style={{
-                  backgroundColor: "#fafafa",
-                  padding: 12,
-                  border: "1px solid #f0f0f0",
-                  borderRadius: 8,
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography.Title
-                  type="secondary"
-                  level={5}
-                  style={{ margin: 0, marginBottom: 4 }}
-                >
-                  {t("targetEndDate", "Target End Date")}
-                </Typography.Title>
-
-                {data.target_end_date ? (
-                  <>
-                    <Typography.Text>
-                      {formatEndDate(data.target_end_date)}
-                    </Typography.Text>
-
-                    <Alert
-                      type="info"
-                      showIcon
-                      icon={<InfoCircleOutlined />}
-                      message={t(
-                        "targetEndDateExplanation",
-                        "This is the latest date you would accept for an appointment.",
-                      )}
-                      style={{ marginTop: 8 }}
-                    />
-                  </>
-                ) : (
-                  <Typography.Text>N/A</Typography.Text>
-                )}
-              </div>
-            </div>
-          </Card>
+          <DateRangeSelector
+            readOnly
+            formData={{
+              targetStartDate: data.target_start_date,
+              targetEndDate: data.target_end_date,
+              targetStartDays: data.target_start_days,
+            }}
+            setFormData={() => {}}
+          />
 
           {/* Target Cities */}
           {cities.length > 0 && (

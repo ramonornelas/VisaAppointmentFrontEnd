@@ -16,10 +16,18 @@ import dayjs from "dayjs";
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
-const DateRangeSelector = ({ formData, setFormData, errors, formatDate }) => {
+const DateRangeSelector = ({
+  formData,
+  setFormData,
+  errors,
+  formatDate,
+  readOnly = false,
+}) => {
   const { t } = useTranslation();
 
-  const [usePreparationDays, setUsePreparationDays] = useState(false);
+  const [usePreparationDays, setUsePreparationDays] = useState(
+    (formData?.targetStartDays ?? 0) > 0,
+  );
 
   const screens = Grid.useBreakpoint();
   const isMobile = !screens.md;
@@ -27,6 +35,8 @@ const DateRangeSelector = ({ formData, setFormData, errors, formatDate }) => {
   const today = dayjs();
 
   const handleRangeChange = (dates) => {
+    if (readOnly) return;
+
     if (!dates) {
       setFormData((prev) => ({
         ...prev,
@@ -75,10 +85,11 @@ const DateRangeSelector = ({ formData, setFormData, errors, formatDate }) => {
             <span>{t("startDate", "Start date")}</span>
             <span>{t("endDate", "End date")}</span>
           </div>
+
           <RangePicker
             style={{ width: isMobile ? "100%" : 340 }}
             value={
-              formData.targetStartDate && formData.targetEndDate
+              formData?.targetStartDate && formData?.targetEndDate
                 ? [
                     dayjs(formData.targetStartDate),
                     dayjs(formData.targetEndDate),
@@ -86,6 +97,7 @@ const DateRangeSelector = ({ formData, setFormData, errors, formatDate }) => {
                 : null
             }
             onChange={handleRangeChange}
+            disabled={readOnly}
             disabledDate={(current) =>
               current && current < today.startOf("day")
             }
@@ -97,21 +109,24 @@ const DateRangeSelector = ({ formData, setFormData, errors, formatDate }) => {
         </div>
 
         {errors?.targetStartDate && (
-          <Alert type="error" title={errors.targetStartDate} />
+          <Alert type="error" message={errors.targetStartDate} />
         )}
 
         {errors?.targetEndDate && (
-          <Alert type="error" title={errors.targetEndDate} />
+          <Alert type="error" message={errors.targetEndDate} />
         )}
 
-        {/* Advanced options */}
+        {/* Preparation Days */}
 
         <div>
           <div style={{ marginTop: 12 }}>
             <Space align="center" wrap>
               <Switch
                 checked={usePreparationDays}
+                disabled={readOnly}
                 onChange={(val) => {
+                  if (readOnly) return;
+
                   setUsePreparationDays(val);
 
                   if (!val) {
@@ -128,27 +143,33 @@ const DateRangeSelector = ({ formData, setFormData, errors, formatDate }) => {
               <InputNumber
                 min={0}
                 max={90}
-                value={usePreparationDays ? (formData.targetStartDays ?? 0) : 0}
-                disabled={!usePreparationDays}
+                value={
+                  usePreparationDays
+                    ? formData?.targetStartDays ?? 0
+                    : 0
+                }
+                disabled={!usePreparationDays || readOnly}
                 style={{ width: 70 }}
-                onChange={(v) =>
+                onChange={(v) => {
+                  if (readOnly) return;
+
                   setFormData((prev) => ({
                     ...prev,
                     targetStartDays: v,
-                  }))
-                }
+                  }));
+                }}
               />
 
               <Text>{t("prepDaysPart2")}</Text>
             </Space>
 
-            {/* Appointment explanation */}
+            {/* Explanation */}
 
             <Alert
               style={{ marginTop: 16 }}
               type="info"
               showIcon
-              title={t(
+              message={t(
                 "importantAppointments",
                 "Important: About Your Appointments",
               )}

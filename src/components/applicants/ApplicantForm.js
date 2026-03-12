@@ -41,10 +41,12 @@ const ApplicantForm = () => {
   const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
   const countryCode = sessionStorage.getItem("country_code");
 
+  /*
   // Determine initial targetStartDays based on user permissions
   const initialTargetStartDays = permissions.canManageApplicants()
     ? "1"
     : "120";
+*/
 
   // Form state
   const [formData, setFormData] = useState({
@@ -54,7 +56,7 @@ const ApplicantForm = () => {
     aisScheduleId: "",
     numberOfApplicants: "1",
     applicantActive: true,
-    targetStartDays: initialTargetStartDays, // Basic users: 120 days, Admins: 1 day
+    targetStartDays: 0, // Basic users: 120 days, Admins: 1 day
     targetStartDate: "",
     targetEndDate: "",
     selectedCities: [],
