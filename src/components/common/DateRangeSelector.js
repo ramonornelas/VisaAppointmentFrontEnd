@@ -12,6 +12,7 @@ import {
 import { CalendarOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
+import { permissions } from "../../utils/permissions";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -33,6 +34,10 @@ const DateRangeSelector = ({
   const isMobile = !screens.md;
 
   const today = dayjs();
+
+  const minStartDate = permissions.canSearchUnlimited()
+    ? today
+    : today.add(120, "day");
 
   const handleRangeChange = (dates) => {
     if (readOnly) return;
@@ -99,13 +104,24 @@ const DateRangeSelector = ({
             onChange={handleRangeChange}
             disabled={readOnly}
             disabledDate={(current) =>
-              current && current < today.startOf("day")
+              current && current < minStartDate.startOf("day")
             }
+            defaultPickerValue={[minStartDate, minStartDate]}
             placeholder={[
               t("startDate", "Start date"),
               t("endDate", "End date"),
             ]}
           />
+          {!permissions.canSearchUnlimited() && (
+            <Alert
+              type="info"
+              showIcon
+              message={t(
+                "basicPlanDateRestriction",
+                "Basic plan: In the basic plan, searches can start 120 days from today.",
+              )}
+            />
+          )}
         </div>
 
         {errors?.targetStartDate && (
@@ -144,9 +160,7 @@ const DateRangeSelector = ({
                 min={0}
                 max={90}
                 value={
-                  usePreparationDays
-                    ? formData?.targetStartDays ?? 0
-                    : 0
+                  usePreparationDays ? (formData?.targetStartDays ?? 0) : 0
                 }
                 disabled={!usePreparationDays || readOnly}
                 style={{ width: 70 }}

@@ -425,5 +425,6 @@
   "ascExplanation": "Your ASC appointment (biometrics) will be automatically scheduled before your consular appointment.",
   "ascNote": "Note: The ASC date may fall before your selected start date.",
   "endDate": "End date",
-  "prepAdjustment": "Start date will be adjusted"
+  "prepAdjustment": "Start date will be adjusted",
+  "basicPlanDateRestriction": "In the basic plan, searches can start 120 days from today."
 }
