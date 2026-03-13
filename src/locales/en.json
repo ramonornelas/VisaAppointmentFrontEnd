@@ -426,5 +426,5 @@
   "ascNote": "Note: The ASC date may fall before your selected start date.",
   "endDate": "End date",
   "prepAdjustment": "Start date will be adjusted",
-  "basicPlanDateRestriction": "In the basic plan, searches can start 120 days from today."
+  "basicPlanDateRestriction": "In the basic plan, the earliest appointment you can schedule will always be 120 days away."
 }

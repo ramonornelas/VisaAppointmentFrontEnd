@@ -426,5 +426,5 @@
   "ascNote": "Nota: La fecha de CAS puede quedar antes de tu fecha inicial.",
   "endDate": "Fecha de fin",
   "prepAdjustment": "La fecha de inicio será ajustada",
-  "basicPlanDateRestriction": "En el plan básico, las búsquedas pueden comenzar 120 días a partir de hoy."
+  "basicPlanDateRestriction": "En el plan básico, la cita más cercana que puedes agendar siempre será dentro de 120 días"
 }

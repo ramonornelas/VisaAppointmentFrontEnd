@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   Space,
@@ -21,7 +21,6 @@ const DateRangeSelector = ({
   formData,
   setFormData,
   errors,
-  formatDate,
   readOnly = false,
 }) => {
   const { t } = useTranslation();
@@ -39,6 +38,17 @@ const DateRangeSelector = ({
     ? today
     : today.add(120, "day");
 
+  const isBasicUser = !permissions.canSearchUnlimited();
+
+  useEffect(() => {
+    if (isBasicUser) {
+      setFormData((prev) => ({
+        ...prev,
+        targetStartDays: 120,
+      }));
+    }
+  }, [isBasicUser, setFormData]);
+
   const handleRangeChange = (dates) => {
     if (readOnly) return;
 
@@ -51,11 +61,19 @@ const DateRangeSelector = ({
       return;
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      targetStartDate: dates[0].format("YYYY-MM-DD"),
-      targetEndDate: dates[1].format("YYYY-MM-DD"),
-    }));
+    if (isBasicUser) {
+      setFormData((prev) => ({
+        ...prev,
+        targetStartDate: minStartDate.format("YYYY-MM-DD"),
+        targetEndDate: dates[1]?.format("YYYY-MM-DD"),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        targetStartDate: dates[0].format("YYYY-MM-DD"),
+        targetEndDate: dates[1].format("YYYY-MM-DD"),
+      }));
+    }
   };
 
   return (
@@ -94,12 +112,19 @@ const DateRangeSelector = ({
           <RangePicker
             style={{ width: isMobile ? "100%" : 340 }}
             value={
-              formData?.targetStartDate && formData?.targetEndDate
+              isBasicUser
                 ? [
-                    dayjs(formData.targetStartDate),
-                    dayjs(formData.targetEndDate),
+                    minStartDate,
+                    formData?.targetEndDate
+                      ? dayjs(formData.targetEndDate)
+                      : null,
                   ]
-                : null
+                : formData?.targetStartDate && formData?.targetEndDate
+                  ? [
+                      dayjs(formData.targetStartDate),
+                      dayjs(formData.targetEndDate),
+                    ]
+                  : null
             }
             onChange={handleRangeChange}
             disabled={readOnly}
@@ -114,68 +139,71 @@ const DateRangeSelector = ({
           />
           {!permissions.canSearchUnlimited() && (
             <Alert
+              style={{ marginTop: 16 }}
               type="info"
               showIcon
-              message={t(
+              title={t(
                 "basicPlanDateRestriction",
-                "Basic plan: In the basic plan, searches can start 120 days from today.",
+                "In the basic plan, the earliest appointment you can schedule will always be 120 days away.",
               )}
             />
           )}
         </div>
 
         {errors?.targetStartDate && (
-          <Alert type="error" message={errors.targetStartDate} />
+          <Alert type="error" title={errors.targetStartDate} />
         )}
 
         {errors?.targetEndDate && (
-          <Alert type="error" message={errors.targetEndDate} />
+          <Alert type="error" title={errors.targetEndDate} />
         )}
 
         {/* Preparation Days */}
 
         <div>
           <div style={{ marginTop: 12 }}>
-            <Space align="center" wrap>
-              <Switch
-                checked={usePreparationDays}
-                disabled={readOnly}
-                onChange={(val) => {
-                  if (readOnly) return;
+            {!isBasicUser && (
+              <Space align="center" wrap>
+                <Switch
+                  checked={usePreparationDays}
+                  disabled={readOnly}
+                  onChange={(val) => {
+                    if (readOnly) return;
 
-                  setUsePreparationDays(val);
+                    setUsePreparationDays(val);
 
-                  if (!val) {
+                    if (!val) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        targetStartDays: 0,
+                      }));
+                    }
+                  }}
+                />
+
+                <Text>{t("prepDaysPart1")}</Text>
+
+                <InputNumber
+                  min={0}
+                  max={90}
+                  value={
+                    usePreparationDays ? (formData?.targetStartDays ?? 0) : 0
+                  }
+                  disabled={!usePreparationDays || readOnly}
+                  style={{ width: 70 }}
+                  onChange={(v) => {
+                    if (readOnly) return;
+
                     setFormData((prev) => ({
                       ...prev,
-                      targetStartDays: 0,
+                      targetStartDays: v,
                     }));
-                  }
-                }}
-              />
+                  }}
+                />
 
-              <Text>{t("prepDaysPart1")}</Text>
-
-              <InputNumber
-                min={0}
-                max={90}
-                value={
-                  usePreparationDays ? (formData?.targetStartDays ?? 0) : 0
-                }
-                disabled={!usePreparationDays || readOnly}
-                style={{ width: 70 }}
-                onChange={(v) => {
-                  if (readOnly) return;
-
-                  setFormData((prev) => ({
-                    ...prev,
-                    targetStartDays: v,
-                  }));
-                }}
-              />
-
-              <Text>{t("prepDaysPart2")}</Text>
-            </Space>
+                <Text>{t("prepDaysPart2")}</Text>
+              </Space>
+            )}
 
             {/* Explanation */}
 
@@ -183,7 +211,7 @@ const DateRangeSelector = ({
               style={{ marginTop: 16 }}
               type="info"
               showIcon
-              message={t(
+              title={t(
                 "importantAppointments",
                 "Important: About Your Appointments",
               )}
