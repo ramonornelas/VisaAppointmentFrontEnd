@@ -415,5 +415,16 @@
   "registrationSuccessDesc": "We have sent a verification email to:",
   "checkInbox": "Please check your inbox and spam folder.",
   "expand": "Expand",
-  "collapse": "Collapse"
+  "collapse": "Collapse",
+  "dateRangeWhenICanAttend": "Date range when I can attend my appointment",
+  "advancedOptions": "Advanced options",
+  "prepDaysPart1": "I need at least",
+  "prepDaysPart2": "days of preparation before the appointment",
+  "importantAppointments": "Important: About Your Appointments",
+  "consularExplanation": "The dates you select apply to your consular appointment (visa interview).",
+  "ascExplanation": "Your ASC appointment (biometrics) will be automatically scheduled before your consular appointment.",
+  "ascNote": "Note: The ASC date may fall before your selected start date.",
+  "endDate": "End date",
+  "prepAdjustment": "Start date will be adjusted",
+  "basicPlanDateRestriction": "In the basic plan, the earliest appointment you can schedule will always be 120 days away."
 }
