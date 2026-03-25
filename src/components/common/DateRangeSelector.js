@@ -13,6 +13,7 @@ import { CalendarOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 import { permissions } from "../../utils/permissions";
+import "./DateRangeSelector.css";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -34,34 +35,27 @@ const DateRangeSelector = ({
 
   const today = dayjs();
 
-  const minStartDate = permissions.canSearchUnlimited()
-    ? today
-    : today.add(120, "day");
-
   const isBasicUser = !permissions.canSearchUnlimited();
 
+  const minStartDate = isBasicUser ? today.add(120, "day") : today;
+
+  // 🔥 FIX PRINCIPAL: Start date fijo desde el inicio
   useEffect(() => {
     if (isBasicUser) {
       setFormData((prev) => ({
         ...prev,
         targetStartDays: 120,
+        targetStartDate: minStartDate.format("YYYY-MM-DD"),
       }));
     }
-  }, [isBasicUser, setFormData]);
+  }, [isBasicUser, minStartDate, setFormData]);
 
   const handleRangeChange = (dates) => {
     if (readOnly) return;
-
-    if (!dates) {
-      setFormData((prev) => ({
-        ...prev,
-        targetStartDate: "",
-        targetEndDate: "",
-      }));
-      return;
-    }
+    if (!dates) return;
 
     if (isBasicUser) {
+      // 🔒 Ignorar cambio de start date
       setFormData((prev) => ({
         ...prev,
         targetStartDate: minStartDate.format("YYYY-MM-DD"),
@@ -95,6 +89,17 @@ const DateRangeSelector = ({
         {/* Calendar */}
 
         <div>
+          {!permissions.canSearchUnlimited() && (
+            <Alert
+              style={{ marginBottom: 16 }}
+              type="info"
+              showIcon
+              message={t(
+                "basicPlanDateRestriction",
+                "Basic plan: the earliest appointment you can schedule will always be 120 days from today.",
+              )}
+            />
+          )}
           <div
             style={{
               display: "flex",
@@ -110,6 +115,7 @@ const DateRangeSelector = ({
           </div>
 
           <RangePicker
+            className={isBasicUser ? "basic-range-picker" : ""}
             style={{ width: isMobile ? "100%" : 340 }}
             value={
               isBasicUser
@@ -128,34 +134,32 @@ const DateRangeSelector = ({
             }
             onChange={handleRangeChange}
             disabled={readOnly}
-            disabledDate={(current) =>
-              current && current < minStartDate.startOf("day")
-            }
-            defaultPickerValue={[minStartDate, minStartDate]}
-            placeholder={[
-              t("startDate", "Start date"),
-              t("endDate", "End date"),
-            ]}
+            disabledDate={(current, info) => {
+              if (!current) return false;
+
+              // BASIC USER
+              if (isBasicUser) {
+                // 🔒 bloquear selección de START (primer click)
+                if (!info?.from) {
+                  return true; // bloquea TODO → no puede seleccionar start
+                }
+
+                // permitir solo END >= minStartDate
+                return current < minStartDate.startOf("day");
+              }
+
+              // PREMIUM (comportamiento normal)
+              return current < minStartDate.startOf("day");
+            }}
           />
-          {!permissions.canSearchUnlimited() && (
-            <Alert
-              style={{ marginTop: 16 }}
-              type="info"
-              showIcon
-              title={t(
-                "basicPlanDateRestriction",
-                "In the basic plan, the earliest appointment you can schedule will always be 120 days away.",
-              )}
-            />
-          )}
         </div>
 
         {errors?.targetStartDate && (
-          <Alert type="error" title={errors.targetStartDate} />
+          <Alert type="error" message={errors.targetStartDate} />
         )}
 
         {errors?.targetEndDate && (
-          <Alert type="error" title={errors.targetEndDate} />
+          <Alert type="error" message={errors.targetEndDate} />
         )}
 
         {/* Preparation Days */}
@@ -211,7 +215,7 @@ const DateRangeSelector = ({
               style={{ marginTop: 16 }}
               type="info"
               showIcon
-              title={t(
+              message={t(
                 "importantAppointments",
                 "Important: About Your Appointments",
               )}
@@ -224,12 +228,12 @@ const DateRangeSelector = ({
                   <br />
                   {t(
                     "ascExplanation",
-                    "Your CAS/ASC appointment (biometrics) will be automatically scheduled before your consular appointment, as close as possible to it.",
+                    "Your ASC appointment (biometrics) will be automatically scheduled before your consular appointment, as close as possible to it.",
                   )}
                   <br />
                   {t(
                     "ascNote",
-                    "Note: The CAS/ASC date may fall before your selected start date.",
+                    "Note: The ASC date may fall before your selected start date.",
                   )}
                 </>
               }

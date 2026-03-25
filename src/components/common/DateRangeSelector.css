@@ -1,0 +1,7 @@
+.basic-range-picker .ant-picker-input:first-child input {
+  cursor: not-allowed;
+}
+
+.basic-range-picker .ant-picker-input input {
+  text-align: center;
+}

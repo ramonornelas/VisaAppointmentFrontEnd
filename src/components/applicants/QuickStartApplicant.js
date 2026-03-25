@@ -37,8 +37,6 @@ import {
   EnvironmentOutlined,
   CloseOutlined,
   ThunderboltOutlined,
-  ClockCircleOutlined,
-  InfoCircleOutlined,
 } from "@ant-design/icons";
 import "./ApplicantForm.css";
 import "../auth/RegisterUser.css";
@@ -69,7 +67,7 @@ const QuickStartApplicant = () => {
   const countryOptions = useMemo(
     () =>
       countries.map((c) => ({ value: c.value, label: c.label, flag: c.flag })),
-    [countries]
+    [countries],
   );
   const countryCode = Form.useWatch("country_code", form) || "";
 
@@ -91,12 +89,6 @@ const QuickStartApplicant = () => {
   };
   const searchStartDate = getSearchStartDate();
 
-  // Format date for display
-  const formatDate = (date) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return date.toLocaleDateString(undefined, options);
-  };
-
   const formatApplicantDate = (dateVal) => {
     if (dateVal == null || dateVal === "") return "N/A";
     return dateVal;
@@ -108,7 +100,7 @@ const QuickStartApplicant = () => {
     const expirationDate = new Date(
       now.getFullYear(),
       now.getMonth() + 1,
-      now.getDate()
+      now.getDate(),
     );
     return expirationDate.toISOString();
   };
@@ -153,13 +145,13 @@ const QuickStartApplicant = () => {
           setRolesLoaded(true);
         } else if (isMounted) {
           setSubmitError(
-            "Could not find the basic_user role. Please contact support."
+            "Could not find the basic_user role. Please contact support.",
           );
         }
       } catch (err) {
         if (isMounted) {
           setSubmitError(
-            "Failed to load configuration. Please try again later."
+            "Failed to load configuration. Please try again later.",
           );
         }
       }
@@ -199,13 +191,13 @@ const QuickStartApplicant = () => {
         const codeLower = countryCode.toLowerCase();
         // 1) Direct match by full value
         let found = countries.find(
-          (c) => c.value && c.value.toLowerCase() === codeLower
+          (c) => c.value && c.value.toLowerCase() === codeLower,
         );
         // 2) Fallback: match by suffix (e.g., "es-mx" -> "mx")
         if (!found) {
           found = countries.find(
             (c) =>
-              c.value && c.value.split("-").pop().toLowerCase() === codeLower
+              c.value && c.value.split("-").pop().toLowerCase() === codeLower,
           );
         }
         if (found) {
@@ -222,14 +214,14 @@ const QuickStartApplicant = () => {
           } catch (err) {
             console.warn(
               "[QuickStart] Metrics error tracking location_detected:",
-              err
+              err,
             );
           }
         } else {
           // Don't show user any message when country is not supported; keep silent
           console.warn(
             "[QuickStart] Detected country not supported by list:",
-            countryCode
+            countryCode,
           );
           try {
             const uid = sessionStorage.getItem("fastVisa_userid");
@@ -243,7 +235,7 @@ const QuickStartApplicant = () => {
           } catch (err) {
             console.warn(
               "[QuickStart] Metrics error tracking location_detected (no match):",
-              err
+              err,
             );
           }
         }
@@ -277,7 +269,7 @@ const QuickStartApplicant = () => {
             // Ignore and fallback
             console.warn(
               "[QuickStart] Reverse geocode failed, falling back to IP geo",
-              err
+              err,
             );
           }
         }
@@ -321,8 +313,8 @@ const QuickStartApplicant = () => {
       setAisAuthError(
         t(
           "aisCredentialsRequired",
-          "Please enter AIS email, password and select country first."
-        )
+          "Please enter AIS email, password and select country first.",
+        ),
       );
       return;
     }
@@ -348,9 +340,9 @@ const QuickStartApplicant = () => {
           data?.error
             ? t(
                 "invalidCredentials",
-                "Invalid credentials. Please check your email and password."
+                "Invalid credentials. Please check your email and password.",
               )
-            : t("noAisApplicants", "No applicants found for this account.")
+            : t("noAisApplicants", "No applicants found for this account."),
         );
       }
     } catch (err) {
@@ -358,8 +350,8 @@ const QuickStartApplicant = () => {
       setAisAuthError(
         t(
           "invalidCredentials",
-          "Invalid credentials. Please check your email and password."
-        )
+          "Invalid credentials. Please check your email and password.",
+        ),
       );
     } finally {
       setLoadApplicantsLoading(false);
@@ -375,7 +367,7 @@ const QuickStartApplicant = () => {
 
     if (!rolesLoaded || !basicRoleId) {
       setSubmitError(
-        t("loadingConfig", "Configuration is still loading. Please wait.")
+        t("loadingConfig", "Configuration is still loading. Please wait."),
       );
       return;
     }
@@ -388,8 +380,8 @@ const QuickStartApplicant = () => {
       setSubmitError(
         t(
           "selectAisApplicant",
-          "Please load and select an applicant from the list."
-        )
+          "Please load and select an applicant from the list.",
+        ),
       );
       return;
     }
@@ -463,7 +455,7 @@ const QuickStartApplicant = () => {
         numberOfApplicants = "1";
         console.log(
           "[QuickStart] Country has no cities, using default values:",
-          { username, userName }
+          { username, userName },
         );
       }
 
@@ -498,7 +490,7 @@ const QuickStartApplicant = () => {
         console.error("[QuickStart] User creation failed:", userResult.error);
         throw new Error(
           userResult.error ||
-            t("userCreationFailed", "Failed to create user account")
+            t("userCreationFailed", "Failed to create user account"),
         );
       }
       console.log("[QuickStart] User created successfully");
@@ -530,7 +522,6 @@ const QuickStartApplicant = () => {
         ais_schedule_id: aisScheduleId,
         number_of_applicants: numberOfApplicants,
         applicant_active: true,
-        target_start_mode: "days",
         target_start_days: "120",
         target_start_date: "-",
         target_end_date: values.targetEndDate,
@@ -550,11 +541,11 @@ const QuickStartApplicant = () => {
 
       if (!applicantData || !applicantData.id) {
         console.error(
-          "[QuickStart] Failed to create applicant - no ID returned"
+          "[QuickStart] Failed to create applicant - no ID returned",
         );
         // If we can't get the applicant ID, we can't continue to the view page
         throw new Error(
-          t("applicantCreationFailed", "Failed to create applicant")
+          t("applicantCreationFailed", "Failed to create applicant"),
         );
       }
 
@@ -568,7 +559,7 @@ const QuickStartApplicant = () => {
 
       if (!loginResult || !loginResult.success) {
         console.warn(
-          "[QuickStart] Auto-login failed, but user and applicant were created successfully"
+          "[QuickStart] Auto-login failed, but user and applicant were created successfully",
         );
         // Continue anyway - user can log in manually
       } else {
@@ -590,13 +581,13 @@ const QuickStartApplicant = () => {
         if (permissionsData) {
           sessionStorage.setItem(
             "fastVisa_permissions",
-            JSON.stringify(permissionsData)
+            JSON.stringify(permissionsData),
           );
         }
       } catch (permError) {
         console.warn(
           "[QuickStart] Failed to fetch permissions, but continuing:",
-          permError
+          permError,
         );
       }
 
@@ -608,7 +599,7 @@ const QuickStartApplicant = () => {
       } catch (containerError) {
         console.warn(
           "[QuickStart] Failed to start container, but continuing:",
-          containerError
+          containerError,
         );
       }
 
@@ -623,7 +614,7 @@ const QuickStartApplicant = () => {
         name: error.name,
       });
       setSubmitError(
-        error.message || t("unexpectedError", "An unexpected error occurred")
+        error.message || t("unexpectedError", "An unexpected error occurred"),
       );
       setCurrentStep(1);
       setLoading(false);
@@ -657,7 +648,7 @@ const QuickStartApplicant = () => {
                   <p style={{ color: "#666", marginTop: "1rem" }}>
                     {t(
                       "pleaseWait",
-                      "Please wait while we set up your account"
+                      "Please wait while we set up your account",
                     )}
                   </p>
                 </>
@@ -670,7 +661,7 @@ const QuickStartApplicant = () => {
                   <p style={{ color: "#666", marginTop: "1rem" }}>
                     {t(
                       "almostDone",
-                      "Almost done! Setting up your appointment search"
+                      "Almost done! Setting up your appointment search",
                     )}
                   </p>
                 </>
@@ -706,7 +697,7 @@ const QuickStartApplicant = () => {
             <Typography.Text type="secondary" style={{ fontSize: 15 }}>
               {t(
                 "quickStartDescription",
-                "Start using the app immediately. We'll create your account automatically."
+                "Start using the app immediately. We'll create your account automatically.",
               )}
             </Typography.Text>
           </Space>
@@ -774,7 +765,7 @@ const QuickStartApplicant = () => {
                       required: true,
                       message: t(
                         "countryRequired",
-                        "Country selection is required"
+                        "Country selection is required",
                       ),
                     },
                   ]}
@@ -853,7 +844,7 @@ const QuickStartApplicant = () => {
               >
                 {t(
                   "aisCredentialsInfo",
-                  "Enter your AIS login credentials. We will automatically retrieve your schedule ID and number of applicants from the AIS system."
+                  "Enter your AIS login credentials. We will automatically retrieve your schedule ID and number of applicants from the AIS system.",
                 )}
               </Typography.Text>
               <div style={cardContentStyle}>
@@ -867,14 +858,14 @@ const QuickStartApplicant = () => {
                             required: true,
                             message: t(
                               "aisEmailRequired",
-                              "AIS Email is required"
+                              "AIS Email is required",
                             ),
                           },
                           {
                             type: "email",
                             message: t(
                               "invalidEmail",
-                              "Please enter a valid email"
+                              "Please enter a valid email",
                             ),
                           },
                         ]
@@ -906,7 +897,7 @@ const QuickStartApplicant = () => {
                             required: true,
                             message: t(
                               "aisPasswordRequired",
-                              "AIS Password is required"
+                              "AIS Password is required",
                             ),
                           },
                         ]
@@ -948,7 +939,7 @@ const QuickStartApplicant = () => {
                       {aisAuthSuccess
                         ? t(
                             "authenticationSuccessful",
-                            "Authentication Successful"
+                            "Authentication Successful",
                           )
                         : t("authenticate", "Authenticate")}
                     </Button>
@@ -962,7 +953,7 @@ const QuickStartApplicant = () => {
                     >
                       {t(
                         "clickToVerifyCredentials",
-                        "Click to verify your Visa Appointment System credentials and automatically retrieve your Schedule ID"
+                        "Click to verify your Visa Appointment System credentials and automatically retrieve your Schedule ID",
                       )}
                     </Typography.Text>
                   </div>
@@ -995,7 +986,7 @@ const QuickStartApplicant = () => {
                           showIcon
                           message={t(
                             "oneApplicantFound",
-                            "1 applicant found for this account."
+                            "1 applicant found for this account.",
                           )}
                           style={{ marginBottom: 16 }}
                         />
@@ -1007,7 +998,7 @@ const QuickStartApplicant = () => {
                             showIcon
                             message={t(
                               "selectApplicant",
-                              "Please select an applicant from the list"
+                              "Please select an applicant from the list",
                             )}
                             style={{ marginBottom: 16 }}
                           />
@@ -1026,7 +1017,7 @@ const QuickStartApplicant = () => {
                           style={{ width: "100%" }}
                           onChange={(e) => {
                             const app = aisApplicantsList.find(
-                              (a) => a.schedule_id === e.target.value
+                              (a) => a.schedule_id === e.target.value,
                             );
                             if (app) handleSelectApplicant(app);
                           }}
@@ -1088,28 +1079,28 @@ const QuickStartApplicant = () => {
                                     <Typography.Text type="secondary">
                                       {t(
                                         "ds160Confirmation",
-                                        "DS-160 confirmation"
+                                        "DS-160 confirmation",
                                       )}
                                       : {app.ds_160_id || "—"}
                                     </Typography.Text>
                                     <Typography.Text type="secondary">
                                       {t(
                                         "consulAppointmentDate",
-                                        "Consul appointment date"
+                                        "Consul appointment date",
                                       )}
                                       :{" "}
                                       {formatApplicantDate(
-                                        app.consul_appointment_date
+                                        app.consul_appointment_date,
                                       )}
                                     </Typography.Text>
                                     <Typography.Text type="secondary">
                                       {t(
                                         "ascAppointmentDate",
-                                        "ASC appointment date"
+                                        "ASC appointment date",
                                       )}
                                       :{" "}
                                       {formatApplicantDate(
-                                        app.asc_appointment_date
+                                        app.asc_appointment_date,
                                       )}
                                     </Typography.Text>
                                   </Space>
@@ -1125,7 +1116,7 @@ const QuickStartApplicant = () => {
                           showIcon
                           message={t(
                             "selectedApplicantSummary",
-                            "Selected applicant"
+                            "Selected applicant",
                           )}
                           style={{ marginTop: 16 }}
                         />
@@ -1146,101 +1137,71 @@ const QuickStartApplicant = () => {
                     level={isMobile ? 5 : 4}
                     strong
                   >
-                    {t("targetDates", "Target Dates")}
+                    {t(
+                      "dateRangeWhenICanAttend",
+                      "Date range when I can attend my appointment",
+                    )}
                   </Typography.Title>
                 </Space>
               }
             >
-              <Space orientation="vertical" size={16} style={{ width: "100%" }}>
+              <Space direction="vertical" size={16} style={{ width: "100%" }}>
+                {/* 🔵 ALERT BASIC */}
                 <Alert
                   type="info"
                   showIcon
-                  message={
-                    <span>
-                      <strong>
-                        {t(
-                          "basicUserSearchInfo",
-                          "Basic User Search Settings:"
-                        )}
-                      </strong>{" "}
-                      {t(
-                        "basicUserSearchDesc",
-                        "Your appointment search will start 4 months from today."
-                      )}{" "}
-                      <strong>
-                        {t("premiumUpgradeNote", "Premium users")}
-                      </strong>{" "}
-                      {t(
-                        "premiumCanSearchTomorrow",
-                        "can search for appointments starting from tomorrow."
-                      )}
-                    </span>
-                  }
+                  message={t(
+                    "basicPlanDateRestriction",
+                    "Basic plan: the earliest appointment you can schedule will always be 120 days from today.",
+                  )}
                 />
-                <div style={cardContentStyle}>
-                  <div>
-                    <Typography.Title
-                      type="secondary"
-                      level={5}
-                      style={{ margin: 0, marginBottom: 8, display: "block" }}
-                    >
-                      {t("searchStartsIn", "Search Starts In")}
-                    </Typography.Title>
-                    <Card size="small" style={{ background: "#fafafa" }}>
-                      <Space
-                        orientation="vertical"
-                        size={8}
-                        style={{ width: "100%" }}
-                      >
-                        <Space>
-                          <ClockCircleOutlined style={{ color: "#6b7280" }} />
-                          <Typography.Text strong>
-                            {t(
-                              "fourMonthsFromToday",
-                              "4 months from today (120 days)"
-                            )}
-                          </Typography.Text>
-                        </Space>
-                        <Typography.Text type="secondary">
-                          <CalendarOutlined style={{ marginRight: 8 }} />
-                          {t("startDate", "Start date")}:{" "}
-                          {formatDate(searchStartDate)}
-                        </Typography.Text>
-                        <Typography.Text
-                          type="secondary"
-                          style={{
-                            fontSize: "0.875rem",
-                            display: "block",
-                            marginTop: 4,
-                          }}
-                        >
-                          <InfoCircleOutlined style={{ marginRight: 6 }} />
-                          {t(
-                            "targetStartDateExplanationView",
-                            "This is the earliest date the system will start searching for available appointments."
-                          )}
-                        </Typography.Text>
-                      </Space>
-                    </Card>
-                  </div>
 
+                {/* LABELS COMO RANGE PICKER */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: isMobile ? "100%" : 340,
+                    marginBottom: 6,
+                    fontSize: "0.8rem",
+                    color: "#8c8c8c",
+                  }}
+                >
+                  <span>{t("startDate", "Start date")}</span>
+                  <span>{t("endDate", "End date")}</span>
+                </div>
+
+                {/* INPUTS (SIMULANDO RANGE PICKER) */}
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 8,
+                    width: isMobile ? "100%" : 340,
+                  }}
+                >
+                  {/* 🔒 START DATE */}
+                  <Input
+                    value={searchStartDate.toISOString().split("T")[0]}
+                    disabled
+                    style={{
+                      textAlign: "center",
+                      backgroundColor: "#f5f5f5",
+                    }}
+                  />
+
+                  {/* SEPARADOR */}
+                  <div style={{ display: "flex", alignItems: "center" }}>→</div>
+
+                  {/* 🟢 END DATE */}
                   <Form.Item
                     name="targetEndDate"
-                    label={
-                      <Typography.Title
-                        type="secondary"
-                        level={5}
-                        style={{ margin: 0, display: "block" }}
-                      >
-                        {t("targetEndDate", "Target End Date")}
-                      </Typography.Title>
-                    }
+                    style={{ marginBottom: 0, flex: 1 }}
                     rules={[
                       {
                         required: true,
                         message: t(
                           "endDateRequired",
-                          "Target end date is required"
+                          "Target end date is required",
                         ),
                       },
                       () => ({
@@ -1251,35 +1212,49 @@ const QuickStartApplicant = () => {
                             new Error(
                               t(
                                 "endDateMinimum",
-                                "Target end date must be at least 210 days from today"
-                              )
-                            )
+                                "Target end date must be at least 210 days from today",
+                              ),
+                            ),
                           );
                         },
                       }),
                     ]}
                   >
                     <Input
-                      size={btnSize}
                       type="date"
                       min={minEndDate}
                       style={{ width: "100%" }}
                     />
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        fontSize: "0.75rem",
-                        display: "block",
-                        marginTop: 4,
-                      }}
-                    >
-                      {t(
-                        "targetEndDateExplanation",
-                        "This is the latest date you would accept for an appointment. The search will look for appointments between 4 months from now and this date."
-                      )}
-                    </Typography.Text>
                   </Form.Item>
                 </div>
+
+                {/* EXPLANATION */}
+                <Alert
+                  type="info"
+                  showIcon
+                  message={t(
+                    "importantAppointments",
+                    "Important: About Your Appointments",
+                  )}
+                  description={
+                    <>
+                      {t(
+                        "consularExplanation",
+                        "The dates you select apply to your consular appointment (visa interview).",
+                      )}
+                      <br />
+                      {t(
+                        "ascExplanation",
+                        "Your CAS/ASC appointment (biometrics) will be automatically scheduled before your consular appointment.",
+                      )}
+                      <br />
+                      {t(
+                        "ascNote",
+                        "Note: The CAS/ASC date may fall before your selected start date.",
+                      )}
+                    </>
+                  }
+                />
               </Space>
             </Card>
 
@@ -1323,7 +1298,7 @@ const QuickStartApplicant = () => {
                               min: 1,
                               message: t(
                                 "cityRequired",
-                                "Please select at least one city"
+                                "Please select at least one city",
                               ),
                             },
                           ]
@@ -1335,7 +1310,7 @@ const QuickStartApplicant = () => {
                       mode="multiple"
                       placeholder={t(
                         "cityRequired",
-                        "Please select at least one city"
+                        "Please select at least one city",
                       )}
                       options={cities.map((c) => ({
                         value: c.city_code,
