@@ -415,5 +415,13 @@
   "registrationSuccessDesc": "Hemos enviado un correo de verificación a:",
   "checkInbox": "Por favor revisa tu bandeja de entrada y carpeta de spam.",
   "expand": "Expandir",
-  "collapse": "Colapsar"
+  "collapse": "Colapsar",
+  "vigencia": "Vigencia (días)",
+  "sendByEmail": "Enviar el enlace al correo registrado del solicitante.",
+  "errorPrefix": "Error",
+  "generate": "Generar",
+  "linkGeneratedSuccessfully": "Enlace generado exitosamente",
+  "failedToGenerateLink": "Error al generar el enlace",
+  "generateLinkApplicant": "¿Estás seguro de que deseas generar el enlace DS-160?",
+  "generateLink": "Generar Enlace DS-160"
 }
