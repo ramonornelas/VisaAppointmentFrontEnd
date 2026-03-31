@@ -38,6 +38,7 @@ import {
   ApplicantUpdate,
   ApplicantDetails,
   ApplicantDelete,
+  UserDetails,
 } from "../../services/APIFunctions";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/AuthContext";
@@ -50,7 +51,7 @@ const { useBreakpoint } = Grid;
 
 const Applicants = () => {
   const { t } = useTranslation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, trialActive, subscriptionExpired } = useAuth();
   const screens = useBreakpoint();
   const isMobile = !screens.md; // Cards when width < 768px (md breakpoint)
   const [data, setData] = useState([]);
@@ -70,6 +71,9 @@ const Applicants = () => {
   // Use centralized permissions utility
   const canViewAllApplicants = permissions.canViewAllApplicants();
   const canClearStatus = permissions.canClearStatus();
+
+  // Check if user can start searches (trial active OR subscription not expired)
+  const canStartSearch = trialActive || !subscriptionExpired;
 
   // Check if user can manage applicants and redirect accordingly
   useEffect(() => {
@@ -212,9 +216,52 @@ const Applicants = () => {
 
     try {
       if (isActive === "Stopped") {
-        const concurrentLimit = parseInt(
-          sessionStorage.getItem("concurrent_applicants")
+        // Check if user can start searches
+        if (!canStartSearch) {
+          AntModal.confirm({
+            title: t("subscriptionExpired", "Subscription Expired"),
+            content: t(
+              "renewSubscriptionMessage",
+              "Your subscription has expired. Please renew your subscription to continue using the service."
+            ),
+            okText: t("renewSubscription", "Renew Subscription"),
+            onOk: () => {
+              navigate("/subscription");
+            },
+            cancelText: t("cancel", "Cancel"),
+            icon: null,
+          });
+
+          await metrics.trackCustomEvent("subscription_expired_block", {
+            applicantId: id,
+            trialActive: trialActive,
+            subscriptionExpired: subscriptionExpired,
+            timestamp: new Date().toISOString(),
+          });
+
+          return;
+        }
+
+        let concurrentLimit = parseInt(
+          sessionStorage.getItem("concurrent_applicants"),
+          10
         );
+
+        if (Number.isNaN(concurrentLimit) || concurrentLimit <= 0) {
+          const latestUser = await UserDetails(fastVisaUserId);
+          concurrentLimit = parseInt(latestUser?.concurrent_applicants, 10);
+          if (!Number.isNaN(concurrentLimit) && concurrentLimit > 0) {
+            sessionStorage.setItem(
+              "concurrent_applicants",
+              String(concurrentLimit)
+            );
+          }
+        }
+
+        if (Number.isNaN(concurrentLimit) || concurrentLimit <= 0) {
+          concurrentLimit = 1;
+        }
+
         const applicantsResponse = await ApplicantSearch(fastVisaUserId);
         const runningCount = applicantsResponse.filter(
           (a) => a.search_status === "Running"

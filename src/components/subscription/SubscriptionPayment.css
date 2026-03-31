@@ -1,0 +1,183 @@
+.subscription-page-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: #1e293b;
+}
+
+.subscription-header {
+  margin-bottom: 1.5rem;
+}
+
+.subscription-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #0f172a;
+}
+
+.subscription-header p {
+  margin-top: 0.5rem;
+  color: #475569;
+}
+
+.subscription-step-section,
+.subscription-payment-section,
+.subscription-success-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+}
+
+.subscription-step-section h2,
+.subscription-payment-section h3,
+.subscription-success-card h2 {
+  margin-top: 0;
+}
+
+.subscription-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+}
+
+.subscription-plan-card {
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  padding: 1rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  height: 100%;
+}
+
+.subscription-plan-card .ant-card-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.subscription-plan-card:hover {
+  border-color: #93c5fd;
+  transform: translateY(-2px);
+}
+
+.subscription-plan-card.selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.plan-price-mxn {
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.plan-price-usd {
+  margin-top: 0.25rem;
+  color: #475569;
+}
+
+.subscription-method-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-whatsapp {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.bank-details-box {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.subscription-error-message {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-error {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.exchange-rate-warning {
+  margin-top: 0.75rem;
+  color: #a16207;
+  background: #fef9c3;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 0.6rem;
+}
+
+.subscription-processing-text {
+  margin-top: 0.75rem;
+  color: #334155;
+}
+
+.subscription-pending-box {
+  margin-top: 0.75rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.subscription-success-detail {
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .subscription-page-container {
+    padding: 1rem;
+  }
+
+  .subscription-header h1 {
+    font-size: 1.5rem;
+  }
+}

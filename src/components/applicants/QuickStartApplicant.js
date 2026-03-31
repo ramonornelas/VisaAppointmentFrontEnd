@@ -102,15 +102,15 @@ const QuickStartApplicant = () => {
     return dateVal;
   };
 
-  // Get expiration date (one month from now)
-  const getExpirationDate = () => {
+  // Get subscription expiration date (one month from now for trial users)
+  const getSubscriptionExpirationDate = () => {
     const now = new Date();
     const expirationDate = new Date(
       now.getFullYear(),
       now.getMonth() + 1,
       now.getDate()
     );
-    return expirationDate.toISOString().split("T")[0];
+    return expirationDate.toISOString();
   };
 
   // Generate a random password
@@ -483,7 +483,7 @@ const QuickStartApplicant = () => {
         password: generatedPassword,
         phone_number: values.phone_number || "",
         active: true,
-        expiration_date: getExpirationDate(),
+        subscription_expires_at: getSubscriptionExpirationDate(),
         country_code: values.country_code,
         role_id: basicRoleId,
         sendEmail: true,

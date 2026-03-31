@@ -13,7 +13,7 @@ const PayPalPayment = ({
   onError,
   onCancel,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [paypalConfig, setPaypalConfig] = useState(null);
@@ -52,14 +52,32 @@ const PayPalPayment = ({
     loadPayPalConfig();
   }, []);
 
-  const initialOptions = paypalConfig
-    ? {
-        "client-id": paypalConfig.clientId,
-        currency: selectedCurrency,
-        intent: "capture",
-        environment: paypalConfig.environment || "sandbox", // sandbox or live
-      }
-    : null;
+  const initialOptions = useMemo(
+    () =>
+      paypalConfig
+        ? {
+            "client-id": paypalConfig.clientId,
+            currency: selectedCurrency,
+            intent: "capture",
+            "disable-funding": "card",
+            environment: paypalConfig.environment || "sandbox", // sandbox or live
+            locale: i18n.language === "es" ? "es_MX" : "en_US",
+          }
+        : null,
+    [paypalConfig, selectedCurrency, i18n.language],
+  );
+
+  const formatAmount = (value) => {
+    const numericValue = Number(value);
+    if (Number.isNaN(numericValue)) {
+      return "0,000.00";
+    }
+
+    return new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(numericValue);
+  };
 
   const handleCurrencyChange = (currency) => {
     // Track currency selection
@@ -254,7 +272,7 @@ const PayPalPayment = ({
             <span style={{ fontSize: "1.4rem" }}>🇺🇸</span>
             <span>{t("usdDollars", "USD (Dollars)")}</span>
             <span style={{ fontSize: "0.9rem", fontWeight: "700" }}>
-              ${amount}
+              ${formatAmount(amount)}
             </span>
           </button>
           <button
@@ -296,7 +314,7 @@ const PayPalPayment = ({
             <span style={{ fontSize: "1.4rem" }}>🇲🇽</span>
             <span>{t("mxnPesos", "MXN (Pesos)")}</span>
             <span style={{ fontSize: "0.9rem", fontWeight: "700" }}>
-              ${amountMXN}
+              ${formatAmount(amountMXN)}
             </span>
           </button>
         </div>
@@ -317,7 +335,7 @@ const PayPalPayment = ({
         <p style={{ margin: "5px 0", color: "#555" }}>
           <strong>{t("amount", "Amount")}:</strong>{" "}
           {selectedCurrency === "USD" ? "$" : "$"}
-          {currentAmount} {selectedCurrency}
+          {formatAmount(currentAmount)} {selectedCurrency}
         </p>
         <p style={{ margin: "5px 0", color: "#555" }}>
           <strong>{t("description", "Description")}:</strong> {description}
@@ -358,13 +376,17 @@ const PayPalPayment = ({
       )}
 
       {initialOptions && (
-        <PayPalScriptProvider options={initialOptions} key={selectedCurrency}>
+        <PayPalScriptProvider
+          options={initialOptions}
+          key={`${selectedCurrency}-${i18n.language}`}
+        >
           <PayPalButtons
+            fundingSource="paypal"
             style={{
               layout: "vertical",
               color: "blue",
               shape: "rect",
-              label: "paypal",
+              label: "pay",
             }}
             createOrder={handleCreateOrder}
             onApprove={handleApprove}

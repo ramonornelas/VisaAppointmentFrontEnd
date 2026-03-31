@@ -4,18 +4,22 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../utils/AuthContext";
 import { UserDetails, getRoles } from "../../services/APIFunctions";
+import { Tag, Button, Divider } from "antd";
+import { CreditCardOutlined, CalendarOutlined, TeamOutlined, ClockCircleOutlined, StarOutlined } from "@ant-design/icons";
 import "./HamburgerMenu.css";
 import EnvironmentBadge from "./EnvironmentBadge";
+import TrialPaymentButton from "./TrialPaymentButton";
 
 import { permissions } from "../../utils/permissions";
 
 const HamburgerMenu = () => {
   const { t } = useTranslation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, trialActive, subscriptionExpired, paymentPending } = useAuth();
   const location = useLocation();
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [userRole, setUserRole] = useState("");
+  const [userSubscriptionData, setUserSubscriptionData] = useState(null);
   const userMenuRef = useRef(null);
   const fastVisa_userid = sessionStorage.getItem("fastVisa_userid");
   const fastVisa_username = sessionStorage.getItem("fastVisa_username");
@@ -59,11 +63,44 @@ const HamburgerMenu = () => {
     return roleMap[roleName] || roleName;
   };
 
+  const formatExpirationDate = (isoDate) => {
+    if (!isoDate) return "—";
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  const getSubscriptionStatus = () => {
+    if (!userSubscriptionData) return null;
+    
+    if (trialActive) {
+      return {
+        label: t("subscriptionStatusTrial", "Trial"),
+        color: "#ff9800", // Orange
+      };
+    }
+    
+    if (subscriptionExpired) {
+      return {
+        label: t("subscriptionStatusExpired", "Expired"),
+        color: "#f44336", // Red
+      };
+    }
+    
+    return {
+      label: t("subscriptionStatusActive", "Active"),
+      color: "#4caf50", // Green
+    };
+  };
+
   useEffect(() => {
     const checkUserRoleAndName = async () => {
       try {
         if (!fastVisa_userid || !isAuthenticated) {
           setShowUpgrade(false);
+          setUserSubscriptionData(null);
           return;
         }
 
@@ -87,10 +124,18 @@ const HamburgerMenu = () => {
           ) {
             sessionStorage.setItem("fastVisa_name", userData.name);
           }
+
+          // Store subscription data
+          setUserSubscriptionData({
+            trial_active: userData.trial_active,
+            subscription_expires_at: userData.subscription_expires_at,
+            concurrent_applicants: userData.concurrent_applicants || 0,
+          });
         }
       } catch (error) {
         console.error("Error checking user role or name:", error);
         setShowUpgrade(false);
+        setUserSubscriptionData(null);
       }
     };
 
@@ -118,6 +163,14 @@ const HamburgerMenu = () => {
           >
             <EnvironmentBadge />
           </div>
+          {/* Trial/Expired Payment Button - Left aligned for maximum visibility */}
+          {location.pathname !== "/premium-upgrade" &&
+            location.pathname !== "/subscription" && (
+            <TrialPaymentButton
+              trialActive={trialActive}
+              subscriptionExpired={subscriptionExpired}
+            />
+            )}
           {showUpgrade && location.pathname !== "/premium-upgrade" && (
             <div className="menu-item premium-section">
               <Link to="/premium-upgrade" className="premium-link shiny-btn">
@@ -172,7 +225,7 @@ const HamburgerMenu = () => {
                             {fastVisa_name}
                           </span>
                           <br />
-                          <span style={{ color: "#888", fontSize: "0.95em" }}>
+                          <span style={{ color: "#888", fontSize: "1.1em" }}>
                             {fastVisa_username}
                           </span>
                         </>
@@ -191,6 +244,86 @@ const HamburgerMenu = () => {
                       </a>
                     </div>
                   </div>
+
+                  {/* Subscription Information Section */}
+                  {userSubscriptionData && (
+                    <>
+                      <Divider style={{ margin: "8px 0" }} />
+                      <div className="subscription-info-section">
+                        <div className="subscription-info-title">
+                          <StarOutlined style={{ marginRight: "6px" }} />
+                          {t("subscriptionInfo", "Subscription")}
+                        </div>
+                        
+                        <div className="subscription-info-item">
+                          <span className="subscription-label">
+                            {t("subscriptionStatus", "Status")}:
+                          </span>
+                          <Tag 
+                            color={
+                              trialActive ? "orange" : 
+                              subscriptionExpired ? "red" : 
+                              "green"
+                            }
+                            style={{ 
+                              marginLeft: "auto",
+                              fontWeight: "600"
+                            }}
+                          >
+                            {getSubscriptionStatus()?.label}
+                          </Tag>
+                        </div>
+
+                        <div className="subscription-info-item">
+                          <CalendarOutlined style={{ color: "#666", marginRight: "6px" }} />
+                          <span className="subscription-label">
+                            {t("subscriptionExpiresAt", "Expires")}:
+                          </span>
+                          <span className="subscription-value">
+                            {formatExpirationDate(userSubscriptionData.subscription_expires_at)}
+                          </span>
+                        </div>
+
+                        <div className="subscription-info-item">
+                          <TeamOutlined style={{ color: "#666", marginRight: "6px" }} />
+                          <span className="subscription-label">
+                            {t("subscriptionQuota", "Quota")}:
+                          </span>
+                          <span className="subscription-value">
+                            {userSubscriptionData.concurrent_applicants}
+                          </span>
+                        </div>
+
+                        {paymentPending && (
+                          <div className="subscription-info-item" style={{ marginTop: 6 }}>
+                            <Tag color="warning" icon={<ClockCircleOutlined />} style={{ marginLeft: 0 }}>
+                              {t("pendingValidation", "Pending validation")}
+                            </Tag>
+                          </div>
+                        )}
+
+                        <Button
+                          type="primary"
+                          icon={<CreditCardOutlined />}
+                          size="small"
+                          block
+                          style={{ 
+                            marginTop: "10px",
+                            background: "linear-gradient(135deg, #2c6ba0 0%, #1d4d73 100%)",
+                            borderColor: "transparent"
+                          }}
+                          onClick={() => {
+                            setShowUserMenu(false);
+                            window.location.href = "/subscription";
+                          }}
+                        >
+                          {t("payRenew", "Pay / Renew")}
+                        </Button>
+                      </div>
+                      <Divider style={{ margin: "8px 0" }} />
+                    </>
+                  )}
+
                   <Link
                     to="/logout"
                     className="logout-link"

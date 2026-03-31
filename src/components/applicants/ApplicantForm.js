@@ -530,7 +530,7 @@ const ApplicantForm = () => {
         });
 
         antMessage.success(
-          t("applicantCreatedSuccess", "Applicant created successfully."),
+          t("createdSuccessfully", "Applicant created successfully."),
         );
         if (permissions.canManageApplicants()) {
           navigate("/applicants");
