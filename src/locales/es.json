@@ -424,4 +424,15 @@
   "failedToGenerateLink": "Error al generar el enlace",
   "generateLinkApplicant": "¿Estás seguro de que deseas generar el enlace DS-160?",
   "generateLink": "Generar Enlace DS-160"
+  "dateRangeWhenICanAttend": "Rango de fechas en que puedo asistir a mi cita",
+  "advancedOptions": "Opciones avanzadas",
+  "prepDaysPart1": "Necesito al menos",
+  "prepDaysPart2": "días de preparación antes de la cita",
+  "importantAppointments": "Importante: Acerca de tus citas",
+  "consularExplanation": "Las fechas que selecciones aplican para tu cita consular (entrevista de visa).",
+  "ascExplanation": "Tu cita CAS (biométricos) será programada automáticamente antes de tu cita consular.",
+  "ascNote": "Nota: La fecha de CAS puede quedar antes de tu fecha inicial.",
+  "endDate": "Fecha de fin",
+  "prepAdjustment": "La fecha de inicio será ajustada",
+  "basicPlanDateRestriction": "En el plan básico, la cita más cercana que puedes agendar siempre será dentro de 120 días"
 }

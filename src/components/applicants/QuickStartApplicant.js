@@ -56,7 +56,7 @@ const QuickStartApplicant = () => {
   const isMobile = !screens.md;
   const btnSize = isMobile ? "large" : "middle";
   const cardContentStyle = isMobile
-    ? { display: "flex", flexDirection: "column", gap: 16, width: "100%" }
+    ? { display: "flex", flexorientation: "column", gap: 16, width: "100%" }
     : {
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
@@ -692,7 +692,7 @@ const QuickStartApplicant = () => {
           className="applicant-form-container"
           style={{ minHeight: "100vh" }}
         >
-          <Space direction="vertical" size={8} style={{ marginBottom: 24 }}>
+          <Space orientation="vertical" size={8} style={{ marginBottom: 24 }}>
             <Space align="center">
               <ThunderboltOutlined style={{ fontSize: 28, color: "#10b981" }} />
               <Typography.Title
@@ -1017,7 +1017,7 @@ const QuickStartApplicant = () => {
                           maxHeight: 320,
                           overflowY: "auto",
                           display: "flex",
-                          flexDirection: "column",
+                          flexorientation: "column",
                           gap: 12,
                         }}
                       >
@@ -1032,7 +1032,7 @@ const QuickStartApplicant = () => {
                           }}
                         >
                           <Space
-                            direction="vertical"
+                            orientation="vertical"
                             size={12}
                             style={{ width: "100%" }}
                           >
@@ -1073,7 +1073,7 @@ const QuickStartApplicant = () => {
                                     style={{ marginTop: 4 }}
                                   />
                                   <Space
-                                    direction="vertical"
+                                    orientation="vertical"
                                     size={4}
                                     style={{ flex: 1 }}
                                   >
@@ -1151,7 +1151,7 @@ const QuickStartApplicant = () => {
                 </Space>
               }
             >
-              <Space direction="vertical" size={16} style={{ width: "100%" }}>
+              <Space orientation="vertical" size={16} style={{ width: "100%" }}>
                 <Alert
                   type="info"
                   showIcon
@@ -1188,7 +1188,7 @@ const QuickStartApplicant = () => {
                     </Typography.Title>
                     <Card size="small" style={{ background: "#fafafa" }}>
                       <Space
-                        direction="vertical"
+                        orientation="vertical"
                         size={8}
                         style={{ width: "100%" }}
                       >

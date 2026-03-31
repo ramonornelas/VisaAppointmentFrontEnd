@@ -1041,7 +1041,7 @@ const Applicants = () => {
             }}
             size="large"
             wrap
-            direction={isMobile ? "vertical" : "horizontal"}
+            orientation={isMobile ? "vertical" : "horizontal"}
           >
             <Space>
               {!isMobile && (
@@ -1072,7 +1072,7 @@ const Applicants = () => {
             </Space>
 
             {canViewAllApplicants && allRegisteredUsers.length > 0 && (
-              <Space direction={isMobile ? "vertical" : "horizontal"} style={{ width: isMobile ? "100%" : undefined }}>
+              <Space orientation={isMobile ? "vertical" : "horizontal"} style={{ width: isMobile ? "100%" : undefined }}>
                 <span style={{ fontWeight: 500 }}>
                   {t("registeredBy", "Registered by")}:
                 </span>
@@ -1107,7 +1107,7 @@ const Applicants = () => {
                 description={emptyDescription}
               />
             ) : (
-              <Space direction="vertical" size={0} style={{ width: "100%" }}>
+              <Space orientation="vertical" size={0} style={{ width: "100%" }}>
                 {data.map((record) => renderMobileCard(record))}
               </Space>
             )
