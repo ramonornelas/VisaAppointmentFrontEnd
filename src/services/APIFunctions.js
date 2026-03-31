@@ -240,6 +240,50 @@ const StopApplicantContainer = async (applicant_userid) => {
   }
 };
 
+const GenerateLinkApplicantContainer = async (
+  applicant_userid,
+  expirationDays = 7,
+  sendEmail = false
+) => {
+  const requestBody = {
+    sendEmail,
+    expirationDays,
+  };
+  try {
+    const response = await fetch(`${BASE_URL}/applicants/${applicant_userid}/generate-ds160-link`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+     body: JSON.stringify(requestBody),
+    });
+
+    if (response.status === 200) {
+      return await response.json();
+    } else {
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (err) {
+        errorData = null;
+      }
+      return {
+        success: false,
+        status: response.status,
+        message: (errorData && (errorData.message || errorData.error)) ||
+          `Failed to generate link (status ${response.status})`,
+        ...errorData,
+      };
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return {
+      success: false,
+      message: error?.message || "Unknown error generating link",
+    };
+  }
+};
 const GetApplicantPassword = async (applicant_userid) => {
   try {
     const response = await fetch(
@@ -632,6 +676,7 @@ export {
   StopApplicantContainer,
   ApplicantDelete,
   GetApplicantPassword,
+  GenerateLinkApplicantContainer,
   getUsers,
   updateUser,
   getRoles,

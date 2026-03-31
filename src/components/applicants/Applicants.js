@@ -16,6 +16,8 @@ import {
   Grid,
   Spin,
   Divider,
+  Input,
+  Checkbox,
 } from "antd";
 import {
   PlayCircleOutlined,
@@ -28,6 +30,7 @@ import {
   UserAddOutlined,
   EyeOutlined,
   UsergroupAddOutlined,
+  LinkOutlined
 } from "@ant-design/icons";
 import HamburgerMenu from "../common/HamburgerMenu";
 import {
@@ -38,6 +41,7 @@ import {
   ApplicantUpdate,
   ApplicantDetails,
   ApplicantDelete,
+  GenerateLinkApplicantContainer,
 } from "../../services/APIFunctions";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/AuthContext";
@@ -63,6 +67,11 @@ const Applicants = () => {
   const navigate = useNavigate();
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [hoveredRowId, setHoveredRowId] = useState(null);
+  const [generateLinkExpiry, setGenerateLinkExpiry] = useState(7);
+  const [generateLinkSendByEmail, setGenerateLinkSendByEmail] = useState(false);
+  const [isGenerateLinkModalVisible, setGenerateLinkModalVisible] = useState(false);
+  const [generateLinkApplicantId, setGenerateLinkApplicantId] = useState(null);
+  const [isGenerateLinkLoading, setIsGenerateLinkLoading] = useState(false);
 
   // Initialize metrics tracker
   const metrics = useMemo(() => new FastVisaMetrics(), []);
@@ -487,6 +496,60 @@ const Applicants = () => {
     });
   };
 
+  const handleGenerateLinkApplicant = (id) => {
+    metrics.trackButtonClick("generate-link-applicant-btn", "Generate Link Applicant");
+    setGenerateLinkApplicantId(id);
+    setGenerateLinkExpiry(7);
+    setGenerateLinkSendByEmail(false);
+    setGenerateLinkModalVisible(true);
+  };
+
+  const handleGenerateLinkCancel = () => {
+    setGenerateLinkModalVisible(false);
+    setGenerateLinkApplicantId(null);
+  };
+
+  const handleGenerateLinkConfirm = async () => {
+    if (!generateLinkApplicantId) {
+      return;
+    }
+
+    setIsGenerateLinkLoading(true);
+
+    try {
+      const response = await GenerateLinkApplicantContainer(
+        generateLinkApplicantId,
+        generateLinkExpiry,
+        generateLinkSendByEmail
+      );
+
+      const isSuccess =
+        response &&
+        (response.success === true ||
+          response.status === "success" ||
+          response.status === "ok" ||
+          response.status === "200");
+
+      if (isSuccess) {
+        message.success(
+          response?.message || t("linkGeneratedSuccessfully", "Link generated successfully.")
+        );
+        setRefreshFlag((flag) => !flag);
+        setGenerateLinkModalVisible(false);
+        setGenerateLinkApplicantId(null);
+      } else {
+        const errorMessage = response?.message || t("failedToGenerateLink", "Failed to generate the link. Please try again.");
+        message.error(`${t("errorPrefix", "Error")} : ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error("Error generating link:", error);
+      const errorMessage = error?.message || t("failedToGenerateLink", "Failed to generate the link. Please try again.");
+      message.error(`${t("errorPrefix", "Error")} : ${errorMessage}`);
+    } finally {
+      setIsGenerateLinkLoading(false);
+    }
+  };
+
   const getSearchStatusColor = (status) => {
     if (!status) return "default";
     const colors = {
@@ -526,6 +589,19 @@ const Applicants = () => {
               }}
             />
           </Tooltip>
+            <Tooltip title={t("generateLink", "Generate Link")}>
+            <Button
+              type="text"
+              icon={<LinkOutlined />}
+              onClick={() => handleGenerateLinkApplicant(record.id)}
+              size="small"
+              style={{
+                opacity: hoveredRowId === record.id ? 1 : 0,
+                transition: "opacity 0.2s ease-in",
+                pointerEvents: hoveredRowId === record.id ? "auto" : "none",
+              }}
+            />
+          </Tooltip>
           <Tooltip title={t("deleteApplicant", "Delete Applicant")}>
             <Button
               type="text"
@@ -540,6 +616,7 @@ const Applicants = () => {
               }}
             />
           </Tooltip>
+        
         </Space>
       ),
     },
@@ -845,6 +922,15 @@ const Applicants = () => {
             size="middle"
           />
         </Tooltip>
+          <Tooltip title={t("deleteApplicants", "Delete Applicants")}>
+          <Button
+            type="default"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => handleDeleteApplicant(record.id)}
+            size="middle"
+          />
+        </Tooltip>
       </Space>
     </Card>
   );
@@ -852,6 +938,48 @@ const Applicants = () => {
   return (
     <>
       <HamburgerMenu />
+
+      <AntModal
+        title={t("generateLinkApplicant", "Are you sure you want to generate the DS-160 link?")}
+        open={isGenerateLinkModalVisible}
+        onOk={handleGenerateLinkConfirm}
+        onCancel={handleGenerateLinkCancel}
+        okText={t("generate", "Generate")}
+        cancelText={t("cancel", "Cancel")}
+        loading={isGenerateLinkLoading}
+        okButtonProps={{ disabled: isGenerateLinkLoading }}
+        cancelButtonProps={{ disabled: isGenerateLinkLoading }}
+      >
+        <div style={{ marginBottom: 12 }}>
+          <label htmlFor="link-expiry" style={{ display: "block", marginBottom: 4 }}>
+            {t("vigencia", "Vigencia")}
+          </label>
+          <Input
+            id="link-expiry"
+            type="number"
+            min={1}
+            max={30}
+            value={generateLinkExpiry}
+            onChange={(e) => {
+              const val = Number(e.target.value);
+              let nextVal = Number.isNaN(val) ? 7 : val;
+              if (nextVal < 1) nextVal = 1;
+              if (nextVal > 30) nextVal = 30;
+              setGenerateLinkExpiry(nextVal);
+            }}
+            defaultValue={7}
+            disabled={isGenerateLinkLoading}
+          />
+        </div>
+        <Checkbox
+          checked={generateLinkSendByEmail}
+          onChange={(e) => setGenerateLinkSendByEmail(e.target.checked)}
+          disabled={isGenerateLinkLoading}
+        >
+          {t("sendByEmail", "Send the link to the applicant's registered email address.")}
+        </Checkbox>
+      </AntModal>
+
       <div
         style={{
           padding: "120px 18px 0px 18px",
