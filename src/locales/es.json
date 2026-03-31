@@ -423,7 +423,7 @@
   "linkGeneratedSuccessfully": "Enlace generado exitosamente",
   "failedToGenerateLink": "Error al generar el enlace",
   "generateLinkApplicant": "¿Estás seguro de que deseas generar el enlace DS-160?",
-  "generateLink": "Generar Enlace DS-160"
+  "generateLink": "Generar Enlace DS-160",
   "dateRangeWhenICanAttend": "Rango de fechas en que puedo asistir a mi cita",
   "advancedOptions": "Opciones avanzadas",
   "prepDaysPart1": "Necesito al menos",
