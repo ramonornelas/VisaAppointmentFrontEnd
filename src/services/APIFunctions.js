@@ -78,10 +78,21 @@ const updateUser = async (id, userData) => {
       },
       body,
     });
-    if (response.status === 200) {
-      return await response.json();
-    } else {
-      throw new Error("Failed to update user");
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to update user (${response.status}): ${errorText}`);
+    }
+
+    const responseText = await response.text();
+    if (!responseText) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      return {};
     }
   } catch (error) {
     console.error("Error:", error);
@@ -596,6 +607,35 @@ const verifyEmail = async (token) => {
   }
 };
 
+// Send a generic email via the FastVisaSendEmail Lambda
+const sendEmail = async ({ recipient, subject, message, html_body, cc, bcc }) => {
+  try {
+    const body = { recipient, subject, message };
+    if (html_body) body.html_body = html_body;
+    if (cc) body.cc = cc;
+    if (bcc) body.bcc = bcc;
+
+    const response = await fetch(`${BASE_URL}/admin/send-email`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (response.status === 200) {
+      return { success: true, data: await response.json() };
+    } else {
+      const errorData = await response.json().catch(() => ({}));
+      return { success: false, error: errorData.message || "Failed to send email" };
+    }
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return { success: false, error: error.message };
+  }
+};
+
 // Resend verification email
 const resendVerificationEmail = async (email) => {
   try {
@@ -648,4 +688,5 @@ export {
   getUserPermissions,
   verifyEmail,
   resendVerificationEmail,
+  sendEmail,
 };

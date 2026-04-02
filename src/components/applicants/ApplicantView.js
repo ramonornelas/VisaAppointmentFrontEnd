@@ -52,7 +52,7 @@ const { Title, Text } = Typography;
 const ApplicantView = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, trialActive, subscriptionExpired } = useAuth();
   const { id } = useParams();
   const screens = useBreakpoint();
   const isMobile = !screens.md;
@@ -67,6 +67,9 @@ const ApplicantView = () => {
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [searchActionLoading, setSearchActionLoading] = useState(false);
+
+  // Check if user can start searches (trial active OR subscription not expired)
+  const canStartSearch = trialActive || !subscriptionExpired;
 
   // Refresh permissions on component mount
   useEffect(() => {
@@ -249,6 +252,25 @@ const ApplicantView = () => {
     setSearchActionLoading(true);
     try {
       if (data.search_status === "Stopped") {
+        // Check if user can start searches
+        if (!canStartSearch) {
+          AntModal.confirm({
+            title: t("subscriptionExpired", "Subscription Expired"),
+            content: t(
+              "renewSubscriptionMessage",
+              "Your subscription has expired. Please renew your subscription to continue using the service."
+            ),
+            okText: t("renewSubscription", "Renew Subscription"),
+            onOk: () => {
+              navigate("/subscription");
+            },
+            cancelText: t("cancel", "Cancel"),
+            icon: null,
+          });
+          setSearchActionLoading(false);
+          return;
+        }
+
         const concurrentLimit = parseInt(
           sessionStorage.getItem("concurrent_applicants"),
           10,
@@ -265,6 +287,7 @@ const ApplicantView = () => {
               `You have reached your concurrent applicants limit ({limit}).\nTo start a new applicant, please end one of your currently running applicants first.`,
             ).replace("{limit}", concurrentLimit),
           });
+          setSearchActionLoading(false);
           return;
         }
         await StartApplicantContainer(applicantId);

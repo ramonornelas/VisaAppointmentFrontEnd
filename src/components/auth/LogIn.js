@@ -6,6 +6,7 @@ import "./LogIn.css";
 import LanguageSelector from "../common/LanguageSelector";
 import EnvironmentBadge from "../common/EnvironmentBadge";
 import { permissions } from "../../utils/permissions";
+import { useAuth } from "../../utils/AuthContext";
 import FastVisaMetrics from "../../utils/FastVisaMetrics";
 import {
   loginUser,
@@ -35,6 +36,7 @@ const LogIn = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
+  const { login, refreshUserStatus } = useAuth();
   const screens = useBreakpoint();
   const isMobile = !screens.md;
   const btnSize = isMobile ? "large" : "middle";
@@ -88,6 +90,10 @@ const LogIn = () => {
           sessionStorage.setItem("fastVisa_name", searchname);
         }
         metrics.setUserId(searchuserid);
+
+        // Update authentication state and refresh user status
+        login();
+        await refreshUserStatus();
 
         try {
           const [permissionsData, userData, rolesData] = await Promise.all([

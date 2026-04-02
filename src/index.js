@@ -14,6 +14,7 @@ import ApplicantView from "./components/applicants/ApplicantView";
 import DeleteApplicant from "./components/applicants/DeleteApplicant";
 import LogOut from "./components/auth/LogOut";
 import PremiumUpgrade from "./components/premium/PremiumUpgrade";
+import SubscriptionPayment from "./components/subscription/SubscriptionPayment";
 import ChangePassword from "./components/auth/ChangePassword";
 import Users from "./components/users/Users";
 import VerifyEmail from "./components/auth/VerifyEmail";
@@ -38,6 +39,7 @@ root.render(
           <Route path="/deleteapplicant" element={<DeleteApplicant />} />
           <Route path="/logout" element={<LogOut />} />
           <Route path="/premium-upgrade" element={<PremiumUpgrade />} />
+          <Route path="/subscription" element={<SubscriptionPayment />} />
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/users" element={<Users />} />
           <Route path="/verify-email" element={<VerifyEmail />} />

@@ -1,0 +1,109 @@
+.trial-payment-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8px 16px;
+}
+
+.trial-payment-button {
+  background: linear-gradient(135deg, #ffffff 0%, #3c89cb 30%, #eb3324 100%);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  height: 40px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 180px;
+}
+
+/* Shiny animation effect - same as premium button */
+.trial-payment-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+  animation: shine-trial 2s infinite;
+}
+
+@keyframes shine-trial {
+  0% {
+    left: -75%;
+  }
+  60% {
+    left: 125%;
+  }
+  100% {
+    left: 125%;
+  }
+}
+
+.trial-payment-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(235, 51, 36, 0.3);
+  background: linear-gradient(135deg, #ffffff 0%, #ff4136 30%, #4a9eff 100%);
+}
+
+.trial-payment-button:active {
+  transform: translateY(0);
+}
+
+.trial-payment-button .anticon {
+  color: #ffd700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  font-size: 18px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .trial-payment-button-container {
+    padding: 6px 12px;
+  }
+
+  .trial-payment-button {
+    height: 38px;
+    padding: 6px 16px;
+    font-size: 14px;
+    min-width: 160px;
+  }
+
+  .trial-payment-button .anticon {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .trial-payment-button-container {
+    padding: 4px 8px;
+  }
+  
+  .trial-payment-button {
+    padding: 6px 12px;
+    font-size: 13px;
+    height: 36px;
+    gap: 8px;
+    min-width: 140px;
+  }
+  
+  .trial-payment-button .anticon {
+    font-size: 14px;
+  }
+}

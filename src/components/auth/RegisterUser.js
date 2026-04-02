@@ -12,17 +12,6 @@ import "./RegisterUser.css";
 
 const { useBreakpoint } = Grid;
 
-// Calculate expiration date (one month from now)
-const getExpirationDate = () => {
-  const now = new Date();
-  const expirationDate = new Date(
-    now.getFullYear(),
-    now.getMonth() + 1,
-    now.getDate()
-  );
-  return expirationDate.toISOString().split("T")[0];
-};
-
 const UserRegistrationForm = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -255,7 +244,6 @@ const UserRegistrationForm = () => {
       password: values.password,
       phone_number: values.phone_number || "",
       active: true,
-      expiration_date: getExpirationDate(),
       country_code: values.country_code,
       role_id: roleId,
       concurrent_applicants: concurrentApplicants,
@@ -263,6 +251,7 @@ const UserRegistrationForm = () => {
       sendEmail: true,
       includePassword: false,
       language: i18n.language || "en",
+      trial_active: true, // Enable trial for new registrations
     };
 
     createUser(submitData)
@@ -315,7 +304,7 @@ const UserRegistrationForm = () => {
       <div className="content-wrap">
         <LanguageSelector />
         <div className="registration-container">
-          <Typography.Title level={2} style={{ marginBottom: 16 }}>
+          <Typography.Title level={2} style={{ marginBottom: 6, marginTop: 0, lineHeight: 1.1, fontSize: '1.5rem' }}>
             {t("register", "Register")}
           </Typography.Title>
           {roleError && (
@@ -323,7 +312,7 @@ const UserRegistrationForm = () => {
               type="error"
               showIcon
               message={roleError}
-              style={{ marginBottom: 16 }}
+              style={{ marginBottom: 6, padding: '6px 10px' }}
             />
           )}
           {apiError && (
@@ -333,7 +322,7 @@ const UserRegistrationForm = () => {
               message={apiError}
               closable
               onClose={() => setApiError("")}
-              style={{ marginBottom: 16 }}
+              style={{ marginBottom: 6, padding: '6px 10px' }}
             />
           )}
           <Form
@@ -466,14 +455,15 @@ const UserRegistrationForm = () => {
               <p
                 style={{
                   color: "#6b7280",
-                  marginTop: -8,
-                  marginBottom: 16,
-                  fontSize: "0.9rem",
+                  marginTop: -22,
+                  marginBottom: 2,
+                  fontSize: "0.7rem",
+                  lineHeight: 1.1,
                 }}
               >
                 <i
                   className="fas fa-spinner fa-spin"
-                  style={{ marginRight: 8 }}
+                  style={{ marginRight: 4 }}
                 />
                 {t("detectingLocation", "Detecting your location...")}
               </p>
@@ -487,7 +477,7 @@ const UserRegistrationForm = () => {
                 placeholder={t("phoneNumber", "Phone Number")}
               />
             </Form.Item>
-            <Form.Item style={{ marginBottom: 0, marginTop: 16 }}>
+            <Form.Item style={{ marginBottom: 0, marginTop: 6 }}>
               <div
                 className="button-row"
                 style={{ display: "flex", gap: 12, flexWrap: "wrap" }}
