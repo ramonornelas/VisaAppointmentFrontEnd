@@ -17,6 +17,7 @@ import { CloseOutlined, SaveOutlined, CheckOutlined } from "@ant-design/icons";
 import ApplicantFormHeader from "./ApplicantFormHeader";
 import VisaCredentialsPanel from "./VisaCredentialsPanel";
 import DateRangeSelector from "../common/DateRangeSelector";
+import BasicDateRangeSelector from "../common/BasicDateRangeSelector";
 import TargetCitiesSection from "./TargetCitiesSection";
 import "./ApplicantForm.css";
 
@@ -40,6 +41,23 @@ const ApplicantForm = () => {
   const fastVisaUserId = sessionStorage.getItem("fastVisa_userid");
   const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
   const countryCode = sessionStorage.getItem("country_code");
+
+  const isPremiumUser = permissions.canSearchUnlimited();
+
+  const getSearchStartDate = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 120);
+    return d;
+  };
+
+  const getMinEndDate = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 210);
+    return d.toISOString().split("T")[0];
+  };
+
+  const searchStartDate = getSearchStartDate();
+  const minEndDate = getMinEndDate();
 
   /*
   // Determine initial targetStartDays based on user permissions
@@ -651,13 +669,23 @@ const ApplicantForm = () => {
           />
 
           {/* Target Dates Section */}
-          <DateRangeSelector
-            formData={formData}
-            setFormData={setFormData}
-            errors={errors}
-            handleInputChange={handleInputChange}
-            formatDate={formatDate}
-          />
+          {isPremiumUser ? (
+            <DateRangeSelector
+              formData={formData}
+              setFormData={setFormData}
+              errors={errors}
+              handleInputChange={handleInputChange}
+              formatDate={formatDate}
+            />
+          ) : (
+            <BasicDateRangeSelector
+              searchStartDate={searchStartDate}
+              minEndDate={minEndDate}
+              isMobile={isMobile}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          )}
 
           {/* Target Cities Section */}
           <TargetCitiesSection

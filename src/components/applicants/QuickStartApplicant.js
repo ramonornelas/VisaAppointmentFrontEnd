@@ -41,6 +41,7 @@ import {
 import "./ApplicantForm.css";
 import "../auth/RegisterUser.css";
 import "../auth/LogIn.css";
+import BasicDateRangeSelector from "../common/BasicDateRangeSelector";
 
 const { useBreakpoint } = Grid;
 
@@ -87,7 +88,7 @@ const QuickStartApplicant = () => {
     startDate.setDate(today.getDate() + 120);
     return startDate;
   };
-  const searchStartDate = getSearchStartDate();
+  const searchStartDate = getSearchStartDate(); 
 
   const formatApplicantDate = (dateVal) => {
     if (dateVal == null || dateVal === "") return "N/A";
@@ -1145,117 +1146,11 @@ const QuickStartApplicant = () => {
                 </Space>
               }
             >
-              <Space direction="vertical" size={16} style={{ width: "100%" }}>
-                {/* 🔵 ALERT BASIC */}
-                <Alert
-                  type="info"
-                  showIcon
-                  message={t(
-                    "basicPlanDateRestriction",
-                    "Basic plan: the earliest appointment you can schedule will always be 120 days from today.",
-                  )}
-                />
-
-                {/* LABELS COMO RANGE PICKER */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    width: isMobile ? "100%" : 340,
-                    marginBottom: 6,
-                    fontSize: "0.8rem",
-                    color: "#8c8c8c",
-                  }}
-                >
-                  <span>{t("startDate", "Start date")}</span>
-                  <span>{t("endDate", "End date")}</span>
-                </div>
-
-                {/* INPUTS (SIMULANDO RANGE PICKER) */}
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 8,
-                    width: isMobile ? "100%" : 340,
-                  }}
-                >
-                  {/* 🔒 START DATE */}
-                  <Input
-                    value={searchStartDate.toISOString().split("T")[0]}
-                    disabled
-                    style={{
-                      textAlign: "center",
-                      backgroundColor: "#f5f5f5",
-                    }}
-                  />
-
-                  {/* SEPARADOR */}
-                  <div style={{ display: "flex", alignItems: "center" }}>→</div>
-
-                  {/* 🟢 END DATE */}
-                  <Form.Item
-                    name="targetEndDate"
-                    style={{ marginBottom: 0, flex: 1 }}
-                    rules={[
-                      {
-                        required: true,
-                        message: t(
-                          "endDateRequired",
-                          "Target end date is required",
-                        ),
-                      },
-                      () => ({
-                        validator(_, value) {
-                          if (!value || value >= minEndDate)
-                            return Promise.resolve();
-                          return Promise.reject(
-                            new Error(
-                              t(
-                                "endDateMinimum",
-                                "Target end date must be at least 210 days from today",
-                              ),
-                            ),
-                          );
-                        },
-                      }),
-                    ]}
-                  >
-                    <Input
-                      type="date"
-                      min={minEndDate}
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Item>
-                </div>
-
-                {/* EXPLANATION */}
-                <Alert
-                  type="info"
-                  showIcon
-                  message={t(
-                    "importantAppointments",
-                    "Important: About Your Appointments",
-                  )}
-                  description={
-                    <>
-                      {t(
-                        "consularExplanation",
-                        "The dates you select apply to your consular appointment (visa interview).",
-                      )}
-                      <br />
-                      {t(
-                        "ascExplanation",
-                        "Your CAS/ASC appointment (biometrics) will be automatically scheduled before your consular appointment.",
-                      )}
-                      <br />
-                      {t(
-                        "ascNote",
-                        "Note: The CAS/ASC date may fall before your selected start date.",
-                      )}
-                    </>
-                  }
-                />
-              </Space>
+              <BasicDateRangeSelector
+                searchStartDate={searchStartDate}
+                minEndDate={minEndDate}
+                isMobile={isMobile}
+              />
             </Card>
 
             {countryCode && cities.length > 0 && (
