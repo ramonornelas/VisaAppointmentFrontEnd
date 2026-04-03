@@ -18,6 +18,8 @@ import SubscriptionPayment from "./components/subscription/SubscriptionPayment";
 import ChangePassword from "./components/auth/ChangePassword";
 import Users from "./components/users/Users";
 import VerifyEmail from "./components/auth/VerifyEmail";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import ResetPassword from "./components/auth/ResetPassword";
 import Landing from "./components/home/Landing";
 
 const container = document.getElementById("root");
@@ -43,6 +45,8 @@ root.render(
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/users" element={<Users />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </Router>
     </AuthProvider>
