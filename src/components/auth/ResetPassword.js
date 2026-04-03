@@ -40,7 +40,7 @@ const ResetPassword = () => {
 
   // Token validation state
   const [tokenStatus, setTokenStatus] = useState("loading"); // loading | valid | invalid | used | networkError
-  const [tokenError, setTokenError] = useState("");
+  const [, setTokenError] = useState("");
   const [userEmail, setUserEmail] = useState("");
 
   // Form state
