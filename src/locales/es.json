@@ -473,8 +473,7 @@
   "passwordsDoNotMatch": "Las contraseñas no coinciden",
   "passwordsMatch": "Las contraseñas coinciden",
   "passwordReqExpiredDuringReset": "Tu enlace de restablecimiento ha expirado. Por favor solicita uno nuevo.",
-  "networkError": "Error de red. Por favor verifica tu conexión e intenta de nuevo."
-  "basicPlanDateRestriction": "En el plan básico, la cita más cercana que puedes agendar siempre será dentro de 120 días",
+  "networkError": "Error de red. Por favor verifica tu conexión e intenta de nuevo.",
   "searchUsers": "Buscar por nombre, correo, teléfono, país o rol",
   "of": "de",
   "email": "Correo electrónico",
