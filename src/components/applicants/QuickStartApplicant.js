@@ -128,11 +128,22 @@ const QuickStartApplicant = () => {
   const [aisAuthError, setAisAuthError] = useState("");
   const [aisAuthSuccess, setAisAuthSuccess] = useState(false);
 
-  // Initialize metrics tracker
-  const metrics = useMemo(() => new FastVisaMetrics(), []);
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [currentStep, setCurrentStep] = useState(1); // 1: form, 2: creating user, 3: creating applicant
+  const [targetEndDate, setTargetEndDate] = useState(minEndDate);
+
+  // Handle input changes for BasicDateRangeSelector
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'targetEndDate') {
+      setTargetEndDate(value);
+      form.setFieldsValue({ targetEndDate: value });
+    }
+  };
+
+  // Initialize metrics tracker
+  const metrics = useMemo(() => new FastVisaMetrics(), []);
 
   // Fetch basic_user role
   useEffect(() => {
@@ -161,7 +172,7 @@ const QuickStartApplicant = () => {
     return () => {
       isMounted = false;
     };
-  }, [countries, metrics]);
+  }, [countries]);
 
   // Load cities when country changes
   useEffect(() => {
@@ -1146,10 +1157,15 @@ const QuickStartApplicant = () => {
                 </Space>
               }
             >
+              <Form.Item name="targetEndDate" initialValue={minEndDate} style={{ display: 'none' }}>
+                <Input />
+              </Form.Item>
               <BasicDateRangeSelector
                 searchStartDate={searchStartDate}
                 minEndDate={minEndDate}
                 isMobile={isMobile}
+                formData={{ targetEndDate }}
+                handleInputChange={handleInputChange}
               />
             </Card>
 

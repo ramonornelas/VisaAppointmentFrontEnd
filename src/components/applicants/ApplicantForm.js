@@ -76,7 +76,7 @@ const ApplicantForm = () => {
     applicantActive: true,
     targetStartDays: 0, // Basic users: 120 days, Admins: 1 day
     targetStartDate: "",
-    targetEndDate: "",
+    targetEndDate: minEndDate,
     selectedCities: [],
   });
 
@@ -368,7 +368,7 @@ const ApplicantForm = () => {
     }
 
     // Date range validation
-    if (!formData.targetStartDate) {
+    if (isEditMode && !formData.targetStartDate) {
       newErrors.targetStartDate = t(
         "startDateRequired",
         "Target start date is required",
@@ -452,8 +452,8 @@ const ApplicantForm = () => {
       number_of_applicants: formData.numberOfApplicants,
       applicant_active: formData.applicantActive,
 
-      target_start_date: formData.targetStartDate,
-      target_end_date: formData.targetEndDate,
+      target_start_date: isEditMode ? formData.targetStartDate : searchStartDate.toISOString().split("T")[0],
+      target_end_date: formData.targetEndDate || "",
       target_start_days: formData.targetStartDays || 0,
 
       target_city_codes: formData.selectedCities.join(","),

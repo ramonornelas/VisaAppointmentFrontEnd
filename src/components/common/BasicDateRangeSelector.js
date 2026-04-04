@@ -14,10 +14,22 @@ const BasicDateRangeSelector = ({
   const maxBoxWidth = isMobile ? "100%" : 340;
 
   const targetStartDate = formData.targetStartDate
-    ? new Date(formData.targetStartDate).toISOString().split("T")[0]
+    ? (function() {
+        try {
+          return new Date(formData.targetStartDate).toISOString().split("T")[0];
+        } catch {
+          return searchStartDate.toISOString().split("T")[0];
+        }
+      })()
     : searchStartDate.toISOString().split("T")[0];
   const targetEndDate = formData.targetEndDate
-    ? new Date(formData.targetEndDate).toISOString().split("T")[0]
+    ? (function() {
+        try {
+          return new Date(formData.targetEndDate).toISOString().split("T")[0];
+        } catch {
+          return minEndDate;
+        }
+      })()
     : minEndDate;
 
   return (
