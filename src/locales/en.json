@@ -426,7 +426,7 @@
   "ascNote": "Note: The ASC date may fall before your selected start date.",
   "endDate": "End date",
   "prepAdjustment": "Start date will be adjusted",
-  "basicPlanDateRestriction": "In the basic plan, you can only select the end date and the earliest appointment you can schedule will always be 120 days away.",
+  "basicPlanDateRestriction": "In the basic plan, you can only select the end date and the earliest appointment you can schedule is 120 days away.",
   "searchUsers": "Search by username, name, phone, country, or role",
   "of": "of",
   "email": "Email",

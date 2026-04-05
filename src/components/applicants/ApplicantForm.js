@@ -42,7 +42,7 @@ const ApplicantForm = () => {
   const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
   const countryCode = sessionStorage.getItem("country_code");
 
-  const isPremiumUser = permissions.canSearchUnlimited();
+  const canSearchUnlimited = permissions.canSearchUnlimited();
 
   const getSearchStartDate = () => {
     const d = new Date();
@@ -58,13 +58,6 @@ const ApplicantForm = () => {
 
   const searchStartDate = getSearchStartDate();
   const minEndDate = getMinEndDate();
-
-  /*
-  // Determine initial targetStartDays based on user permissions
-  const initialTargetStartDays = permissions.canManageApplicants()
-    ? "1"
-    : "120";
-*/
 
   // Form state
   const [formData, setFormData] = useState({
@@ -452,7 +445,11 @@ const ApplicantForm = () => {
       number_of_applicants: formData.numberOfApplicants,
       applicant_active: formData.applicantActive,
 
-      target_start_date: isEditMode ? formData.targetStartDate : searchStartDate.toISOString().split("T")[0],
+      target_start_date: isEditMode
+        ? formData.targetStartDate
+        : canSearchUnlimited && formData.targetStartDate
+          ? formData.targetStartDate
+          : searchStartDate.toISOString().split("T")[0],
       target_end_date: formData.targetEndDate || "",
       target_start_days: formData.targetStartDays || 0,
 
@@ -669,7 +666,7 @@ const ApplicantForm = () => {
           />
 
           {/* Target Dates Section */}
-          {isPremiumUser ? (
+          {canSearchUnlimited ? (
             <DateRangeSelector
               formData={formData}
               setFormData={setFormData}

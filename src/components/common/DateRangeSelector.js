@@ -24,7 +24,9 @@ const DateRangeSelector = ({
   errors,
   readOnly = false,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const dateFormat = i18n.language.startsWith("es") ? "DD/MM/YYYY" : "MM/DD/YYYY";
 
   const [usePreparationDays, setUsePreparationDays] = useState(
     (formData?.targetStartDays ?? 0) > 0,
@@ -103,19 +105,20 @@ const DateRangeSelector = ({
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
               width: isMobile ? "100%" : 340,
               marginBottom: 6,
               fontSize: "0.8rem",
               color: "#8c8c8c",
             }}
           >
-            <span>{t("startDate", "Start date")}</span>
-            <span>{t("endDate", "End date")}</span>
+            <span style={{ flex: 1 }}>{t("startDate", "Start date")}</span>
+            <span style={{ flex: 1, textAlign: "center" }}>{t("endDate", "End date")}</span>
           </div>
 
           <RangePicker
             className={isBasicUser ? "basic-range-picker" : ""}
+            placeholder={[dateFormat, dateFormat]}
+            format={dateFormat}
             style={{ width: isMobile ? "100%" : 340 }}
             value={
               isBasicUser
