@@ -45,6 +45,7 @@ import { ALL_CITIES } from "../../utils/cities";
 import "./ApplicantView.css";
 import "../../index.css";
 import DateRangeSelector from "../common/DateRangeSelector";
+import BasicDateRangeSelector from "../common/BasicDateRangeSelector";
 
 const { useBreakpoint } = Grid;
 const { Title, Text } = Typography;
@@ -430,6 +431,23 @@ const ApplicantView = () => {
     </Button>
   );
 
+  const isPremiumUser = permissions.canSearchUnlimited();
+
+  const getSearchStartDate = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 120);
+    return d;
+  };
+
+  const getMinEndDate = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 210);
+    return d.toISOString().split("T")[0];
+  };
+
+  const searchStartDate = getSearchStartDate();
+  const minEndDate = getMinEndDate();
+
   return (
     <>
       <HamburgerMenu />
@@ -700,15 +718,29 @@ const ApplicantView = () => {
           </Card>
 
           {/* Target Dates */}
-          <DateRangeSelector
-            readOnly
-            formData={{
-              targetStartDate: data.target_start_date,
-              targetEndDate: data.target_end_date,
-              targetStartDays: data.target_start_days,
-            }}
-            setFormData={() => {}}
-          />
+          {isPremiumUser ? (
+            <DateRangeSelector
+              readOnly
+              formData={{
+                targetStartDate: data.target_start_date,
+                targetEndDate: data.target_end_date,
+                targetStartDays: data.target_start_days,
+              }}
+              setFormData={() => {}}
+            />
+          ) : (
+            <BasicDateRangeSelector
+              readOnly
+              isMobile={isMobile}
+              searchStartDate={searchStartDate}
+              minEndDate={minEndDate}
+              formData={{
+                targetStartDate: data.target_start_date,
+                targetEndDate: data.target_end_date,
+                targetStartDays: data.target_start_days,
+              }}
+            />
+          )}
 
           {/* Target Cities */}
           {cities.length > 0 && (
