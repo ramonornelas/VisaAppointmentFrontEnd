@@ -17,6 +17,7 @@ import { CloseOutlined, SaveOutlined, CheckOutlined } from "@ant-design/icons";
 import ApplicantFormHeader from "./ApplicantFormHeader";
 import VisaCredentialsPanel from "./VisaCredentialsPanel";
 import DateRangeSelector from "../common/DateRangeSelector";
+import BasicDateRangeSelector from "../common/BasicDateRangeSelector";
 import TargetCitiesSection from "./TargetCitiesSection";
 import "./ApplicantForm.css";
 
@@ -41,12 +42,22 @@ const ApplicantForm = () => {
   const fastVisaUsername = sessionStorage.getItem("fastVisa_username");
   const countryCode = sessionStorage.getItem("country_code");
 
-  /*
-  // Determine initial targetStartDays based on user permissions
-  const initialTargetStartDays = permissions.canManageApplicants()
-    ? "1"
-    : "120";
-*/
+  const canSearchUnlimited = permissions.canSearchUnlimited();
+
+  const getSearchStartDate = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 120);
+    return d;
+  };
+
+  const getMinEndDate = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 210);
+    return d.toISOString().split("T")[0];
+  };
+
+  const searchStartDate = getSearchStartDate();
+  const minEndDate = getMinEndDate();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -58,7 +69,7 @@ const ApplicantForm = () => {
     applicantActive: true,
     targetStartDays: 0, // Basic users: 120 days, Admins: 1 day
     targetStartDate: "",
-    targetEndDate: "",
+    targetEndDate: minEndDate,
     selectedCities: [],
   });
 
@@ -350,7 +361,7 @@ const ApplicantForm = () => {
     }
 
     // Date range validation
-    if (!formData.targetStartDate) {
+    if (isEditMode && !formData.targetStartDate) {
       newErrors.targetStartDate = t(
         "startDateRequired",
         "Target start date is required",
@@ -434,8 +445,12 @@ const ApplicantForm = () => {
       number_of_applicants: formData.numberOfApplicants,
       applicant_active: formData.applicantActive,
 
-      target_start_date: formData.targetStartDate,
-      target_end_date: formData.targetEndDate,
+      target_start_date: isEditMode
+        ? formData.targetStartDate
+        : canSearchUnlimited && formData.targetStartDate
+          ? formData.targetStartDate
+          : searchStartDate.toISOString().split("T")[0],
+      target_end_date: formData.targetEndDate || "",
       target_start_days: formData.targetStartDays || 0,
 
       target_city_codes: formData.selectedCities.join(","),
@@ -651,13 +666,23 @@ const ApplicantForm = () => {
           />
 
           {/* Target Dates Section */}
-          <DateRangeSelector
-            formData={formData}
-            setFormData={setFormData}
-            errors={errors}
-            handleInputChange={handleInputChange}
-            formatDate={formatDate}
-          />
+          {canSearchUnlimited ? (
+            <DateRangeSelector
+              formData={formData}
+              setFormData={setFormData}
+              errors={errors}
+              handleInputChange={handleInputChange}
+              formatDate={formatDate}
+            />
+          ) : (
+            <BasicDateRangeSelector
+              searchStartDate={searchStartDate}
+              minEndDate={minEndDate}
+              isMobile={isMobile}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          )}
 
           {/* Target Cities Section */}
           <TargetCitiesSection
