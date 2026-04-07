@@ -663,6 +663,64 @@ const resendVerificationEmail = async (email) => {
   }
 };
 
+// Send forgot-password request — POST /auth/forgot-password
+const forgotPassword = async (email, language = 'en') => {
+  try {
+    const response = await fetch(`${BASE_URL}/auth/forgot-password`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, language }),
+    });
+    const data = await response.json();
+    return { success: response.status === 200, status: response.status, ...data };
+  } catch (error) {
+    console.error("Error sending forgot password request:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Validate reset token — GET /auth/validate-reset-token?token=...
+const validateResetToken = async (token) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/auth/validate-reset-token?token=${encodeURIComponent(token)}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    return { success: response.status === 200, status: response.status, ...data };
+  } catch (error) {
+    console.error("Error validating reset token:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Reset password — POST /auth/reset-password
+const resetPassword = async (token, newPassword, language = 'en') => {
+  try {
+    const response = await fetch(`${BASE_URL}/auth/reset-password`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token, newPassword, language }),
+    });
+    const data = await response.json();
+    return { success: response.status === 200, status: response.status, ...data };
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    return { success: false, error: error.message };
+  }
+};
+
 export {
   UserDetails,
   ApplicantSearch,
@@ -688,5 +746,8 @@ export {
   getUserPermissions,
   verifyEmail,
   resendVerificationEmail,
+  forgotPassword,
+  validateResetToken,
+  resetPassword,
   sendEmail,
 };

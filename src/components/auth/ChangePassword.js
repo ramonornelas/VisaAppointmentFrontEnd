@@ -18,6 +18,7 @@ import Footer from "../common/Footer";
 import HamburgerMenu from "../common/HamburgerMenu";
 import { changePassword } from "../../services/APIFunctions";
 import FastVisaMetrics from "../../utils/FastVisaMetrics";
+import PasswordStrengthIndicator, { getStrength, REQUIREMENTS } from "../common/PasswordStrengthIndicator";
 import "./ChangePassword.css";
 
 const { Title, Text } = Typography;
@@ -29,6 +30,7 @@ const ChangePassword = () => {
   const [form] = Form.useForm();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const newPasswordValue = Form.useWatch("newPassword", form) || "";
 
   const screens = useBreakpoint();
   const isMobile = !screens.md;
@@ -208,12 +210,29 @@ const ChangePassword = () => {
                     ),
                   },
                   {
-                    min: 6,
+                    min: 8,
                     message: t(
                       "passwordTooShort",
-                      "Password must be at least 6 characters long"
+                      "Password must be at least 8 characters long"
                     ),
                   },
+                  () => ({
+                    validator(_, value) {
+                      if (!value) return Promise.resolve();
+                      const metCount = getStrength(value);
+                      if (metCount < REQUIREMENTS.length) {
+                        return Promise.reject(
+                          new Error(
+                            t(
+                              "passwordRequirements",
+                              "Password does not meet all requirements"
+                            )
+                          )
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
                   ({ getFieldValue }) => ({
                     validator(_, value) {
                       if (
@@ -238,9 +257,10 @@ const ChangePassword = () => {
                   size={btnSize}
                   disabled={loading}
                   autoComplete="new-password"
-                  placeholder={t("enterPassword", "At least 6 characters")}
+                  placeholder={t("enterPassword", "Enter new password")}
                 />
               </Form.Item>
+              <PasswordStrengthIndicator password={newPasswordValue} />
 
               <Form.Item
                 name="confirmPassword"

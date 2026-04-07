@@ -344,7 +344,7 @@ const LogIn = () => {
                       placeholder={t("password", "Password")}
                     />
                   </Form.Item>
-                  {/*  <div
+                  <div
                     style={{
                       marginTop: -8,
                       marginBottom: 16,
@@ -352,9 +352,9 @@ const LogIn = () => {
                     }}
                   >
                     <a href="/forgot-password">
-                      {t("forgotPassword", "Forgot password?")}
+                      {t("forgotPassword", "Forgot Password?")}
                     </a>
-                  </div> */}
+                  </div>
                   {error && (
                     <Alert
                       type="error"

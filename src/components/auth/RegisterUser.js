@@ -8,6 +8,7 @@ import { getTranslatedCountries } from "../../utils/countries";
 import { getRoles, createUser } from "../../services/APIFunctions";
 import { Form, Input, Select, Button, Alert, Grid, Typography } from "antd";
 import FastVisaMetrics from "../../utils/FastVisaMetrics";
+import PasswordStrengthIndicator, { getStrength, REQUIREMENTS } from "../common/PasswordStrengthIndicator";
 import "./RegisterUser.css";
 
 const { useBreakpoint } = Grid;
@@ -16,6 +17,7 @@ const UserRegistrationForm = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const passwordValue = Form.useWatch("password", form) || "";
 
   // Initialize metrics tracker (stable)
   const metrics = useMemo(() => new FastVisaMetrics(), []);
@@ -379,12 +381,29 @@ const UserRegistrationForm = () => {
                   message: t("passwordRequired", "Password is required"),
                 },
                 {
-                  min: 6,
+                  min: 8,
                   message: t(
                     "passwordTooShort",
-                    "Password must be at least 6 characters long"
+                    "Password must be at least 8 characters long"
                   ),
                 },
+                () => ({
+                  validator(_, value) {
+                    if (!value) return Promise.resolve();
+                    const metCount = getStrength(value);
+                    if (metCount < REQUIREMENTS.length) {
+                      return Promise.reject(
+                        new Error(
+                          t(
+                            "passwordRequirements",
+                            "Password does not meet all requirements"
+                          )
+                        )
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                }),
               ]}
             >
               <Input.Password
@@ -392,6 +411,7 @@ const UserRegistrationForm = () => {
                 placeholder={t("password", "Password")}
               />
             </Form.Item>
+            <PasswordStrengthIndicator password={passwordValue} />
             <Form.Item
               name="confirmPassword"
               label={t("confirmPassword", "Confirm Password")}
