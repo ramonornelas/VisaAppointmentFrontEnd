@@ -325,6 +325,12 @@ const HamburgerMenu = () => {
                   )}
 
                   <Link
+                    to="/notification-settings"
+                    className="logout-link"
+                  >
+                    <i className="fas fa-cog"></i>
+                  </Link>
+                  <Link
                     to="/logout"
                     className="logout-link"
                     title={t("logout", "Log Out")}

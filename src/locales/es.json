@@ -573,5 +573,17 @@
   "earlyRenewalUpgradeBody": "Al contratar el plan superior pagas ${{fullPrice}} MXN y obtienes más capacidad a partir de ahora. Además, tus {{days}} días restantes se transfieren al nuevo plan sin costo extra. Tu suscripción estará activa hasta el {{newExpiry}}.",
   "earlyRenewalDowngradeTitle": "Cambio a plan con menor capacidad",
   "earlyRenewalDowngradeBody": "Al contratar este plan pagas ${{fullPrice}} MXN y el cambio aplica de inmediato: tu cuota se ajusta ahora mismo a {{newApplicants}} búsquedas activas. Tu suscripción estará activa hasta el {{newExpiry}}.",
+  "settings": "Configuración",
+  "notificationSettings": "Configuración de notificaciones",
+  "progressNotificationFrequency": "Frecuencia de notificaciones de progreso",
+  "progressNotificationDescription": "Las actualizaciones de progreso de todos tus solicitantes se agruparán en un solo correo enviado al intervalo que elijas.",
+  "every30Minutes": "Cada 30 minutos",
+  "everyHour": "Cada hora",
+  "every2Hours": "Cada 2 horas",
+  "every4Hours": "Cada 4 horas",
+  "every8Hours": "Cada 8 horas",
+  "every24Hours": "Cada 24 horas",
+  "settingsSaved": "Configuración guardada con éxito",
+  "saveSettings": "Guardar configuración",
   "creditApplied": "descuento aplicado"
 }
