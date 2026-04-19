@@ -1,0 +1,33 @@
+/* ─────────────────────────────────────────────────────────────
+   NotificationSettings.css
+   Mirrors the layout conventions of ChangePassword.css while
+   adding the few selectors this page needs.
+───────────────────────────────────────────────────────────── */
+
+.notification-settings-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* ── Field block ─────────────────────────────────────────── */
+
+.notification-settings-field {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Frequency selector ──────────────────────────────────── */
+
+.notification-frequency-select {
+  min-width: 200px;
+  /* On mobile stretch the selector to fill the card */
+  width: 100%;
+  max-width: 320px;
+}
+
+@media (max-width: 767px) {
+  .notification-frequency-select {
+    max-width: 100%;
+  }
+}

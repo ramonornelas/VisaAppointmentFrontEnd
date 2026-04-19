@@ -702,6 +702,39 @@ const validateResetToken = async (token) => {
   }
 };
 
+// Update notification settings — PATCH /users/:id/notification-settings
+const updateNotificationSettings = async (userId, frequencyMinutes) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/${userId}/notification-settings`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ notification_frequency_minutes: frequencyMinutes }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Failed to update notification settings (${response.status}): ${errorText}`
+      );
+    }
+
+    const responseText = await response.text();
+    if (!responseText) return {};
+
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      return {};
+    }
+  } catch (error) {
+    console.error("Error updating notification settings:", error);
+    throw error;
+  }
+};
+
 // Reset password — POST /auth/reset-password
 const resetPassword = async (token, newPassword, language = 'en') => {
   try {
@@ -750,4 +783,5 @@ export {
   validateResetToken,
   resetPassword,
   sendEmail,
+  updateNotificationSettings,
 };

@@ -16,6 +16,7 @@ import LogOut from "./components/auth/LogOut";
 import PremiumUpgrade from "./components/premium/PremiumUpgrade";
 import SubscriptionPayment from "./components/subscription/SubscriptionPayment";
 import ChangePassword from "./components/auth/ChangePassword";
+import NotificationSettings from "./components/settings/NotificationSettings";
 import Users from "./components/users/Users";
 import VerifyEmail from "./components/auth/VerifyEmail";
 import ForgotPassword from "./components/auth/ForgotPassword";
@@ -43,6 +44,7 @@ root.render(
           <Route path="/premium-upgrade" element={<PremiumUpgrade />} />
           <Route path="/subscription" element={<SubscriptionPayment />} />
           <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/notification-settings" element={<NotificationSettings />} />
           <Route path="/users" element={<Users />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

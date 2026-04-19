@@ -570,5 +570,17 @@
   "earlyRenewalUpgradeBody": "By switching to the higher plan you pay ${{fullPrice}} MXN and get more capacity starting right now. Plus, your {{days}} remaining days carry over to the new plan at no extra cost. Your subscription will be active until {{newExpiry}}.",
   "earlyRenewalDowngradeTitle": "Switching to a lower capacity plan",
   "earlyRenewalDowngradeBody": "By choosing this plan you pay ${{fullPrice}} MXN and the change takes effect immediately: your quota is adjusted right now to {{newApplicants}} active searches. Your subscription will be active until {{newExpiry}}.",
+  "settings": "Settings",
+  "notificationSettings": "Notification Settings",
+  "progressNotificationFrequency": "Progress Notification Frequency",
+  "progressNotificationDescription": "Progress updates for all your applicants will be grouped into a single email sent at the interval you choose.",
+  "every30Minutes": "Every 30 minutes",
+  "everyHour": "Every hour",
+  "every2Hours": "Every 2 hours",
+  "every4Hours": "Every 4 hours",
+  "every8Hours": "Every 8 hours",
+  "every24Hours": "Every 24 hours",
+  "settingsSaved": "Settings saved successfully",
+  "saveSettings": "Save settings",
   "creditApplied": "credit applied"
 }
