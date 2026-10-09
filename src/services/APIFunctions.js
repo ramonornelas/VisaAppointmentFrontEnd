@@ -226,6 +226,7 @@ const StartApplicantContainer = async (applicant_userid) => {
     }
   } catch (error) {
     console.error("Error:", error);
+    throw error;
   }
 };
 
@@ -248,6 +249,7 @@ const StopApplicantContainer = async (applicant_userid) => {
     }
   } catch (error) {
     console.error("Error:", error);
+    throw error;
   }
 };
 

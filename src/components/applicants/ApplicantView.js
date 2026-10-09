@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../utils/AuthContext";
@@ -68,6 +68,7 @@ const ApplicantView = () => {
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [searchActionLoading, setSearchActionLoading] = useState(false);
+  const searchActionInProgress = useRef(false);
 
   // Check if user can start searches (trial active OR subscription not expired)
   const canStartSearch = trialActive || !subscriptionExpired;
@@ -250,6 +251,9 @@ const ApplicantView = () => {
   };
 
   const handleToggleSearch = async () => {
+    if (searchActionInProgress.current) return;
+
+    searchActionInProgress.current = true;
     setSearchActionLoading(true);
     try {
       if (data.search_status === "Stopped") {
@@ -268,7 +272,6 @@ const ApplicantView = () => {
             cancelText: t("cancel", "Cancel"),
             icon: null,
           });
-          setSearchActionLoading(false);
           return;
         }
 
@@ -288,15 +291,16 @@ const ApplicantView = () => {
               `You have reached your concurrent applicants limit ({limit}).\nTo start a new applicant, please end one of your currently running applicants first.`,
             ).replace("{limit}", concurrentLimit),
           });
-          setSearchActionLoading(false);
           return;
         }
         await StartApplicantContainer(applicantId);
+        setData((applicant) => ({ ...applicant, search_status: "Running" }));
         antMessage.success(
           t("searchStartedSuccess", "Search started successfully."),
         );
       } else {
         await StopApplicantContainer(applicantId);
+        setData((applicant) => ({ ...applicant, search_status: "Stopped" }));
         antMessage.success(
           t("searchStoppedSuccess", "Search stopped successfully."),
         );
@@ -306,6 +310,7 @@ const ApplicantView = () => {
       antMessage.error(t("errorPerformingAction", "Error performing action."));
       console.error(error);
     } finally {
+      searchActionInProgress.current = false;
       setSearchActionLoading(false);
     }
   };
