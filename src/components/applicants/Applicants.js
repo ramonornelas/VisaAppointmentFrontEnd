@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Table,
@@ -64,6 +64,10 @@ const Applicants = () => {
   const navigate = useNavigate();
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [hoveredRowId, setHoveredRowId] = useState(null);
+  const [searchActionLoadingIds, setSearchActionLoadingIds] = useState(
+    () => new Set(),
+  );
+  const searchActionsInProgress = useRef(new Set());
 
   // Initialize metrics tracker
   const metrics = useMemo(() => new FastVisaMetrics(), []);
@@ -208,13 +212,18 @@ const Applicants = () => {
   };
 
   const handleAction = async (id, isActive) => {
+    if (searchActionsInProgress.current.has(id)) return;
+
+    searchActionsInProgress.current.add(id);
+    setSearchActionLoadingIds((ids) => new Set(ids).add(id));
     const action = isActive === "Stopped" ? "start_search" : "stop_search";
-    metrics.trackButtonClick(
-      `${action}-btn`,
-      action === "start_search" ? "Start Search" : "Stop Search"
-    );
 
     try {
+      metrics.trackButtonClick(
+        `${action}-btn`,
+        action === "start_search" ? "Start Search" : "Stop Search"
+      );
+
       if (isActive === "Stopped") {
         // Check if user can start searches
         if (!canStartSearch) {
@@ -287,6 +296,13 @@ const Applicants = () => {
         }
 
         await StartApplicantContainer(id);
+        setData((applicants) =>
+          applicants.map((applicant) =>
+            applicant.id === id
+              ? { ...applicant, search_status: "Running" }
+              : applicant,
+          ),
+        );
         message.success(
           t("searchStartedSuccess", "Search started successfully.")
         );
@@ -297,6 +313,13 @@ const Applicants = () => {
         });
       } else {
         await StopApplicantContainer(id);
+        setData((applicants) =>
+          applicants.map((applicant) =>
+            applicant.id === id
+              ? { ...applicant, search_status: "Stopped" }
+              : applicant,
+          ),
+        );
         message.success(
           t("searchStoppedSuccess", "Search stopped successfully.")
         );
@@ -318,6 +341,13 @@ const Applicants = () => {
         error: "action_failed",
         errorMessage: error.message,
         timestamp: new Date().toISOString(),
+      });
+    } finally {
+      searchActionsInProgress.current.delete(id);
+      setSearchActionLoadingIds((ids) => {
+        const nextIds = new Set(ids);
+        nextIds.delete(id);
+        return nextIds;
       });
     }
   };
@@ -659,6 +689,7 @@ const Applicants = () => {
           >
             <Button
               type="text"
+              loading={searchActionLoadingIds.has(record.id)}
               icon={
                 status === "Stopped" ? <PlayCircleOutlined /> : <StopOutlined />
               }
@@ -840,6 +871,7 @@ const Applicants = () => {
         <Space size={8} wrap>
           <Button
             type={record.search_status === "Stopped" ? "primary" : "default"}
+            loading={searchActionLoadingIds.has(record.id)}
             icon={
               record.search_status === "Stopped" ? <PlayCircleOutlined /> : <StopOutlined />
             }
