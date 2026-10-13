@@ -756,6 +756,36 @@ const resetPassword = async (token, newPassword, language = 'en') => {
   }
 };
 
+const getApplicantLogs = async (filters) => {
+  const response = await fetch(
+    "https://w3a0pdhqul.execute-api.us-west-1.amazonaws.com/logs",
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(filters),
+    },
+  );
+
+  const responseText = await response.text();
+  let result = responseText;
+  if (responseText) {
+    try {
+      result = JSON.parse(responseText);
+    } catch {
+      result = responseText;
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error(`Failed to load applicant logs (HTTP ${response.status})`);
+  }
+
+  return result;
+};
+
 export {
   UserDetails,
   ApplicantSearch,
@@ -786,4 +816,5 @@ export {
   resetPassword,
   sendEmail,
   updateNotificationSettings,
+  getApplicantLogs,
 };
