@@ -11,6 +11,7 @@ import QuickStartApplicant from "./components/applicants/QuickStartApplicant";
 import Applicants from "./components/applicants/Applicants";
 import ApplicantForm from "./components/applicants/ApplicantForm";
 import ApplicantView from "./components/applicants/ApplicantView";
+import ApplicantLogs from "./components/applicants/ApplicantLogs";
 import DeleteApplicant from "./components/applicants/DeleteApplicant";
 import LogOut from "./components/auth/LogOut";
 import PremiumUpgrade from "./components/premium/PremiumUpgrade";
@@ -39,6 +40,7 @@ root.render(
           <Route path="/applicant-form" element={<ApplicantForm />} />
           <Route path="/viewapplicant" element={<ApplicantView />} />
           <Route path="/view-applicant/:id" element={<ApplicantView />} />
+          <Route path="/logs" element={<ApplicantLogs />} />
           <Route path="/deleteapplicant" element={<DeleteApplicant />} />
           <Route path="/logout" element={<LogOut />} />
           <Route path="/premium-upgrade" element={<PremiumUpgrade />} />
