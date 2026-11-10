@@ -653,14 +653,17 @@ const ApplicantView = () => {
                       ? t("startSearch", "Start Search")
                       : t("stopSearch", "Stop Search")}
                   </Button>
-                  <Button
-                    icon={<FileTextOutlined />}
-                    onClick={handleViewLogs}
-                    size={btnSize}
-                    style={{ height: "auto", padding: "4px 8px" }}
-                  >
-                    {t("applicantLogs", "Logs")}
-                  </Button>
+                  {permissions.canManageApplicants() &&
+                    permissions.canManageUsers() && (
+                      <Button
+                        icon={<FileTextOutlined />}
+                        onClick={handleViewLogs}
+                        size={btnSize}
+                        style={{ height: "auto", padding: "4px 8px" }}
+                      >
+                        {t("applicantLogsButton", "Logs")}
+                      </Button>
+                    )}
                 </Space>
               </div>
             </div>

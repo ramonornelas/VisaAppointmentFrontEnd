@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/AuthContext";
+import { permissions } from "../../utils/permissions";
 import { getApplicantLogs } from "../../services/APIFunctions";
 import HamburgerMenu from "../common/HamburgerMenu";
 import {
@@ -85,15 +86,18 @@ const ApplicantLogs = () => {
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/");
+    } else if (
+      !permissions.canManageApplicants() ||
+      !permissions.canManageUsers()
+    ) {
+      navigate("/applicants");
     }
   }, [isAuthenticated, navigate]);
 
   const loadLogs = useCallback(
     async (searchFilters) => {
       if (!applicantId) {
-        setError(
-          t("applicantIdUnavailable", "No applicant is selected for these logs."),
-        );
+        setError(t("applicantIdUnavailable"));
         setLogs([]);
         setLoading(false);
         return;
@@ -113,10 +117,7 @@ const ApplicantLogs = () => {
       } catch (loadError) {
         console.error("Error loading applicant logs:", loadError);
         setLogs([]);
-        setError(
-          loadError.message ||
-            t("failedToLoadApplicantLogs", "Failed to load applicant logs."),
-        );
+        setError(t("failedToLoadApplicantLogs"));
       } finally {
         setLoading(false);
       }
@@ -125,8 +126,14 @@ const ApplicantLogs = () => {
   );
 
   useEffect(() => {
-    loadLogs(initialFilters.current);
-  }, [loadLogs]);
+    if (
+      isAuthenticated &&
+      permissions.canManageApplicants() &&
+      permissions.canManageUsers()
+    ) {
+      loadLogs(initialFilters.current);
+    }
+  }, [isAuthenticated, loadLogs]);
 
   const handleFilterChange = (event) => {
     const { name, value } = event.target;
@@ -141,7 +148,7 @@ const ApplicantLogs = () => {
       !filters.end_date ||
       !filters.end_time
     ) {
-      setError(t("completeDateTimeRange", "Enter a complete date and time range."));
+      setError(t("completeDateTimeRange"));
       return;
     }
 
@@ -149,7 +156,7 @@ const ApplicantLogs = () => {
     const endDateTime = `${filters.end_date}T${filters.end_time}`;
     if (startDateTime > endDateTime) {
       setError(
-        t("invalidDateTimeRange", "The start date and time must be before the end date and time."),
+        t("invalidDateTimeRange"),
       );
       return;
     }
@@ -210,10 +217,10 @@ const ApplicantLogs = () => {
                 }}
               >
                 <FileTextOutlined />
-                {t("applicantLogs", "Applicant Logs")}
+                {t("applicantLogs")}
               </Title>
               <Text type="secondary" style={{ display: "block", marginTop: 4 }}>
-                {t("viewApplicantLogs", "View logs for the selected applicant")}
+                {t("viewApplicantLogs")}
               </Text>
             </div>
             <Button
@@ -230,7 +237,7 @@ const ApplicantLogs = () => {
         </div>
 
         <Space orientation="vertical" size={16} style={{ width: "100%" }}>
-          <Card title={t("logSearchRange", "Log search range")}>
+          <Card title={t("logSearchRange")}>
             <form onSubmit={handleSearch}>
               <Space wrap size={[12, 12]}>
                 <label style={{ display: "flex", flexDirection: "column" }}>
@@ -245,9 +252,9 @@ const ApplicantLogs = () => {
                   />
                 </label>
                 <label style={{ display: "flex", flexDirection: "column" }}>
-                  {t("startTime", "Start time")}
+                  {t("startTime")}
                   <Input
-                    aria-label={t("startTime", "Start time")}
+                    aria-label={t("startTime")}
                     type="time"
                     step="1"
                     name="start_time"
@@ -267,9 +274,9 @@ const ApplicantLogs = () => {
                   />
                 </label>
                 <label style={{ display: "flex", flexDirection: "column" }}>
-                  {t("endTime", "End time")}
+                  {t("endTime")}
                   <Input
-                    aria-label={t("endTime", "End time")}
+                    aria-label={t("endTime")}
                     type="time"
                     step="1"
                     name="end_time"
@@ -278,7 +285,7 @@ const ApplicantLogs = () => {
                   />
                 </label>
                 <Button type="primary" htmlType="submit" loading={loading}>
-                  {t("searchLogs", "Search logs")}
+                  {t("searchLogs")}
                 </Button>
               </Space>
             </form>
@@ -286,7 +293,7 @@ const ApplicantLogs = () => {
 
           {error && <Alert type="error" showIcon message={error} />}
 
-          <Card title={t("applicantLogs", "Applicant Logs")}>
+          <Card title={t("applicantLogs")}>
             {logs.length ? (
               <Table
                 dataSource={logs}
@@ -303,8 +310,8 @@ const ApplicantLogs = () => {
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                 description={
                   loading
-                    ? t("loadingLogs", "Loading logs...")
-                    : t("noApplicantLogs", "No logs found for this range.")
+                    ? t("loadingLogs")
+                    : t("noApplicantLogs")
                 }
               />
             )}
