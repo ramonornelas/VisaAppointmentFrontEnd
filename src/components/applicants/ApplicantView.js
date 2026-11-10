@@ -29,6 +29,7 @@ import {
   CopyOutlined,
   PlayCircleOutlined,
   StopOutlined,
+  FileTextOutlined,
   EnvironmentOutlined,
   CalendarTwoTone,
   GlobalOutlined,
@@ -142,6 +143,11 @@ const ApplicantView = () => {
 
   const handleEdit = () => {
     navigate(`/applicant-form?id=${applicantId}`);
+  };
+
+  const handleViewLogs = () => {
+    sessionStorage.setItem("applicant_userid", applicantId);
+    navigate("/logs");
   };
 
   const handleDelete = () => {
@@ -647,6 +653,17 @@ const ApplicantView = () => {
                       ? t("startSearch", "Start Search")
                       : t("stopSearch", "Stop Search")}
                   </Button>
+                  {permissions.canManageApplicants() &&
+                    permissions.canManageUsers() && (
+                      <Button
+                        icon={<FileTextOutlined />}
+                        onClick={handleViewLogs}
+                        size={btnSize}
+                        style={{ height: "auto", padding: "4px 8px" }}
+                      >
+                        {t("applicantLogsButton", "Logs")}
+                      </Button>
+                    )}
                 </Space>
               </div>
             </div>
